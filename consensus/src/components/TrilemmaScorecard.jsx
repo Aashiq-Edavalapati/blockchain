@@ -7,9 +7,9 @@ import IconByName from "./IconByName";
 
 export default function TrilemmaScorecard({ algorithm }) {
   const radarData = [
-    { subject: TOTAL.scalability, value: algorithm.trilemma.scalability },
-    { subject: TOTAL.security, value: algorithm.trilemma.security },
-    { subject: TOTAL.decentralization, value: algorithm.trilemma.decentralization },
+    { subject: TOTAL.scalability, value: algorithm.score.scalability },
+    { subject: TOTAL.security, value: algorithm.score.security },
+    { subject: TOTAL.decentralization, value: algorithm.score.decentralization },
   ];
 
   return (
@@ -33,7 +33,7 @@ export default function TrilemmaScorecard({ algorithm }) {
 
       <div className="space-y-3 mt-2">
         {PILLARS.map(({ key, label, iconName }) => {
-          const val = algorithm.trilemma[key];
+          const val = algorithm.score[key];
           return (
             <div key={key}>
               <div className="flex justify-between text-xs mb-1" style={{ color: "var(--muted)" }}>
@@ -57,11 +57,11 @@ export default function TrilemmaScorecard({ algorithm }) {
       <div className="grid grid-cols-2 gap-3 mt-6">
         <div className="rounded-xl p-3 text-center" style={{ background: "var(--surface-2)", border: "1px solid var(--border)" }}>
           <p className="text-[10px] uppercase tracking-wide" style={{ color: "var(--muted)" }}>Block time</p>
-          <p className="font-mono text-sm mt-1">{algorithm.stats.blockTime}</p>
+          <p className="font-mono text-sm mt-1">{algorithm.typicalBlockTime}</p>
         </div>
         <div className="rounded-xl p-3 text-center" style={{ background: "var(--surface-2)", border: "1px solid var(--border)" }}>
           <p className="text-[10px] uppercase tracking-wide" style={{ color: "var(--muted)" }}>Throughput</p>
-          <p className="font-mono text-sm mt-1">{algorithm.stats.tps}</p>
+          <p className="font-mono text-sm mt-1">{algorithm.typicalTPS}</p>
         </div>
       </div>
     </div>

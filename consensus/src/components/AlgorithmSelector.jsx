@@ -25,7 +25,7 @@ export default function AlgorithmSelector({ algorithms, activeId, onSelect }) {
             }}
           >
             <IconByName name={a.iconName} size={15} />
-            {a.short}
+            {a.shortName}
             {isActive && (
               <motion.span
                 layoutId="active-dot"

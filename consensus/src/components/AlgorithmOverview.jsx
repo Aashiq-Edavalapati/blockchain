@@ -21,7 +21,7 @@ export default function AlgorithmOverview({ algorithm, prefersReduced }) {
         </div>
       </div>
       <p className="mt-4 text-sm leading-relaxed" style={{ color: "var(--muted)" }}>
-        {algorithm.mechanism}
+        {algorithm.coreMechanism}
       </p>
 
       <div className="mt-8 relative">
@@ -35,7 +35,7 @@ export default function AlgorithmOverview({ algorithm, prefersReduced }) {
           />
         )}
         <ol className="space-y-5">
-          {algorithm.steps.map((step, i) => (
+          {algorithm.stepByStepExplanation.map((step, i) => (
             <motion.li
               key={i}
               initial={{ opacity: 0, x: -8 }}

@@ -1,10 +1,19 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link2, Unlink } from "lucide-react";
-import { pairNote } from "../utils/helpers";
+import compatibility from "../data/compatibility.js";
 
-export default function CompatibilityMatrix({ allChains, algorithms, activeAlgorithm }) {
-  const [hoverCell, setHoverCell] = useState(null);
+function pairKey(a, b) {
+  return [a, b].sort().join("-");
+}
+
+export default function CompatibilityMatrix({ allChains, activeAlgorithm }) {
+  const [hoverPair, setHoverPair] = useState(null);
+
+  const compatMap = {};
+  for (const p of compatibility) {
+    compatMap[pairKey(p.chainA, p.chainB)] = p;
+  }
 
   return (
     <section>
@@ -18,7 +27,7 @@ export default function CompatibilityMatrix({ allChains, algorithms, activeAlgor
         </div>
       </div>
       <p className="text-xs mb-4 max-w-2xl" style={{ color: "var(--muted)" }}>
-        Rows and columns for the selected algorithm ({activeAlgorithm.short}) are highlighted. Hover any cell for a
+        Rows and columns for the selected algorithm ({activeAlgorithm.shortName}) are highlighted. Hover any cell for a
         plain-language read on that pair's interoperability at the protocol level.
       </p>
 
@@ -54,27 +63,30 @@ export default function CompatibilityMatrix({ allChains, algorithms, activeAlgor
                   </span>
                 </th>
                 {allChains.map((colChain) => {
-                  const compatible = rowChain.algo === colChain.algo;
-                  const algo = algorithms.find((a) => a.id === rowChain.algo);
                   const isSelf = rowChain.id === colChain.id;
+                  const p = compatMap[pairKey(rowChain.id, colChain.id)];
+                  const compatible = p ? p.sameConsensus : false;
                   const relatedToSelection =
                     rowChain.algo === activeAlgorithm.id || colChain.algo === activeAlgorithm.id;
-                  const key = `${rowChain.id}-${colChain.id}`;
+                  const key = pairKey(rowChain.id, colChain.id);
+
+                  const alpha = isSelf ? 1 : compatible ? (relatedToSelection ? 0.8 : 0.35) : relatedToSelection ? 0.55 : 0.2;
+
                   return (
                     <td key={colChain.id} className="p-0">
                       <button
                         className="cell-btn w-6 h-6 rounded-md transition-transform"
-                        onMouseEnter={() => setHoverCell(key)}
-                        onMouseLeave={() => setHoverCell((k) => (k === key ? null : k))}
-                        onFocus={() => setHoverCell(key)}
+                        onMouseEnter={() => setHoverPair(key)}
+                        onMouseLeave={() => setHoverPair((k) => (k === key ? null : k))}
+                        onFocus={() => setHoverPair(key)}
                         style={{
                           background: isSelf
                             ? "var(--border)"
                             : compatible
-                            ? algo.color + (relatedToSelection ? "cc" : "55")
+                            ? activeAlgorithm.color + Math.round(alpha * 255).toString(16).padStart(2, "0")
                             : "var(--surface-2)",
                           opacity: relatedToSelection || compatible ? 1 : 0.55,
-                          transform: hoverCell === key ? "scale(1.35)" : "scale(1)",
+                          transform: hoverPair === key ? "scale(1.35)" : "scale(1)",
                           border: relatedToSelection ? `1px solid ${activeAlgorithm.color}88` : "1px solid transparent",
                         }}
                         aria-label={`${rowChain.name} vs ${colChain.name}`}
@@ -89,7 +101,7 @@ export default function CompatibilityMatrix({ allChains, algorithms, activeAlgor
       </div>
 
       <AnimatePresence>
-        {hoverCell && (
+        {hoverPair && (
           <motion.div
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
@@ -98,13 +110,16 @@ export default function CompatibilityMatrix({ allChains, algorithms, activeAlgor
             className="mt-3 rounded-xl px-4 py-3 text-sm"
             style={{ background: "var(--surface-2)", border: "1px solid var(--border)" }}
           >
-            {(() => {
-              const [rId, cId] = hoverCell.split("-");
-              const r = allChains.find((c) => c.id === rId);
-              const cc = allChains.find((c) => c.id === cId);
-              if (!r || !cc) return null;
-              return <span style={{ color: "var(--muted)" }}>{pairNote(r, cc, algorithms)}</span>;
-            })()}
+            <span style={{ color: "var(--muted)" }}>
+              {(() => {
+                const [rId, cId] = hoverPair.split("-");
+                const p = compatMap[hoverPair];
+                if (!p) return null;
+                const cA = allChains.find((c) => c.id === rId);
+                const cB = allChains.find((c) => c.id === cId);
+                return `${cA ? cA.name : rId} ↔ ${cB ? cB.name : cId}: ${p.reason}`;
+              })()}
+            </span>
           </motion.div>
         )}
       </AnimatePresence>

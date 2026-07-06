@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
-import algorithms from "./data/algorithms";
+import algorithms from "./data/algorithms/index.js";
 import chains from "./data/chains";
 
 import Header from "./components/Header";
@@ -76,7 +76,6 @@ export default function ConsensusExplorer() {
 
         <CompatibilityMatrix
           allChains={chains}
-          algorithms={algorithms}
           activeAlgorithm={active}
         />
       </main>

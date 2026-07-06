@@ -6,7 +6,7 @@ export default function ChainMapping({ chains, algorithm }) {
   return (
     <section className="mb-12">
       <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-        <h3 className="font-display text-lg font-semibold">Where {algorithm.short} runs today</h3>
+        <h3 className="font-display text-lg font-semibold">Where {algorithm.shortName} runs today</h3>
         <div
           className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full"
           style={{ background: "var(--surface)", border: "1px solid var(--border)", color: "var(--muted)" }}
