@@ -6,7 +6,7 @@ export default function Navbar({ currentPath, navigate }) {
   // For the explorer, we use a stark black background with a subtle border.
   // For the home page, it stays perfectly transparent to blend with the hero grid.
   const headerClass = isExplorer
-    ? "sticky top-0 z-50 w-full border-b border-white/[0.06] bg-[#000000]/90 backdrop-blur-md"
+    ? "sticky top-0 z-50 w-full bg-[#000000]/90 backdrop-blur-md"
     : "absolute top-0 left-0 w-full z-50 bg-transparent";
 
   return (
@@ -27,9 +27,6 @@ export default function Navbar({ currentPath, navigate }) {
           <div className="flex items-baseline gap-3">
             <span className="text-[16px] font-medium tracking-tight text-white/90 group-hover:text-white transition-colors">
               Consensus Explorer
-            </span>
-            <span className="text-[10px] text-white/40 font-mono px-2 py-0.5 rounded-md border border-white/10 bg-white/[0.02] uppercase tracking-widest">
-              Educational
             </span>
           </div>
         </div>

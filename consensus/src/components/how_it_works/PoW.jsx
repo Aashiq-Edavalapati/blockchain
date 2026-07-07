@@ -11,18 +11,18 @@ const STAGES = [
 ];
 
 const THEME = {
-  bg: '#0A0A0C',
-  surface: '#111114',
-  surface2: '#17171B',
-  border: '#242429',
-  borderStrong: '#33333A',
-  amber: '#E8A344',
-  amberDim: 'rgba(232, 163, 68, 0.14)',
-  green: '#3FCE8E',
-  greenDim: 'rgba(63, 206, 142, 0.14)',
-  text1: '#F3F1EC',
-  text2: '#8C8C93',
-  text3: '#57575E',
+  bg: '#000000',
+  surface: '#050505',
+  surface2: '#020202',
+  border: 'rgba(255, 255, 255, 0.08)',
+  borderStrong: 'rgba(255, 255, 255, 0.15)',
+  amber: '#ffffff',
+  amberDim: 'rgba(255, 255, 255, 0.1)',
+  green: '#ffffff',
+  greenDim: 'rgba(255, 255, 255, 0.1)',
+  text1: '#ffffff',
+  text2: '#888888',
+  text3: '#666666',
 };
 
 function useHashRate(active) {
@@ -285,14 +285,14 @@ export default function ProofOfWorkVisualizer({ algorithm }) {
             <button
               onClick={manualNextStep}
               disabled={isAutoRunning || isSolving}
-              className="pow-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer text-zinc-100 hover:bg-[#1C1F26]"
+              className="pow-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer text-white hover:bg-white/[0.06]"
               style={{ borderColor: 'var(--border)', background: 'var(--surface-2)' }}
             >
               {step === 5 ? 'Restart' : 'Step →'}
             </button>
             <button
               onClick={resetSimulation}
-              className="pow-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors cursor-pointer text-zinc-400 hover:text-zinc-200 hover:bg-[#1C1F26]"
+              className="pow-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors cursor-pointer text-white/60 hover:text-white hover:bg-white/[0.06]"
               style={{ borderColor: 'var(--border)', background: 'var(--surface-2)' }}
             >
               Reset
@@ -340,7 +340,7 @@ export default function ProofOfWorkVisualizer({ algorithm }) {
 
       <div
         className="relative mt-7 overflow-hidden rounded-xl border"
-        style={{ borderColor: isSolved ? 'var(--green)' : 'var(--border)', background: '#08080A', transition: 'border-color 0.4s ease' }}
+        style={{ borderColor: isSolved ? 'var(--green)' : 'var(--border)', background: '#050505', transition: 'border-color 0.4s ease' }}
       >
         <div className="flex items-center justify-between border-b px-4 py-2.5" style={{ borderColor: 'var(--border)', background: 'var(--surface)' }}>
           <div className="flex items-center gap-2">
@@ -405,21 +405,21 @@ export default function ProofOfWorkVisualizer({ algorithm }) {
         </div>
       </div>
 
-      <div className="mt-6 border-t border-zinc-900 pt-6">
-        <h4 className="pow-mono text-[10px] text-zinc-550 uppercase tracking-widest mb-3">
+      <div className="mt-6 border-t border-white/[0.06] pt-6">
+        <h4 className="pow-mono text-[10px] text-white/40 uppercase tracking-widest mb-3">
           chain_extended_ledger
         </h4>
         <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin">
           {blockchain.map((b) => (
             <div
               key={b.height}
-              className="rounded-xl border border-zinc-900 bg-[#0C0D12] p-3 text-xs min-w-[125px] flex flex-col justify-between gap-2 shrink-0 animate-fade-in"
+              className="rounded-xl border border-white/[0.08] bg-[#050505] p-3 text-xs min-w-[125px] flex flex-col justify-between gap-2 shrink-0 animate-fade-in"
             >
               <div>
-                <p className="pow-mono text-[9px] text-zinc-550">Block: #{b.height}</p>
-                <p className="font-bold text-zinc-300 mt-1">Difficulty: {difficulty}</p>
+                <p className="pow-mono text-[9px] text-white/40">Block: #{b.height}</p>
+                <p className="font-bold text-white mt-1">Difficulty: {difficulty}</p>
               </div>
-              <p className="pow-mono text-[9px] text-zinc-500 truncate" title={b.hash}>Hash: {b.hash.slice(0, 8)}...</p>
+              <p className="pow-mono text-[9px] text-white/40 truncate" title={b.hash}>Hash: {b.hash.slice(0, 8)}...</p>
             </div>
           ))}
         </div>

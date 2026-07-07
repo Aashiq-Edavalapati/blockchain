@@ -79,7 +79,7 @@ export default function CryptoIcon({ symbol, size = 20 }) {
 
       {/* Tooltip */}
       {hovered && (
-        <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 z-50 px-2 py-1 text-[10px] font-bold text-zinc-100 bg-[#0B0D12] border border-zinc-800 rounded-lg shadow-lg whitespace-nowrap pointer-events-none transition-all duration-155">
+        <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 z-50 px-2 py-1 text-[10px] font-bold text-white bg-[#050505] border border-white/[0.08] rounded-lg shadow-lg whitespace-nowrap pointer-events-none transition-all duration-155">
           {fullName}
         </div>
       )}

@@ -10,18 +10,18 @@ const STAGES = [
 ];
 
 const THEME = {
-  bg: '#0A0A0C',
-  surface: '#111114',
-  surface2: '#17171B',
-  border: '#242429',
-  borderStrong: '#33333A',
-  purple: '#a855f7',
-  purpleDim: 'rgba(168, 85, 247, 0.14)',
+  bg: '#000000',
+  surface: '#050505',
+  surface2: '#020202',
+  border: 'rgba(255, 255, 255, 0.08)',
+  borderStrong: 'rgba(255, 255, 255, 0.15)',
+  purple: '#ffffff',
+  purpleDim: 'rgba(255, 255, 255, 0.1)',
   red: '#EF4444',
   blue: '#3b82f6',
-  text1: '#F3F1EC',
-  text2: '#8C8C93',
-  text3: '#57575E',
+  text1: '#ffffff',
+  text2: '#888888',
+  text3: '#666666',
 };
 
 const INITIAL_TRANSACTIONS = [
@@ -290,14 +290,14 @@ export default function DAGVisualizer({ algorithm }) {
             <button
               onClick={manualNextStep}
               disabled={isAutoRunning}
-              className="dag-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer text-zinc-100 hover:bg-[#1C1F26]"
+              className="dag-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer text-white hover:bg-white/[0.06]"
               style={{ borderColor: 'var(--border)', background: 'var(--surface-2)' }}
             >
               {step === 4 ? 'Restart' : 'Step →'}
             </button>
             <button
               onClick={resetSimulation}
-              className="dag-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors cursor-pointer text-zinc-400 hover:text-zinc-200 hover:bg-[#1C1F26]"
+              className="dag-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors cursor-pointer text-white/60 hover:text-white hover:bg-white/[0.06]"
               style={{ borderColor: 'var(--border)', background: 'var(--surface-2)' }}
             >
               Reset
@@ -345,8 +345,8 @@ export default function DAGVisualizer({ algorithm }) {
 
       <div className="grid grid-cols-1 md:grid-cols-[1fr_260px] gap-6 mt-7">
         
-        <div className="rounded-xl border border-zinc-900 bg-[#08080A] p-6 flex flex-col items-center justify-center min-h-[280px] relative">
-          <div className="absolute top-3 left-4 dag-mono text-[10px] text-zinc-550">
+        <div className="rounded-xl border border-white/[0.08] bg-[#050505] p-6 flex flex-col items-center justify-center min-h-[280px] relative">
+          <div className="absolute top-3 left-4 dag-mono text-[10px] text-white/40">
             {variant.gridName}
           </div>
 
@@ -392,16 +392,16 @@ export default function DAGVisualizer({ algorithm }) {
           )}
         </div>
 
-        <div className="rounded-xl border border-zinc-900 bg-zinc-950/20 p-5 flex flex-col justify-between">
+        <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-5 flex flex-col justify-between">
           <div>
-            <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-4 border-b border-zinc-900 pb-2">
+            <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-4 border-b border-white/[0.06] pb-2">
               Parameters
             </h4>
             <div className="space-y-4">
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-center justify-between text-[10px]">
-                  <span className="font-semibold text-zinc-400">Sample size (k)</span>
-                  <span className="font-mono text-zinc-300 font-semibold">{kSample} peers</span>
+                  <span className="font-semibold text-[#888]">Sample size (k)</span>
+                  <span className="font-mono text-white font-semibold">{kSample} peers</span>
                 </div>
                 <input
                   type="range" min="2" max="8" value={kSample}
@@ -414,8 +414,8 @@ export default function DAGVisualizer({ algorithm }) {
 
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-center justify-between text-[10px]">
-                  <span className="font-semibold text-zinc-400">Threshold (α)</span>
-                  <span className="font-mono text-zinc-300 font-semibold">{alpha} votes</span>
+                  <span className="font-semibold text-[#888]">Threshold (α)</span>
+                  <span className="font-mono text-white font-semibold">{alpha} votes</span>
                 </div>
                 <input
                   type="range" min="2" max={kSample} value={alpha}
@@ -428,7 +428,7 @@ export default function DAGVisualizer({ algorithm }) {
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-zinc-900 text-[10px] text-zinc-550 leading-relaxed font-semibold">
+          <div className="mt-4 pt-3 border-t border-white/[0.06] text-[10px] text-white/40 leading-relaxed font-semibold">
             {variant.bottomText}
           </div>
         </div>

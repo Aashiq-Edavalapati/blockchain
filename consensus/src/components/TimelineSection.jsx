@@ -16,14 +16,16 @@ const categoryColors = {
   Launch: "#E84142",
 };
 
-export default function TimelineSection() {
+export default function TimelineSection({ algorithm }) {
+  const accentColor = algorithm ? algorithm.color : "#ffffff";
+
   return (
     <div>
       <div className="flex items-center gap-3 mb-3">
         <h3 className="text-base font-semibold tracking-tight">Historical Timeline</h3>
         <span
           className="text-[10px] px-2 py-0.5 rounded font-mono"
-          style={{ background: "#8B93FF12", color: "#8B93FF" }}
+          style={{ background: `${accentColor}12`, color: accentColor }}
         >
           {timeline.length} events
         </span>

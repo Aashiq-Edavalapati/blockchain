@@ -24,7 +24,7 @@ export default function LanguagesSection({ chains, algorithm }) {
 
   return (
     <section className="space-y-4">
-      <div className="flex items-center gap-3 pb-2 border-b border-zinc-900/60">
+      <div className="flex items-center gap-3 pb-2 border-b border-white/[0.06]">
         <h3 className="text-sm font-bold text-white tracking-tight">Smart Contract client Languages</h3>
         <span
           className="text-[10px] font-bold font-mono px-2 py-0.5 rounded border"
@@ -44,11 +44,11 @@ export default function LanguagesSection({ chains, algorithm }) {
           return (
             <div
               key={langName}
-              className="rounded-2xl border border-zinc-900/50 bg-[#0D0F14]/40 hover:bg-[#0D0F14]/75 p-5 transition-all duration-300 flex flex-col justify-between"
+              className="rounded-2xl border border-white/[0.08] bg-[#050505] hover:bg-[#020202] p-5 transition-all duration-300 flex flex-col justify-between"
             >
               <div className="flex items-start gap-3.5">
                 <div
-                  className="w-8.5 h-8.5 rounded-xl flex items-center justify-center shrink-0 border border-zinc-900/60 bg-zinc-900/40"
+                  className="w-8.5 h-8.5 rounded-xl flex items-center justify-center shrink-0 border border-white/[0.08] bg-white/[0.02]"
                   style={{ color: algorithm.color }}
                 >
                   {data.iconId ? (
@@ -58,10 +58,10 @@ export default function LanguagesSection({ chains, algorithm }) {
                   )}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs font-bold text-zinc-200 truncate" title={langName}>
+                  <p className="text-xs font-bold text-white truncate" title={langName}>
                     {shortLang}
                   </p>
-                  <p className="text-[10px] text-zinc-500 font-semibold mt-0.5">
+                  <p className="text-[10px] text-white/40 font-semibold mt-0.5">
                     {data.chainList.length} client{data.chainList.length !== 1 ? "s" : ""}
                   </p>
                 </div>

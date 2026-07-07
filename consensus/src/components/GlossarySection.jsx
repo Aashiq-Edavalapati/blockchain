@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Search, BookText, ChevronDown, Lightbulb, Link2 } from "lucide-react";
 import glossary from "../data/glossary";
 
-export default function GlossarySection() {
+export default function GlossarySection({ algorithm }) {
   const [search, setSearch] = useState("");
   const [expanded, setExpanded] = useState(null);
 
@@ -21,13 +21,15 @@ export default function GlossarySection() {
     setExpanded((prev) => (prev === term ? null : term));
   };
 
+  const accentColor = algorithm ? algorithm.color : "#ffffff";
+
   return (
     <div>
       <div className="flex items-center gap-3 mb-3">
         <h3 className="text-base font-semibold tracking-tight">Glossary</h3>
         <span
           className="text-[10px] px-2 py-0.5 rounded font-mono"
-          style={{ background: `${"#8B93FF"}12`, color: "#8B93FF" }}
+          style={{ background: `${accentColor}12`, color: accentColor }}
         >
           {glossary.length} terms
         </span>
@@ -65,15 +67,15 @@ export default function GlossarySection() {
               className="w-full text-left rounded-lg p-4 transition-all duration-200"
               style={{
                 background: "var(--surface)",
-                border: `1px solid ${expanded === entry.term ? "#8B93FF30" : "var(--border)"}`,
+                border: `1px solid ${expanded === entry.term ? `${accentColor}30` : "var(--border)"}`,
               }}
             >
               <div className="flex items-start gap-3">
                 <div
                   className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
                   style={{
-                    background: expanded === entry.term ? "#8B93FF15" : "var(--surface-2)",
-                    color: expanded === entry.term ? "#8B93FF" : "var(--text-3)",
+                    background: expanded === entry.term ? `${accentColor}15` : "var(--surface-2)",
+                    color: expanded === entry.term ? accentColor : "var(--text-3)",
                   }}
                 >
                   <BookText size={14} />
@@ -129,7 +131,7 @@ export default function GlossarySection() {
                                 <span
                                   key={rt}
                                   className="text-[9px] font-mono px-1.5 py-0.5 rounded"
-                                  style={{ background: "#8B93FF10", color: "#8B93FF", border: "1px solid #8B93FF18" }}
+                                  style={{ background: `${accentColor}10`, color: accentColor, border: `1px solid ${accentColor}18` }}
                                 >
                                   {rt}
                                 </span>

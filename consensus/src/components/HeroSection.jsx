@@ -19,7 +19,8 @@ import {
 const FONT_SANS = "'Inter', ui-sans-serif, system-ui, sans-serif";
 const FONT_MONO = "'JetBrains Mono', 'IBM Plex Mono', monospace";
 
-function ConsensusDiagram() {
+export function ConsensusDiagram() {
+  // Perfect hexagonal mathematical coordinates
   const nodes = [
     { x: 200, y: 40 },
     { x: 338, y: 120 },
@@ -31,120 +32,172 @@ function ConsensusDiagram() {
 
   return (
     <div className="relative w-full max-w-[500px] mx-auto lg:ml-auto select-none group perspective-1000">
-      {/* Immersive core glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[250px] h-[250px] bg-[#ffffff]/5 blur-[100px] rounded-full pointer-events-none transition-all duration-1000 group-hover:bg-[#ffffff]/10 group-hover:w-[300px]" />
+      {/* Precision Background Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[240px] h-[240px] bg-white/[0.015] rounded-full pointer-events-none transition-all duration-700 group-hover:bg-white/[0.03] group-hover:scale-110 blur-xl" />
       
-      <div className="relative p-8 lg:p-10">
-        <svg viewBox="0 0 400 400" className="w-full h-auto drop-shadow-2xl" aria-hidden="true">
-          {/* Static mesh connections */}
-          {nodes.map((n, i) => (
-            <line
-              key={`base-${i}`}
-              x1={n.x}
-              y1={n.y}
-              x2="200"
-              y2="200"
-              stroke="#ffffff"
-              strokeOpacity="0.08"
-              strokeWidth="1"
-              className="transition-all duration-700 group-hover:stroke-opacity-20"
-            />
-          ))}
+      <div className="relative p-8 lg:p-10 transition-transform duration-700 group-hover:scale-[1.02]">
+        <svg viewBox="0 0 400 400" className="w-full h-auto drop-shadow-2xl overflow-visible" aria-hidden="true">
+          <defs>
+            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="4" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+          </defs>
 
-          {/* Perimeter connections */}
+          {/* 1. Base Topology Mesh (Static) */}
+          {nodes.map((n, i) => {
+            const nextNode = nodes[(i + 1) % nodes.length];
+            const oppositeNode = nodes[(i + 3) % nodes.length];
+            return (
+              <g key={`static-mesh-${i}`}>
+                {/* Perimeter connections */}
+                <line x1={n.x} y1={n.y} x2={nextNode.x} y2={nextNode.y} stroke="#ffffff" strokeOpacity="0.05" strokeWidth="1" />
+                {/* Center connections */}
+                <line x1={n.x} y1={n.y} x2="200" y2="200" stroke="#ffffff" strokeOpacity="0.08" strokeWidth="1" />
+                {/* Cross-network connections */}
+                <line x1={n.x} y1={n.y} x2={oppositeNode.x} y2={oppositeNode.y} stroke="#ffffff" strokeOpacity="0.02" strokeWidth="1" />
+              </g>
+            );
+          })}
+
+          {/* 2. Gossip Protocol (Peer-to-Peer Data Propagation) */}
           {nodes.map((n, i) => {
             const nextNode = nodes[(i + 1) % nodes.length];
             return (
               <line
-                key={`perimeter-${i}`}
+                key={`gossip-${i}`}
                 x1={n.x}
                 y1={n.y}
                 x2={nextNode.x}
                 y2={nextNode.y}
                 stroke="#ffffff"
-                strokeOpacity="0.05"
-                strokeWidth="1"
+                strokeOpacity="0.4"
+                strokeWidth="1.5"
+                strokeDasharray="2 240"
+                strokeLinecap="round"
+                className="gossip-pulse"
+                style={{ animationDelay: `${i * 0.4}s` }}
               />
             );
           })}
 
-          {/* Active data streams */}
+          {/* 3. Consensus Finality (Validators submitting to the Ledger) */}
           {nodes.map((n, i) => (
             <line
-              key={`pulse-${i}`}
+              key={`consensus-${i}`}
               x1={n.x}
               y1={n.y}
               x2="200"
               y2="200"
               stroke="#ffffff"
-              strokeOpacity="0.6"
-              strokeWidth="1.5"
+              strokeOpacity="0.8"
+              strokeWidth="2"
+              strokeDasharray="4 200"
               strokeLinecap="round"
-              strokeDasharray="4 160"
               className="consensus-pulse"
-              style={{ animationDelay: `${i * 0.3}s` }}
+              style={{ animationDelay: `${i * 0.2}s` }}
             />
           ))}
 
-          {/* Peripheral Nodes */}
+          {/* 4. Validator Nodes (Perimeter) */}
           {nodes.map((n, i) => (
-            <g key={`node-group-${i}`}>
+            <g 
+              key={`validator-${i}`} 
+              className="transition-transform duration-500 ease-out group-hover:scale-125"
+              style={{ transformOrigin: `${n.x}px ${n.y}px` }} // PERFECT ALIGNMENT FIX
+            >
+              {/* Outer Sync Ring */}
               <circle
                 cx={n.x}
                 cy={n.y}
-                r="4"
-                fill="#000000"
-                stroke="#404040"
-                strokeWidth="1.5"
-                className="transition-all duration-500 group-hover:stroke-white group-hover:scale-125 origin-center"
+                r="10"
+                fill="none"
+                stroke="#ffffff"
+                strokeOpacity="0.15"
+                strokeWidth="1"
+                strokeDasharray="2 4"
+                className="animate-[spin_4s_linear_infinite]"
                 style={{ transformOrigin: `${n.x}px ${n.y}px` }}
               />
+              {/* Node Body */}
+              <circle cx={n.x} cy={n.y} r="5" fill="#000000" stroke="#555555" strokeWidth="1.5" className="transition-colors duration-500 group-hover:stroke-white" />
+              {/* Active Indicator */}
+              <circle cx={n.x} cy={n.y} r="2" fill="#ffffff" opacity="0.4" className="transition-opacity duration-500 group-hover:opacity-100" />
             </g>
           ))}
 
-          {/* Core Finality Node */}
-          <circle
-            cx="200"
-            cy="200"
-            r="12"
-            fill="none"
-            stroke="#ffffff"
-            strokeOpacity="0.4"
-            strokeWidth="1"
-            className="consensus-ring"
-          />
-          <circle cx="200" cy="200" r="16" fill="#050505" stroke="#333333" strokeWidth="1" />
-          <circle cx="200" cy="200" r="3" fill="#ffffff" className="animate-pulse" />
+          {/* 5. The Ledger / Finalized Block (Center) */}
+          <g 
+            className="transition-transform duration-700 ease-out group-hover:scale-110"
+            style={{ transformOrigin: "200px 200px" }}
+          >
+            {/* Finality Shockwave */}
+            <circle
+              cx="200"
+              cy="200"
+              r="24"
+              fill="none"
+              stroke="#ffffff"
+              strokeOpacity="0.6"
+              strokeWidth="1.5"
+              className="shockwave-pulse"
+            />
+            
+            {/* Geometric Block Representation (Diamond) */}
+            <g transform="rotate(45 200 200)">
+              <rect x="186" y="186" width="28" height="28" fill="#050505" stroke="#333333" strokeWidth="1.5" className="transition-colors duration-500 group-hover:stroke-white/60" />
+              <rect x="192" y="192" width="16" height="16" fill="none" stroke="#ffffff" strokeOpacity="0.2" strokeWidth="1" />
+              <rect x="197" y="197" width="6" height="6" fill="#ffffff" filter="url(#glow)" className="animate-pulse" />
+            </g>
+          </g>
         </svg>
 
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-700 translate-y-4 group-hover:translate-y-0">
-          <span className="text-[10px] tracking-widest text-[#888] uppercase" style={{ fontFamily: FONT_MONO }}>
-            State / 0x01
-          </span>
-          <span className="text-[12px] text-white font-medium tracking-wide">
-            Finalized Block
-          </span>
+        {/* Tactical HUD Label */}
+        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 opacity-0 group-hover:opacity-100 transition-all duration-700 translate-y-3 group-hover:translate-y-0">
+          <div className="flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-black/50 backdrop-blur-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+            <span className="text-[10px] tracking-widest text-white/60 uppercase" style={{ fontFamily: "var(--font-mono, monospace)" }}>
+              State_Machine // Synced
+            </span>
+          </div>
         </div>
       </div>
 
       <style>{`
+        /* P2P Gossip Animation */
+        .gossip-pulse {
+          animation: travel-perimeter 3s linear infinite;
+        }
+        
+        /* Node to Ledger Animation */
         .consensus-pulse {
-          animation: consensus-travel 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+          animation: travel-center 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
         }
-        .consensus-ring {
+        
+        /* Block Finality Expansion */
+        .shockwave-pulse {
           transform-origin: 200px 200px;
-          animation: consensus-flash 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+          animation: pulse-ring 2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
         }
-        @keyframes consensus-travel {
-          0% { stroke-dashoffset: 0; opacity: 0; }
+
+        @keyframes travel-perimeter {
+          0% { stroke-dashoffset: 242; opacity: 0; }
+          10% { opacity: 1; }
+          90% { opacity: 1; }
+          100% { stroke-dashoffset: 0; opacity: 0; }
+        }
+
+        @keyframes travel-center {
+          0% { stroke-dashoffset: 204; opacity: 0; }
           20% { opacity: 1; }
           80% { opacity: 1; }
-          100% { stroke-dashoffset: -180; opacity: 0; }
+          100% { stroke-dashoffset: 0; opacity: 0; }
         }
-        @keyframes consensus-flash {
-          0% { r: 12; opacity: 0; stroke-width: 2; }
-          50% { opacity: 1; }
-          100% { r: 35; opacity: 0; stroke-width: 0; }
+
+        @keyframes pulse-ring {
+          0% { r: 14; opacity: 0; stroke-width: 2; }
+          40% { opacity: 1; }
+          100% { r: 45; opacity: 0; stroke-width: 0; }
         }
       `}</style>
     </div>
@@ -170,7 +223,7 @@ function SectionEyebrow({ label }) {
 
 export default function HeroSection({ navigate }) {
   const totalAlgos = 26; // Hardcoded for preview, replace with your data length
-  const totalFamilies = 6;
+  const totalFamilies = 4;
 
   return (
     <div className="bg-[#000000] text-white min-h-screen overflow-x-hidden selection:bg-white/20 selection:text-white" style={{ fontFamily: FONT_SANS }}>
@@ -191,7 +244,7 @@ export default function HeroSection({ navigate }) {
             >
               <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
               <span className="text-[12px] font-medium text-white/70 group-hover:text-white transition-colors">
-                Consensus Explorer v1.2
+                Consensus Explorer
               </span>
               <ArrowRight size={12} className="text-white/40 group-hover:text-white group-hover:translate-x-0.5 transition-all" />
             </button>

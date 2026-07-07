@@ -6,25 +6,27 @@
 }
 
 :root {
-  --bg: #08090C;
-  --surface: #0D0F14;
-  --surface-2: #151820;
-  --border: #1A1D26;
-  --border-2: #262B37;
-  --text: #F4F4F7;
-  --text-2: #A0A5B5;
-  --text-3: #606575;
+  --bg: #000000;
+  --surface: #050505;
+  --surface-2: #020202;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-2: rgba(255, 255, 255, 0.15);
+  --text: #ffffff;
+  --text-2: #888888;
+  --text-3: #666666;
   --accent: #10B981;
 }
 
 body {
+  background-color: #000000;
+  color: #ffffff;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 .scrollbar-thin {
   scrollbar-width: thin;
-  scrollbar-color: #2A3144 transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
 }
 
 ::selection {

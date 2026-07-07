@@ -83,7 +83,6 @@ export default function Footer() {
           <span>© {new Date().getFullYear()} Open Source Educational Tool</span>
           
           <div className="flex items-center gap-3">
-            <span className="hover:text-white/60 transition-colors cursor-pointer">v1.2.0-stable</span>
             <span className="w-1 h-1 rounded-full bg-white/10" />
             <span className="flex items-center gap-1.5 hover:text-white/60 transition-colors cursor-pointer">
               <span className="w-1.5 h-1.5 rounded-full bg-white/20" />

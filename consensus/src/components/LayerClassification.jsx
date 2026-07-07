@@ -9,7 +9,7 @@ export default function LayerClassification({ chains, algorithm }) {
 
   return (
     <section className="space-y-4">
-      <div className="flex items-center gap-3 pb-2 border-b border-zinc-900/60">
+      <div className="flex items-center gap-3 pb-2 border-b border-white/[0.06]">
         <h3 className="text-sm font-bold text-white tracking-tight">Layer Distribution</h3>
         <span
           className="text-[10px] font-bold font-mono px-2 py-0.5 rounded border"
@@ -50,9 +50,8 @@ export default function LayerClassification({ chains, algorithm }) {
 function LayerGroup({ label, icon, chains, color, algorithm, description, tooltipText }) {
   return (
     <div
-      className="rounded-2xl border p-5 flex flex-col justify-between"
+      className="rounded-2xl border p-5 flex flex-col justify-between bg-[#050505]"
       style={{
-        background: "rgba(13, 15, 20, 0.4)",
         borderColor: `${color}20`,
       }}
     >
@@ -69,10 +68,10 @@ function LayerGroup({ label, icon, chains, color, algorithm, description, toolti
         </div>
         <div>
           <div className="flex items-center gap-1.5">
-            <p className="text-xs font-bold text-zinc-100">{label}</p>
+            <p className="text-xs font-bold text-white">{label}</p>
             <InfoTooltip text={tooltipText} size={11} />
           </div>
-          <p className="text-[10px] text-zinc-555 mt-0.5">{description}</p>
+          <p className="text-[10px] text-white/40 mt-0.5">{description}</p>
         </div>
         <span className="ml-auto font-mono text-xs font-bold" style={{ color }}>
           {chains.length}
@@ -83,15 +82,15 @@ function LayerGroup({ label, icon, chains, color, algorithm, description, toolti
         {chains.map((c) => (
           <div
             key={c.id}
-            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs border border-zinc-900/50 bg-zinc-950/20"
+            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs border border-white/[0.08] bg-white/[0.02]"
           >
             <CryptoIcon symbol={c.symbol} size={18} />
-            <span className="truncate text-zinc-300 font-medium">{c.name}</span>
-            <span className="font-mono text-[10px] ml-auto text-zinc-550">{c.symbol}</span>
+            <span className="truncate text-white font-medium">{c.name}</span>
+            <span className="font-mono text-[10px] ml-auto text-white/40">{c.symbol}</span>
           </div>
         ))}
         {chains.length === 0 && (
-          <p className="text-xs py-5 text-center text-zinc-500 font-medium">
+          <p className="text-xs py-5 text-center text-white/40 font-medium">
             No {icon} chains mapped for {algorithm.shortName}
           </p>
         )}

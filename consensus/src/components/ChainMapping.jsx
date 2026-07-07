@@ -5,18 +5,18 @@ import InfoTooltip from "./InfoTooltip";
 export default function ChainMapping({ chains, algorithm }) {
   return (
     <section className="space-y-4">
-      <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-zinc-900/60">
+      <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-white/[0.06]">
         <h3 className="text-sm font-bold text-white tracking-tight">
           <span style={{ color: algorithm.color }}>{algorithm.shortName}</span> Mapped Blockchains
         </h3>
-        <div className="flex items-center gap-3.5 text-[10px] font-bold uppercase tracking-wider text-zinc-550">
+        <div className="flex items-center gap-3.5 text-[10px] font-bold uppercase tracking-wider text-white/40">
           <span className="flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full" style={{ background: algorithm.color }} />
             Layer 1
             <InfoTooltip text="Layer 1 (L1) refers to the base settlement layer of a blockchain network. L1 chains validate and finalize their own transactions." />
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-zinc-700" />
+            <span className="w-1.5 h-1.5 rounded-full bg-white/40" />
             Layer 2
             <InfoTooltip text="Layer 2 (L2) refers to scaling protocols built on top of an L1, inheriting its underlying security guarantees." />
           </span>
@@ -24,7 +24,7 @@ export default function ChainMapping({ chains, algorithm }) {
       </div>
 
       {chains.length === 0 ? (
-        <div className="rounded-2xl p-8 text-center text-xs border border-zinc-900/50 bg-[#0D0F14]/60 text-zinc-500">
+        <div className="rounded-2xl p-8 text-center text-xs border border-white/[0.08] bg-[#050505] text-white/40">
           No blockchains currently mapped to {algorithm.shortName} in this database.
         </div>
       ) : (
@@ -32,25 +32,25 @@ export default function ChainMapping({ chains, algorithm }) {
           {chains.map((c) => (
             <div
               key={c.id}
-              className="rounded-2xl relative flex flex-col justify-between border bg-[#0D0F14]/40 hover:bg-[#0D0F14]/80 transition-all duration-300"
+              className="rounded-2xl relative flex flex-col justify-between border bg-[#050505] hover:bg-[#020202] transition-all duration-300"
               style={{
-                borderColor: c.layer === "L1" ? `${algorithm.color}25` : "var(--border)",
+                borderColor: c.layer === "L1" ? `${algorithm.color}25` : "rgba(255, 255, 255, 0.08)",
               }}
             >
               {/* Card Header (with rounded-t-2xl to prevent clipping without overflow-hidden) */}
-              <div className="flex items-center gap-3.5 p-4 border-b border-zinc-900/50 bg-[#0D0F14]/20 rounded-t-2xl">
-                <div className="shrink-0 bg-zinc-900/60 p-1 rounded-xl border border-zinc-800/40">
+              <div className="flex items-center gap-3.5 p-4 border-b border-white/[0.06] bg-white/[0.01] rounded-t-2xl">
+                <div className="shrink-0 bg-white/[0.02] p-1 rounded-xl border border-white/[0.08]">
                   <CryptoIcon symbol={c.symbol} size={26} />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs font-bold text-zinc-100 truncate">{c.name}</p>
+                  <p className="text-xs font-bold text-white truncate">{c.name}</p>
                   <div className="flex items-center gap-2 mt-0.5">
-                    <span className="font-mono text-[9px] font-bold text-zinc-500">{c.symbol}</span>
+                    <span className="font-mono text-[9px] font-bold text-white/40">{c.symbol}</span>
                     <span
-                      className="text-[9px] font-mono font-bold px-1.5 rounded bg-zinc-900/50 border"
+                      className="text-[9px] font-mono font-bold px-1.5 rounded bg-white/[0.02] border"
                       style={{
-                        borderColor: c.layer === "L1" ? `${algorithm.color}20` : "var(--border)",
-                        color: c.layer === "L1" ? algorithm.color : "var(--text-3)",
+                        borderColor: c.layer === "L1" ? `${algorithm.color}20` : "rgba(255, 255, 255, 0.08)",
+                        color: c.layer === "L1" ? algorithm.color : "rgba(255, 255, 255, 0.4)",
                       }}
                     >
                       {c.layer}
@@ -62,21 +62,21 @@ export default function ChainMapping({ chains, algorithm }) {
               {/* Card Body */}
               <div className="p-4 flex-1 flex flex-col justify-between gap-4">
                 <div>
-                  <p className="text-[9px] font-bold uppercase tracking-wider text-zinc-550 mb-1.5">
+                  <p className="text-[9px] font-bold uppercase tracking-wider text-white/40 mb-1.5">
                     Rationale
                   </p>
-                  <p className="text-xs leading-relaxed text-zinc-400 line-clamp-3">
+                  <p className="text-xs leading-relaxed text-[#888] line-clamp-3">
                     {c.why}
                   </p>
                 </div>
                 <div className="flex items-center gap-2.5 min-w-0 flex-wrap">
-                  <span className="text-[9px] font-bold uppercase tracking-wider text-zinc-550 shrink-0">
+                  <span className="text-[9px] font-bold uppercase tracking-wider text-white/40 shrink-0">
                     Smart Contract Client
                   </span>
                   <div className="flex items-center gap-1.5 overflow-hidden flex-wrap">
                     {extractLanguages(c.lang).map((langObj) => {
                       return (
-                        <div key={langObj.name} className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-zinc-900/60 border border-zinc-900/60 text-zinc-350 text-[9px] font-bold font-mono whitespace-nowrap">
+                        <div key={langObj.name} className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-white/[0.02] border border-white/[0.08] text-white/70 text-[9px] font-bold font-mono whitespace-nowrap">
                           {langObj.id && (
                             <span style={{ color: algorithm.color }}>
                               <LanguageIcon name={langObj.id} size={11} />
@@ -91,7 +91,7 @@ export default function ChainMapping({ chains, algorithm }) {
               </div>
 
               {/* Card Footer (with rounded-b-2xl to prevent clipping without overflow-hidden) */}
-              <div className="px-4 py-2 border-t border-zinc-900/50 bg-[#0A0C10]/40 text-[9px] font-mono flex items-center justify-between text-zinc-650 rounded-b-2xl">
+              <div className="px-4 py-2 border-t border-white/[0.06] bg-[#020202] text-[9px] font-mono flex items-center justify-between text-white/40 rounded-b-2xl">
                 <span>#{c.id.toUpperCase().slice(0, 8)}</span>
                 <span>{c.symbol}</span>
               </div>

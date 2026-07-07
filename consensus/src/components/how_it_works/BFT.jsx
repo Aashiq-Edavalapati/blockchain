@@ -10,19 +10,19 @@ const STAGES = [
 ];
 
 const THEME = {
-  bg: '#0A0A0C',
-  surface: '#111114',
-  surface2: '#17171B',
-  border: '#242429',
-  borderStrong: '#33333A',
-  red: '#EF4444',
-  redDim: 'rgba(239, 68, 68, 0.14)',
+  bg: '#000000',
+  surface: '#050505',
+  surface2: '#020202',
+  border: 'rgba(255, 255, 255, 0.08)',
+  borderStrong: 'rgba(255, 255, 255, 0.15)',
+  red: '#ffffff',
+  redDim: 'rgba(255, 255, 255, 0.1)',
   blue: '#3b82f6',
-  green: '#10b981',
-  greenDim: 'rgba(16, 185, 129, 0.14)',
-  text1: '#F3F1EC',
-  text2: '#8C8C93',
-  text3: '#57575E',
+  green: '#ffffff',
+  greenDim: 'rgba(255, 255, 255, 0.1)',
+  text1: '#ffffff',
+  text2: '#888888',
+  text3: '#666666',
 };
 
 const NODES = [
@@ -235,19 +235,19 @@ export default function ByzantineFaultToleranceVisualizer({ algorithm }) {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 rounded-xl border px-3 py-1 bg-zinc-950/40 border-zinc-900">
-            <span className="bft-mono text-[9px] text-zinc-550 uppercase">Byzantine Replica:</span>
+          <div className="flex items-center gap-2 rounded-xl border px-3 py-1 bg-[#020202] border-white/[0.08]">
+            <span className="bft-mono text-[9px] text-white/40 uppercase">Byzantine Replica:</span>
             <select
               value={byzantineId}
               onChange={(e) => setByzantineId(Number(e.target.value))}
               disabled={step > 0}
               className="bg-transparent text-xs font-bold text-red-400 focus:outline-none border-none p-1"
             >
-              <option value={0} className="bg-[#0D0F14] text-zinc-350">None</option>
-              <option value={1} className="bg-[#0D0F14] text-red-400">Node 1 (Leader)</option>
-              <option value={2} className="bg-[#0D0F14] text-red-400">Node 2</option>
-              <option value={3} className="bg-[#0D0F14] text-red-400">Node 3</option>
-              <option value={4} className="bg-[#0D0F14] text-red-400">Node 4</option>
+              <option value={0} className="bg-[#050505] text-white/60">None</option>
+              <option value={1} className="bg-[#050505] text-red-400">Node 1 (Leader)</option>
+              <option value={2} className="bg-[#050505] text-red-400">Node 2</option>
+              <option value={3} className="bg-[#050505] text-red-400">Node 3</option>
+              <option value={4} className="bg-[#050505] text-red-400">Node 4</option>
             </select>
           </div>
 
@@ -275,14 +275,14 @@ export default function ByzantineFaultToleranceVisualizer({ algorithm }) {
             <button
               onClick={manualNextStep}
               disabled={isAutoRunning}
-              className="bft-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer text-zinc-100 hover:bg-[#1C1F26]"
+              className="bft-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer text-white hover:bg-white/[0.06]"
               style={{ borderColor: 'var(--border)', background: 'var(--surface-2)' }}
             >
               {step === 4 ? 'Restart' : 'Step →'}
             </button>
             <button
               onClick={resetSimulation}
-              className="bft-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors cursor-pointer text-zinc-400 hover:text-zinc-200 hover:bg-[#1C1F26]"
+              className="bft-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors cursor-pointer text-white/60 hover:text-white hover:bg-white/[0.06]"
               style={{ borderColor: 'var(--border)', background: 'var(--surface-2)' }}
             >
               Reset
@@ -330,8 +330,8 @@ export default function ByzantineFaultToleranceVisualizer({ algorithm }) {
 
       <div className="grid grid-cols-1 md:grid-cols-[1fr_260px] gap-6 mt-7">
         
-        <div className="rounded-xl border border-zinc-900 bg-[#08080A] p-4 flex flex-col items-center justify-center min-h-[280px] relative overflow-hidden">
-          <div className="absolute top-3 left-4 bft-mono text-[10px] text-zinc-550">
+        <div className="rounded-xl border border-white/[0.08] bg-[#050505] p-4 flex flex-col items-center justify-center min-h-[280px] relative overflow-hidden">
+          <div className="absolute top-3 left-4 bft-mono text-[10px] text-white/40">
             consensus_network_nodes
           </div>
 
@@ -343,7 +343,7 @@ export default function ByzantineFaultToleranceVisualizer({ algorithm }) {
                 const isVoteRound = step === 2 || step === 3;
                 
                 const hasByzantineEndpoint = n1.id === byzantineId || n2.id === byzantineId;
-                const strokeColor = hasByzantineEndpoint && (step > 1) ? '#EF4444' : '#242429';
+                const strokeColor = hasByzantineEndpoint && (step > 1) ? '#EF4444' : 'rgba(255, 255, 255, 0.08)';
                 const strokeWidth = isProposeRound || isVoteRound ? 2 : 1;
                 const showBeam = isProposeRound || (isVoteRound && !hasByzantineEndpoint);
 
@@ -372,7 +372,7 @@ export default function ByzantineFaultToleranceVisualizer({ algorithm }) {
             {NODES.map((n) => {
               const isLeader = n.id === 1;
               const isByzantine = n.id === byzantineId;
-              let bg = '#111114';
+              let bg = 'rgba(255, 255, 255, 0.02)';
               let border = 'var(--border-strong)';
               let text = 'var(--text-2)';
 
@@ -423,45 +423,45 @@ export default function ByzantineFaultToleranceVisualizer({ algorithm }) {
           </svg>
         </div>
 
-        <div className="rounded-xl border border-zinc-900 bg-zinc-950/20 p-5 flex flex-col justify-between">
+        <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-5 flex flex-col justify-between">
           <div>
-            <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-4 border-b border-zinc-900 pb-2">
+            <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-4 border-b border-white/[0.06] pb-2">
               Voting Status
             </h4>
             <div className="space-y-5">
               <div>
-                <div className="flex items-center justify-between text-[10px] uppercase font-bold text-zinc-500 mb-1.5">
+                <div className="flex items-center justify-between text-[10px] uppercase font-bold text-white/40 mb-1.5">
                   <span>{algoId === 'raft' ? 'AppendEntries RPC' : 'Phase 1 agreement'}</span>
-                  <span className={preVotes.length >= 3 ? 'text-emerald-400 font-mono' : 'text-zinc-500 font-mono'}>
+                  <span className={preVotes.length >= 3 ? 'text-emerald-400 font-mono' : 'text-white/40 font-mono'}>
                     {preVotes.length}/4 votes
                   </span>
                 </div>
-                <div className="w-full bg-zinc-900 h-2 rounded overflow-hidden">
+                <div className="w-full bg-white/[0.06] h-2 rounded overflow-hidden">
                   <div
-                    className="bg-emerald-500 h-full transition-all duration-300"
-                    style={{ width: `${(preVotes.length / 4) * 100}%` }}
+                    className="bg-[#EF4444] h-full transition-all duration-300"
+                    style={{ width: `${(preVotes.length / 4) * 100}%`, backgroundColor: variant.color }}
                   />
                 </div>
               </div>
 
               <div>
-                <div className="flex items-center justify-between text-[10px] uppercase font-bold text-zinc-500 mb-1.5">
+                <div className="flex items-center justify-between text-[10px] uppercase font-bold text-white/40 mb-1.5">
                   <span>{algoId === 'raft' ? 'Commit status' : 'Phase 2 agreement'}</span>
-                  <span className={preCommits.length >= 3 ? 'text-emerald-400 font-mono' : 'text-zinc-500 font-mono'}>
+                  <span className={preCommits.length >= 3 ? 'text-emerald-400 font-mono' : 'text-white/40 font-mono'}>
                     {preCommits.length}/4 votes
                   </span>
                 </div>
-                <div className="w-full bg-zinc-900 h-2 rounded overflow-hidden">
+                <div className="w-full bg-white/[0.06] h-2 rounded overflow-hidden">
                   <div
-                    className="bg-emerald-500 h-full transition-all duration-300"
-                    style={{ width: `${(preCommits.length / 4) * 100}%` }}
+                    className="bg-[#EF4444] h-full transition-all duration-300"
+                    style={{ width: `${(preCommits.length / 4) * 100}%`, backgroundColor: variant.color }}
                   />
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-zinc-900 text-[10px] text-zinc-500 leading-relaxed font-semibold">
+          <div className="mt-4 pt-3 border-t border-white/[0.06] text-[10px] text-white/40 leading-relaxed font-semibold">
             {byzantineId > 0 ? (
               <span className="text-red-400">
                 {algoId === 'raft' ? (
@@ -477,21 +477,21 @@ export default function ByzantineFaultToleranceVisualizer({ algorithm }) {
         </div>
       </div>
 
-      <div className="mt-6 border-t border-zinc-900 pt-6">
-        <h4 className="bft-mono text-[10px] text-zinc-550 uppercase tracking-widest mb-3">
+      <div className="mt-6 border-t border-white/[0.06] pt-6">
+        <h4 className="bft-mono text-[10px] text-white/40 uppercase tracking-widest mb-3">
           replicated_ledger
         </h4>
         <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin">
           {blockchain.map((b) => (
             <div
               key={b.height}
-              className="rounded-xl border border-zinc-900 bg-[#0C0D12] p-3 text-xs min-w-[125px] flex flex-col justify-between gap-2 shrink-0"
+              className="rounded-xl border border-white/[0.08] bg-[#050505] p-3 text-xs min-w-[125px] flex flex-col justify-between gap-2 shrink-0"
             >
               <div>
-                <p className="bft-mono text-[9px] text-zinc-550">Height: #{b.height}</p>
-                <p className="font-bold text-zinc-300 mt-1 truncate">Leader: {b.proposer}</p>
+                <p className="bft-mono text-[9px] text-white/40">Height: #{b.height}</p>
+                <p className="font-bold text-white mt-1 truncate">Leader: {b.proposer}</p>
               </div>
-              <p className="bft-mono text-[9px] text-zinc-500 truncate">Hash: {b.hash}</p>
+              <p className="bft-mono text-[9px] text-white/40 truncate">Hash: {b.hash}</p>
             </div>
           ))}
         </div>

@@ -305,7 +305,7 @@ export default function ConsensusExplorer() {
           <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-8 flex-1 flex flex-col">
             
             {/* Top Search & Filter Card (Sticky) */}
-            <div className="sticky top-16 z-40 bg-[#08090C] pt-4 pb-4 border-b border-zinc-900/30 mb-6">
+            <div className="sticky top-24 z-40 bg-[#000000] pt-4 pb-4 border-b border-white/[0.06] mb-6">
               <SearchFilterCard
                 searchQuery={searchQuery}
                 onSearchChange={setSearchQuery}
@@ -320,9 +320,9 @@ export default function ConsensusExplorer() {
             <div className="flex-1 grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8 items-start">
               
               {/* Desktop Left Column Sidebar */}
-              <aside className="hidden lg:flex flex-col bg-[#0D0F14]/75 border border-zinc-800/80 rounded-2xl p-4 sticky top-[180px] max-h-[calc(100vh-210px)] overflow-hidden">
+              <aside className="hidden lg:flex flex-col bg-[#050505]/90 border border-white/[0.08] rounded-2xl p-4 sticky top-[180px] max-h-[calc(100vh-210px)] overflow-hidden backdrop-blur-md">
                 {/* Segmented Control Buttons */}
-                <div className="flex bg-zinc-950/60 p-0.5 rounded-xl border border-zinc-900 mb-4 shrink-0">
+                <div className="flex bg-[#020202] p-0.5 rounded-xl border border-white/[0.06] mb-4 shrink-0">
                   <button
                     onClick={() => {
                       setSidebarTab("algorithms");
@@ -330,8 +330,8 @@ export default function ConsensusExplorer() {
                     }}
                     className={`flex-1 text-center py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
                       sidebarTab === "algorithms"
-                        ? "bg-zinc-900 text-white shadow-sm"
-                        : "text-zinc-550 hover:text-zinc-350"
+                        ? "bg-white/10 text-white shadow-sm border border-white/[0.08]"
+                        : "text-white/40 hover:text-white"
                     }`}
                   >
                     Algorithms
@@ -342,8 +342,8 @@ export default function ConsensusExplorer() {
                     }}
                     className={`flex-1 text-center py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
                       sidebarTab === "cryptos"
-                        ? "bg-zinc-900 text-white shadow-sm"
-                        : "text-zinc-550 hover:text-zinc-350"
+                        ? "bg-white/10 text-white shadow-sm border border-white/[0.08]"
+                        : "text-white/40 hover:text-white"
                     }`}
                   >
                     Cryptos
@@ -357,7 +357,7 @@ export default function ConsensusExplorer() {
                       const isActive = a.id === active.id;
                       return (
                         <div
-                          key={a.id}
+                           key={a.id}
                           onClick={() => {
                             setActiveId(a.id);
                             setSelectedCryptoId(null);
@@ -365,7 +365,7 @@ export default function ConsensusExplorer() {
                           className={`group flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold border transition-all duration-200 cursor-pointer ${
                             isActive
                               ? "text-white"
-                              : "text-zinc-400 border-transparent bg-transparent hover:text-zinc-200 hover:bg-zinc-900/30"
+                              : "text-white/60 border-transparent bg-transparent hover:text-white hover:bg-white/[0.04]"
                           }`}
                           style={{
                             background: isActive ? `${a.color}12` : "",
@@ -378,7 +378,7 @@ export default function ConsensusExplorer() {
                               style={{ backgroundColor: a.color }}
                             />
                             <span
-                              className="w-5 h-5 rounded flex items-center justify-center shrink-0 bg-zinc-900/60"
+                              className="w-5 h-5 rounded flex items-center justify-center shrink-0 bg-white/[0.02]"
                               style={{ color: isActive ? a.color : "var(--text-3)" }}
                             >
                               <IconByName name={a.id} size={10} />
@@ -404,7 +404,7 @@ export default function ConsensusExplorer() {
                           className={`group flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold border transition-all duration-200 cursor-pointer ${
                             isCryptoActive
                               ? "text-white"
-                              : "text-zinc-400 border-transparent bg-transparent hover:text-zinc-200 hover:bg-zinc-900/30"
+                              : "text-white/60 border-transparent bg-transparent hover:text-white hover:bg-white/[0.04]"
                           }`}
                           style={{
                             background: isCryptoActive ? `${activeAlgoColor}12` : "",
@@ -418,8 +418,8 @@ export default function ConsensusExplorer() {
                           <span
                             className="font-mono text-[8px] font-bold px-1.5 py-0.5 rounded border uppercase shrink-0"
                             style={{
-                              borderColor: isCryptoActive ? `${activeAlgoColor}30` : "var(--border)",
-                              color: isCryptoActive ? activeAlgoColor : "var(--text-3)",
+                              borderColor: isCryptoActive ? `${activeAlgoColor}30` : "rgba(255, 255, 255, 0.08)",
+                              color: isCryptoActive ? activeAlgoColor : "rgba(255, 255, 255, 0.4)",
                             }}
                           >
                             {c.layer}
@@ -431,7 +431,7 @@ export default function ConsensusExplorer() {
 
                   {((sidebarTab === "algorithms" && filteredAlgorithms.length === 0) ||
                     (sidebarTab === "cryptos" && filteredCryptos.length === 0)) && (
-                    <div className="text-center py-8 text-zinc-500 text-xs">
+                    <div className="text-center py-8 text-white/40 text-xs">
                       No matching {sidebarTab}
                     </div>
                   )}
@@ -439,9 +439,9 @@ export default function ConsensusExplorer() {
               </aside>
 
               {/* Mobile Horizontal Selector (Sticky below search) */}
-              <div className="block lg:hidden w-full overflow-hidden sticky top-[180px] z-30 bg-[#08090C] pt-2 pb-3 border-b border-zinc-900/30 mb-4">
+              <div className="block lg:hidden w-full overflow-hidden sticky top-[180px] z-30 bg-[#000000] pt-2 pb-3 border-b border-white/[0.06] mb-4">
                 {/* Segmented Control Buttons */}
-                <div className="flex bg-zinc-950/60 p-0.5 rounded-xl border border-zinc-900 mb-3">
+                <div className="flex bg-[#020202] p-0.5 rounded-xl border border-white/[0.06] mb-3">
                   <button
                     onClick={() => {
                       setSidebarTab("algorithms");
@@ -449,8 +449,8 @@ export default function ConsensusExplorer() {
                     }}
                     className={`flex-1 text-center py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
                       sidebarTab === "algorithms"
-                        ? "bg-zinc-900 text-white shadow-sm"
-                        : "text-zinc-550"
+                        ? "bg-white/10 text-white shadow-sm border border-white/[0.08]"
+                        : "text-white/40"
                     }`}
                   >
                     Algorithms
@@ -461,8 +461,8 @@ export default function ConsensusExplorer() {
                     }}
                     className={`flex-1 text-center py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
                       sidebarTab === "cryptos"
-                        ? "bg-zinc-900 text-white shadow-sm"
-                        : "text-zinc-550"
+                        ? "bg-white/10 text-white shadow-sm border border-white/[0.08]"
+                        : "text-white/40"
                     }`}
                   >
                     Cryptos
@@ -483,7 +483,7 @@ export default function ConsensusExplorer() {
                           className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all duration-200 cursor-pointer ${
                             isActive
                               ? "text-white"
-                              : "text-zinc-400 border-zinc-900 bg-zinc-950/40 hover:text-zinc-200"
+                              : "text-white/60 border-white/[0.08] bg-[#050505] hover:text-white"
                           }`}
                           style={{
                             background: isActive ? `${a.color}15` : "",
@@ -511,7 +511,7 @@ export default function ConsensusExplorer() {
                           className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all duration-200 cursor-pointer ${
                             isCryptoActive
                               ? "text-white"
-                              : "text-zinc-400 border-zinc-900 bg-zinc-950/40 hover:text-zinc-200"
+                              : "text-white/60 border-white/[0.08] bg-[#050505] hover:text-white"
                           }`}
                           style={{
                             background: isCryptoActive ? `${activeAlgoColor}15` : "",
@@ -527,7 +527,7 @@ export default function ConsensusExplorer() {
 
                   {((sidebarTab === "algorithms" && filteredAlgorithms.length === 0) ||
                     (sidebarTab === "cryptos" && filteredCryptos.length === 0)) && (
-                    <span className="text-xs text-zinc-500">No matching {sidebarTab}</span>
+                    <span className="text-xs text-white/40">No matching {sidebarTab}</span>
                   )}
                 </div>
               </div>
@@ -537,12 +537,12 @@ export default function ConsensusExplorer() {
                 {((sidebarTab === "algorithms" && filteredAlgorithms.length === 0) ||
                   (sidebarTab === "cryptos" && filteredCryptos.length === 0)) ? (
                   /* Empty State */
-                  <div className="flex flex-col items-center justify-center text-center p-12 bg-[#0D0F14]/75 border border-zinc-800/80 rounded-2xl min-h-[400px]">
-                    <div className="w-12 h-12 rounded-full bg-zinc-900/60 border border-zinc-800 flex items-center justify-center mb-4 text-zinc-500">
+                  <div className="flex flex-col items-center justify-center text-center p-12 bg-[#050505] border border-white/[0.08] rounded-2xl min-h-[400px]">
+                    <div className="w-12 h-12 rounded-full bg-white/[0.02] border border-white/[0.08] flex items-center justify-center mb-4 text-white/40">
                       <Grid size={20} />
                     </div>
                     <h3 className="text-base font-bold text-white">No Matching Records</h3>
-                    <p className="text-xs text-zinc-500 max-w-sm mt-2">
+                    <p className="text-xs text-white/40 max-w-sm mt-2">
                       No consensus protocols or chains matched your filter criteria. Try resetting your search query or filters.
                     </p>
                     <button
@@ -553,7 +553,7 @@ export default function ConsensusExplorer() {
                         setSelectedCryptoId(null);
                         setAdvancedFilters({ permission: "all", finality: "all" });
                       }}
-                      className="mt-5 px-4 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold rounded-lg text-white transition-colors cursor-pointer"
+                      className="mt-5 px-4 py-1.5 bg-white/10 hover:bg-white/20 border border-white/[0.08] text-xs font-semibold rounded-lg text-white transition-colors cursor-pointer"
                     >
                       Reset Filters
                     </button>
@@ -562,7 +562,7 @@ export default function ConsensusExplorer() {
                   /* Workspace Details */
                   <div className="space-y-6">
                     {/* Sticky Tabs Navigation */}
-                    <div className="sticky top-[180px] z-30 bg-[#08090C] py-2 border-b border-zinc-900/40">
+                    <div className="sticky top-[180px] z-30 bg-[#000000] py-2 border-b border-white/[0.06]">
                       <nav className="flex gap-2 overflow-x-auto scrollbar-none whitespace-nowrap">
                         {TABS.map((t) => {
                           const isTabActive = activeTab === t.id;
@@ -572,8 +572,8 @@ export default function ConsensusExplorer() {
                               onClick={() => setActiveTab(t.id)}
                               className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer border ${
                                 isTabActive
-                                  ? "text-white bg-[#0D0F14]"
-                                  : "text-zinc-500 hover:text-zinc-350 border-transparent bg-transparent"
+                                  ? "text-white bg-[#050505]"
+                                  : "text-white/40 hover:text-white border-transparent bg-transparent"
                               }`}
                               style={{
                                 borderColor: isTabActive ? "var(--border)" : "transparent",
@@ -585,9 +585,9 @@ export default function ConsensusExplorer() {
                         })}
                       </nav>
                     </div>
-
+ 
                     {/* Tab Content Panel */}
-                    <div className="bg-[#0D0F14]/40 border border-zinc-800/50 rounded-2xl p-6">
+                    <div className="bg-[#050505]/40 border border-white/[0.08] rounded-2xl p-6">
                       <AnimatePresence mode="wait">
                         <motion.div
                           key={`${active.id}-${activeTab}`}
@@ -604,7 +604,7 @@ export default function ConsensusExplorer() {
                               <div className="space-y-6 shrink-0 xl:w-[310px]">
                                 <TrilemmaScorecard algorithm={active} />
                               </div>
-                              <div className="xl:col-span-2 space-y-8 min-w-0 border-t border-zinc-900/60 pt-6 mt-2">
+                              <div className="xl:col-span-2 space-y-8 min-w-0 border-t border-white/[0.06] pt-6 mt-2">
                                 <ChainMapping chains={chainsForActive} algorithm={active} />
                                 <LanguagesSection chains={chainsForActive} algorithm={active} />
                                 <LayerClassification chains={chainsForActive} algorithm={active} />
@@ -636,8 +636,8 @@ export default function ConsensusExplorer() {
 
                           {activeTab === "reference" && (
                             <div className="space-y-10 w-full">
-                              <GlossarySection />
-                              <TimelineSection />
+                              <GlossarySection algorithm={active} />
+                              <TimelineSection algorithm={active} />
                             </div>
                           )}
                         </motion.div>

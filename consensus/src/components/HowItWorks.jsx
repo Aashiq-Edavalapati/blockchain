@@ -55,11 +55,11 @@ export default function HowItWorks({ algorithm }) {
       </div>
 
       {/* Overview Intro Card */}
-      <div className="rounded-2xl border border-zinc-900 bg-[#0D0F14]/50 p-6">
+      <div className="rounded-2xl border border-white/[0.08] bg-[#050505] p-6">
         <h3 className="text-sm font-bold text-white tracking-tight mb-2">
           How <span style={{ color: algorithm.color }}>{algorithm.shortName}</span> Works
         </h3>
-        <p className="text-xs leading-relaxed text-zinc-400">
+        <p className="text-xs leading-relaxed text-[#888]">
           {algorithm.coreMechanism}
         </p>
       </div>
@@ -70,14 +70,14 @@ export default function HowItWorks({ algorithm }) {
           <div key={i} className="flex flex-col items-center w-full">
             {/* Step block */}
             <div
-              className="rounded-2xl p-5 w-full border border-zinc-900 bg-[#0D0F14]/40"
+              className="rounded-2xl p-5 w-full border border-white/[0.08] bg-white/[0.02]"
               style={{
                 borderLeft: `3px solid ${algorithm.color}`,
               }}
             >
               <div className="flex items-start gap-3">
                 <div
-                  className="w-8.5 h-8.5 rounded-xl flex items-center justify-center font-mono text-[11px] font-bold shrink-0 border border-zinc-900"
+                  className="w-8.5 h-8.5 rounded-xl flex items-center justify-center font-mono text-[11px] font-bold shrink-0 border border-white/[0.08]"
                   style={{
                     background: `${algorithm.color}10`,
                     color: algorithm.color,
@@ -89,7 +89,7 @@ export default function HowItWorks({ algorithm }) {
                   <p className="text-[10px] font-mono font-bold mb-1" style={{ color: algorithm.color }}>
                     STEP_{String(i + 1).padStart(2, "0")}
                   </p>
-                  <p className="text-xs leading-relaxed text-zinc-350">
+                  <p className="text-xs leading-relaxed text-[#888]">
                     {step}
                   </p>
                 </div>
@@ -98,7 +98,7 @@ export default function HowItWorks({ algorithm }) {
 
             {/* Connector arrow to next step */}
             {i < algorithm.stepByStepExplanation.length - 1 && (
-              <div className="flex flex-col items-center py-2.5 text-zinc-800">
+              <div className="flex flex-col items-center py-2.5 text-white/20">
                 <svg width="12" height="16" viewBox="0 0 16 20" fill="none">
                   <path d="M8 0v16M2 10l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>

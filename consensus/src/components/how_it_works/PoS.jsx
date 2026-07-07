@@ -10,18 +10,18 @@ const STAGES = [
 ];
 
 const THEME = {
-  bg: '#0A0A0C',
-  surface: '#111114',
-  surface2: '#17171B',
-  border: '#242429',
-  borderStrong: '#33333A',
-  blue: '#3b82f6',
-  blueDim: 'rgba(59, 130, 246, 0.14)',
-  green: '#10b981',
-  greenDim: 'rgba(16, 185, 129, 0.14)',
-  text1: '#F3F1EC',
-  text2: '#8C8C93',
-  text3: '#57575E',
+  bg: '#000000',
+  surface: '#050505',
+  surface2: '#020202',
+  border: 'rgba(255, 255, 255, 0.08)',
+  borderStrong: 'rgba(255, 255, 255, 0.15)',
+  blue: '#ffffff',
+  blueDim: 'rgba(255, 255, 255, 0.1)',
+  green: '#ffffff',
+  greenDim: 'rgba(255, 255, 255, 0.1)',
+  text1: '#ffffff',
+  text2: '#888888',
+  text3: '#666666',
 };
 
 const INITIAL_NODES = [
@@ -314,14 +314,14 @@ export default function ProofOfStakeVisualizer({ algorithm }) {
             <button
               onClick={manualNextStep}
               disabled={isAutoRunning || lotterySpin}
-              className="pos-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer text-zinc-100 hover:bg-[#1C1F26]"
+              className="pos-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer text-white hover:bg-white/[0.06]"
               style={{ borderColor: 'var(--border)', background: 'var(--surface-2)' }}
             >
               {step === 4 ? 'Restart' : 'Step →'}
             </button>
             <button
               onClick={resetSimulation}
-              className="pos-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors cursor-pointer text-zinc-400 hover:text-zinc-200 hover:bg-[#1C1F26]"
+              className="pos-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors cursor-pointer text-white/60 hover:text-white hover:bg-white/[0.06]"
               style={{ borderColor: 'var(--border)', background: 'var(--surface-2)' }}
             >
               Reset
@@ -369,14 +369,14 @@ export default function ProofOfStakeVisualizer({ algorithm }) {
 
       <div className="grid grid-cols-1 md:grid-cols-[1fr_260px] gap-6 mt-7">
         
-        <div className="rounded-xl border border-zinc-900 bg-[#08080A] p-6 flex flex-col items-center justify-center min-h-[280px] relative">
-          <div className="absolute top-3 left-4 pos-mono text-[10px] text-zinc-500">
+        <div className="rounded-xl border border-white/[0.08] bg-[#050505] p-6 flex flex-col items-center justify-center min-h-[280px] relative">
+          <div className="absolute top-3 left-4 pos-mono text-[10px] text-white/40">
             consensus_selection_arena
           </div>
 
           <div className="relative w-48 h-48 flex items-center justify-center">
-            <div className="absolute w-20 h-20 rounded-full border border-zinc-800 bg-[#111116] flex flex-col items-center justify-center z-10 text-center p-2 shadow-2xl">
-              <span className="pos-mono text-[8px] uppercase tracking-wider text-zinc-550">
+            <div className="absolute w-20 h-20 rounded-full border border-white/[0.08] bg-white/[0.02] flex flex-col items-center justify-center z-10 text-center p-2 shadow-2xl">
+              <span className="pos-mono text-[8px] uppercase tracking-wider text-white/40">
                 {algoId === 'poh' ? 'VDF tick' : 'Active Slot'}
               </span>
               <span className="text-xs font-bold text-white leading-none mt-1">
@@ -405,7 +405,7 @@ export default function ProofOfStakeVisualizer({ algorithm }) {
                       isLeader ? 'pos-active-leader shadow-lg' : ''
                     }`}
                     style={{
-                      background: isLeader ? n.color : hasAttested ? `${n.color}25` : '#111114',
+                      background: isLeader ? n.color : hasAttested ? `${n.color}25` : 'rgba(255, 255, 255, 0.02)',
                       borderColor: isLeader || hasAttested ? n.color : 'var(--border-strong)',
                       color: isLeader ? '#000' : n.color,
                       boxShadow: isLeader ? `0 0 16px ${n.color}60` : 'none',
@@ -413,7 +413,7 @@ export default function ProofOfStakeVisualizer({ algorithm }) {
                   >
                     {n.id}
                   </div>
-                  <span className="text-[8px] font-bold text-zinc-450 uppercase">{isLeader ? variant.roleLabel : `${Math.round((n.weight / totalWeight) * 100)}%`}</span>
+                  <span className="text-[8px] font-bold text-white/40 uppercase">{isLeader ? variant.roleLabel : `${Math.round((n.weight / totalWeight) * 100)}%`}</span>
                 </div>
               );
             })}
@@ -436,17 +436,17 @@ export default function ProofOfStakeVisualizer({ algorithm }) {
           )}
         </div>
 
-        <div className="rounded-xl border border-zinc-900 bg-zinc-950/20 p-5 flex flex-col justify-between">
+        <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-5 flex flex-col justify-between">
           <div>
-            <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-4 border-b border-zinc-900 pb-2">
+            <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-4 border-b border-white/[0.06] pb-2">
               Parameters
             </h4>
             <div className="space-y-4">
               {nodes.map((n) => (
                 <div key={n.id} className="flex flex-col gap-1">
                   <div className="flex items-center justify-between text-[10px]">
-                    <span className="font-semibold text-zinc-400">{variant.nodeNamePre} {n.id}</span>
-                    <span className="font-mono text-zinc-300 font-semibold">{n.weight}</span>
+                    <span className="font-semibold text-[#888]">{variant.nodeNamePre} {n.id}</span>
+                    <span className="font-mono text-white font-semibold">{n.weight}</span>
                   </div>
                   <input
                     type="range"
@@ -464,27 +464,27 @@ export default function ProofOfStakeVisualizer({ algorithm }) {
             </div>
           </div>
 
-          <div className="mt-5 pt-3 border-t border-zinc-900 text-[10px] text-zinc-500 font-semibold leading-relaxed">
+          <div className="mt-5 pt-3 border-t border-white/[0.06] text-[10px] text-white/40 font-semibold leading-relaxed">
             {variant.bottomText}
           </div>
         </div>
       </div>
 
-      <div className="mt-6 border-t border-zinc-900 pt-6">
-        <h4 className="pos-mono text-[10px] text-zinc-550 uppercase tracking-widest mb-3">
+      <div className="mt-6 border-t border-white/[0.06] pt-6">
+        <h4 className="pos-mono text-[10px] text-white/40 uppercase tracking-widest mb-3">
           chain_extended_ledger
         </h4>
         <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin">
           {blockchain.map((b) => (
             <div
               key={b.height}
-              className="rounded-xl border border-zinc-900 bg-[#0C0D12] p-3 text-xs min-w-[125px] flex flex-col justify-between gap-2 shrink-0"
+              className="rounded-xl border border-white/[0.08] bg-[#050505] p-3 text-xs min-w-[125px] flex flex-col justify-between gap-2 shrink-0"
             >
               <div>
-                <p className="pos-mono text-[9px] text-zinc-550">Height: #{b.height}</p>
-                <p className="font-bold text-zinc-300 mt-1 truncate">{b.proposer}</p>
+                <p className="pos-mono text-[9px] text-white/40">Height: #{b.height}</p>
+                <p className="font-bold text-white mt-1 truncate">{b.proposer}</p>
               </div>
-              <p className="pos-mono text-[9px] text-zinc-500 truncate">Hash: {b.hash}</p>
+              <p className="pos-mono text-[9px] text-white/40 truncate">Hash: {b.hash}</p>
             </div>
           ))}
         </div>
