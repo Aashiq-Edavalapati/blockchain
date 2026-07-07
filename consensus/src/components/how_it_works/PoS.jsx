@@ -2,11 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Play, Pause } from 'lucide-react';
 
 const STAGES = [
-  { key: 'idle', label: 'Idle', detail: 'Wait for next slot. Validators locking stake.' },
-  { key: 'proposer', label: 'Leader Election', detail: 'Stake-weighted lottery selects the slot leader.' },
-  { key: 'propose', label: 'Propose Block', detail: 'Elected leader assembles and proposes a block.' },
+  { key: 'idle', label: 'Idle', detail: 'Wait for next slot. Nodes standing by.' },
+  { key: 'proposer', label: 'Election', detail: 'Lottery select slot producer.' },
+  { key: 'propose', label: 'Propose Block', detail: 'Elected producer proposes new block.' },
   { key: 'attest', label: 'Attestation', detail: 'Other validators sign and vote on the proposal.' },
-  { key: 'finalize', label: 'Finalize slot', detail: 'Attestations exceed >2/3 supermajority. Block finalized.' },
+  { key: 'finalize', label: 'Finalize slot', detail: 'Supermajority reached. Slot committed.' },
 ];
 
 const THEME = {
@@ -24,30 +24,99 @@ const THEME = {
   text3: '#57575E',
 };
 
-const INITIAL_VALIDATORS = [
-  { id: 'A', name: 'Node Alice', stake: 400, color: '#3b82f6' },
-  { id: 'B', name: 'Node Bob', stake: 300, color: '#a855f7' },
-  { id: 'C', name: 'Node Charlie', stake: 200, color: '#f59e0b' },
-  { id: 'D', name: 'Node David', stake: 100, color: '#10b981' },
+const INITIAL_NODES = [
+  { id: 'A', name: 'Node Alice', weight: 400, color: '#3b82f6' },
+  { id: 'B', name: 'Node Bob', weight: 300, color: '#a855f7' },
+  { id: 'C', name: 'Node Charlie', weight: 200, color: '#f59e0b' },
+  { id: 'D', name: 'Node David', weight: 100, color: '#10b981' },
 ];
 
-export default function ProofOfStakeVisualizer() {
+export default function ProofOfStakeVisualizer({ algorithm }) {
+  const algoId = algorithm?.id || "pos";
   const [step, setStep] = useState(0);
-  const [validators, setValidators] = useState(INITIAL_VALIDATORS);
+  const [nodes, setNodes] = useState(INITIAL_NODES);
   const [leaderId, setLeaderId] = useState(null);
   const [isAutoRunning, setIsAutoRunning] = useState(false);
   const [lotterySpin, setLotterySpin] = useState(false);
   const [blockchain, setBlockchain] = useState([
-    { height: 0, proposer: 'System', hash: '00000000000000000000000000000000' }
+    { height: 0, proposer: 'Genesis', hash: '00000000' }
   ]);
   const [attestations, setAttestations] = useState([]);
+  const [vdfTicks, setVdfTicks] = useState(0);
 
   const autoRunTimeoutRef = useRef(null);
+  const totalWeight = nodes.reduce((acc, n) => acc + n.weight, 0);
 
-  // Total stake computation
-  const totalStake = validators.reduce((acc, v) => acc + v.stake, 0);
+  const getVariantDetails = () => {
+    switch (algoId) {
+      case 'dpos':
+        return {
+          title: 'Delegated Proof of Stake',
+          desc: 'Simulating delegate lottery. Token holders delegate voting weight to nodes.',
+          sliderLabel: 'Delegated votes',
+          roleLabel: 'DELEGATE',
+          nodeNamePre: 'Delegate',
+          bottomText: 'Stakeholder votes dictate election chance.',
+          color: '#3B82F6',
+        };
+      case 'poa':
+      case 'clique':
+      case 'aura':
+      case 'parlia':
+        return {
+          title: 'Proof of Authority',
+          desc: 'Simulating authority round-robin. Selected nodes use identity authority keys.',
+          sliderLabel: 'Reputation weight',
+          roleLabel: 'AUTHORITY',
+          nodeNamePre: 'Signer',
+          bottomText: 'Elected via off-chain authority keys, not coin stake.',
+          color: '#10B981',
+        };
+      case 'npos':
+        return {
+          title: 'Nominated Proof of Stake',
+          desc: 'Simulating nominators Phragmén election. Nominators back nodes with stake.',
+          sliderLabel: 'Nominators backing',
+          roleLabel: 'VALIDATOR',
+          nodeNamePre: 'Validator',
+          bottomText: 'Active set chosen to maximize total backing stake.',
+          color: '#8B5CF6',
+        };
+      case 'poh':
+        return {
+          title: 'Proof of History + PoS',
+          desc: 'Simulating Verifiable Delay sequence ticks ordering blocks before PoS election.',
+          sliderLabel: 'Validator stake',
+          roleLabel: 'LEADER',
+          nodeNamePre: 'VDF Node',
+          bottomText: 'VDF hashes prove elapse of real time between slot steps.',
+          color: '#F59E0B',
+        };
+      case 'proofOfImportance':
+        return {
+          title: 'Proof of Importance',
+          desc: 'Simulating selection based on activity. Nodes earn importance scores.',
+          sliderLabel: 'Activity score',
+          roleLabel: 'HARVESTER',
+          nodeNamePre: 'Harvester',
+          bottomText: 'Importance is computed from coin hold + active transfers.',
+          color: '#EC4899',
+        };
+      default:
+        return {
+          title: 'Proof of Stake',
+          desc: 'Simulating slot lottery. Validator election chance is proportional to locked stake.',
+          sliderLabel: 'Staked ETH',
+          roleLabel: 'PROPOSER',
+          nodeNamePre: 'Validator',
+          bottomText: 'Stakeholders lock assets to secure block production slot.',
+          color: '#3b82f6',
+        };
+    }
+  };
 
-  // Run slot steps
+  const variant = getVariantDetails();
+
   useEffect(() => {
     if (!isAutoRunning) {
       clearTimeout(autoRunTimeoutRef.current);
@@ -63,15 +132,13 @@ export default function ProofOfStakeVisualizer() {
         nextStep(1, 800);
         break;
       case 1:
-        // Run lottery selection
         setLotterySpin(true);
         const spinTimeout = setTimeout(() => {
           setLotterySpin(false);
-          // Weighted random select
-          let rand = Math.random() * totalStake;
-          let selected = validators[0].id;
-          for (const val of validators) {
-            rand -= val.stake;
+          let rand = Math.random() * totalWeight;
+          let selected = nodes[0].id;
+          for (const val of nodes) {
+            rand -= val.weight;
             if (rand <= 0) {
               selected = val.id;
               break;
@@ -82,35 +149,48 @@ export default function ProofOfStakeVisualizer() {
         }, 1200);
         return () => clearTimeout(spinTimeout);
       case 2:
-        nextStep(3, 1000);
+        if (algoId === 'poh') {
+          // Increment VDF ticks
+          let ticks = 0;
+          const interval = setInterval(() => {
+            ticks++;
+            setVdfTicks(ticks * 100);
+            if (ticks >= 5) {
+              clearInterval(interval);
+              nextStep(3, 200);
+            }
+          }, 150);
+          return () => clearInterval(interval);
+        } else {
+          nextStep(3, 1000);
+        }
         break;
       case 3:
-        // Roll attestations
-        const attesting = validators.filter(v => v.id !== leaderId);
+        const attesting = nodes.filter(v => v.id !== leaderId);
         setAttestations(attesting.map(v => v.id));
         nextStep(4, 1200);
         break;
       case 4:
         autoRunTimeoutRef.current = setTimeout(() => {
-          // Append block
-          const leader = validators.find(v => v.id === leaderId);
+          const leader = nodes.find(v => v.id === leaderId);
           setBlockchain(prev => [
             ...prev,
             {
               height: prev.length,
-              proposer: leader ? leader.name : 'Unknown',
-              hash: Math.random().toString(16).substring(2, 10) + '...'
+              proposer: leader ? `${variant.nodeNamePre} ${leader.id}` : 'Unknown',
+              hash: Math.random().toString(16).substring(2, 10)
             }
           ]);
           setAttestations([]);
           setLeaderId(null);
+          setVdfTicks(0);
           setStep(0);
         }, 1000);
         break;
     }
 
     return () => clearTimeout(autoRunTimeoutRef.current);
-  }, [step, isAutoRunning, validators, leaderId, totalStake]);
+  }, [step, isAutoRunning, nodes, leaderId, totalWeight, algoId]);
 
   const toggleAutoRun = () => {
     setIsAutoRunning(!isAutoRunning);
@@ -120,25 +200,26 @@ export default function ProofOfStakeVisualizer() {
   const manualNextStep = () => {
     setIsAutoRunning(false);
     if (step === 4) {
-      const leader = validators.find(v => v.id === leaderId);
+      const leader = nodes.find(v => v.id === leaderId);
       setBlockchain(prev => [
         ...prev,
         {
           height: prev.length,
-          proposer: leader ? leader.name : 'Unknown',
-          hash: Math.random().toString(16).substring(2, 10) + '...'
+          proposer: leader ? `${variant.nodeNamePre} ${leader.id}` : 'Unknown',
+          hash: Math.random().toString(16).substring(2, 10)
         }
       ]);
       setAttestations([]);
       setLeaderId(null);
+      setVdfTicks(0);
       setStep(0);
     } else if (step === 0) {
       setStep(1);
     } else if (step === 1) {
-      let rand = Math.random() * totalStake;
-      let selected = validators[0].id;
-      for (const val of validators) {
-        rand -= val.stake;
+      let rand = Math.random() * totalWeight;
+      let selected = nodes[0].id;
+      for (const val of nodes) {
+        rand -= val.weight;
         if (rand <= 0) {
           selected = val.id;
           break;
@@ -149,19 +230,29 @@ export default function ProofOfStakeVisualizer() {
     } else if (step === 2) {
       setStep(3);
     } else if (step === 3) {
-      const attesting = validators.filter(v => v.id !== leaderId);
+      const attesting = nodes.filter(v => v.id !== leaderId);
       setAttestations(attesting.map(v => v.id));
       setStep(4);
     }
   };
 
-  const updateStake = (id, newStake) => {
-    setValidators(prev =>
-      prev.map(v => (v.id === id ? { ...v, stake: Math.max(10, newStake) } : v))
+  const resetSimulation = () => {
+    setIsAutoRunning(false);
+    setStep(0);
+    setLeaderId(null);
+    setLotterySpin(false);
+    setBlockchain([{ height: 0, proposer: 'Genesis', hash: '00000000' }]);
+    setAttestations([]);
+    setVdfTicks(0);
+    setNodes(INITIAL_NODES);
+  };
+
+  const updateWeight = (id, newWeight) => {
+    setNodes(prev =>
+      prev.map(n => (n.id === id ? { ...n, weight: Math.max(10, newWeight) } : n))
     );
   };
 
-  const currentLeader = validators.find(v => v.id === leaderId);
   const activeStage = STAGES[step] || STAGES[0];
 
   return (
@@ -169,7 +260,7 @@ export default function ProofOfStakeVisualizer() {
       style={{
         '--bg': THEME.bg, '--surface': THEME.surface, '--surface-2': THEME.surface2,
         '--border': THEME.border, '--border-strong': THEME.borderStrong,
-        '--blue': THEME.blue, '--blue-dim': THEME.blueDim,
+        '--blue': variant.color, '--blue-dim': `${variant.color}20`,
         '--green': THEME.green, '--green-dim': THEME.greenDim,
         '--text-1': THEME.text1, '--text-2': THEME.text2, '--text-3': THEME.text3,
         background: 'var(--bg)', color: 'var(--text-1)',
@@ -184,12 +275,11 @@ export default function ProofOfStakeVisualizer() {
         .pos-track-fill { transition: width 0.4s ease; }
       `}</style>
 
-      {/* Header and Controls */}
       <div style={{ borderColor: 'var(--border)' }} className="flex flex-wrap items-start justify-between gap-6 border-b pb-6">
         <div>
           <div className="pos-mono flex items-center gap-2 text-[11px] uppercase tracking-[0.18em]" style={{ color: 'var(--blue)' }}>
             <span className="h-1.5 w-1.5 rounded-full" style={{ background: 'var(--blue)' }} />
-            Consensus · Proof of Stake
+            Consensus · {variant.title}
           </div>
           <h3 className="mt-2 text-2xl font-semibold tracking-tight" style={{ color: 'var(--text-1)' }}>
             {activeStage.label}
@@ -224,16 +314,22 @@ export default function ProofOfStakeVisualizer() {
             <button
               onClick={manualNextStep}
               disabled={isAutoRunning || lotterySpin}
-              className="pos-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer"
-              style={{ borderColor: 'var(--border)', background: 'var(--surface-2)', color: 'var(--text-1)' }}
+              className="pos-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer text-zinc-100 hover:bg-[#1C1F26]"
+              style={{ borderColor: 'var(--border)', background: 'var(--surface-2)' }}
             >
               {step === 4 ? 'Restart' : 'Step →'}
+            </button>
+            <button
+              onClick={resetSimulation}
+              className="pos-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors cursor-pointer text-zinc-400 hover:text-zinc-200 hover:bg-[#1C1F26]"
+              style={{ borderColor: 'var(--border)', background: 'var(--surface-2)' }}
+            >
+              Reset
             </button>
           </div>
         </div>
       </div>
 
-      {/* Process Steps Progress bar */}
       <div className="mt-7 flex items-center">
         {STAGES.map((s, i) => {
           const active = i === step;
@@ -271,34 +367,34 @@ export default function ProofOfStakeVisualizer() {
         })}
       </div>
 
-      {/* Dynamic Network Arena & Sliders */}
       <div className="grid grid-cols-1 md:grid-cols-[1fr_260px] gap-6 mt-7">
         
-        {/* Validator Nodes Ring Animation */}
         <div className="rounded-xl border border-zinc-900 bg-[#08080A] p-6 flex flex-col items-center justify-center min-h-[280px] relative">
           <div className="absolute top-3 left-4 pos-mono text-[10px] text-zinc-500">
-            lottery_simulation_arena
+            consensus_selection_arena
           </div>
 
           <div className="relative w-48 h-48 flex items-center justify-center">
-            {/* Center Slot Hub */}
             <div className="absolute w-20 h-20 rounded-full border border-zinc-800 bg-[#111116] flex flex-col items-center justify-center z-10 text-center p-2 shadow-2xl">
-              <span className="pos-mono text-[8px] uppercase tracking-wider text-zinc-550">Active Slot</span>
-              <span className="text-sm font-bold text-white leading-none mt-1">#{blockchain.length}</span>
+              <span className="pos-mono text-[8px] uppercase tracking-wider text-zinc-550">
+                {algoId === 'poh' ? 'VDF tick' : 'Active Slot'}
+              </span>
+              <span className="text-xs font-bold text-white leading-none mt-1">
+                {algoId === 'poh' && step === 2 ? `${vdfTicks}` : `#${blockchain.length}`}
+              </span>
             </div>
 
-            {/* Render Nodes around the center */}
-            {validators.map((v, i) => {
-              const angle = (i * 360) / validators.length;
+            {nodes.map((n, i) => {
+              const angle = (i * 360) / nodes.length;
               const radius = 76; 
               const x = radius * Math.cos((angle * Math.PI) / 180);
               const y = radius * Math.sin((angle * Math.PI) / 180);
-              const isLeader = v.id === leaderId;
-              const hasAttested = attestations.includes(v.id);
+              const isLeader = n.id === leaderId;
+              const hasAttested = attestations.includes(n.id);
 
               return (
                 <div
-                  key={v.id}
+                  key={n.id}
                   className="absolute flex flex-col items-center gap-1 transition-all duration-300"
                   style={{
                     transform: `translate(${x}px, ${y}px)`,
@@ -309,61 +405,59 @@ export default function ProofOfStakeVisualizer() {
                       isLeader ? 'pos-active-leader shadow-lg' : ''
                     }`}
                     style={{
-                      background: isLeader ? v.color : hasAttested ? `${v.color}25` : '#111114',
-                      borderColor: isLeader || hasAttested ? v.color : 'var(--border-strong)',
-                      color: isLeader ? '#000' : v.color,
-                      boxShadow: isLeader ? `0 0 16px ${v.color}60` : 'none',
+                      background: isLeader ? n.color : hasAttested ? `${n.color}25` : '#111114',
+                      borderColor: isLeader || hasAttested ? n.color : 'var(--border-strong)',
+                      color: isLeader ? '#000' : n.color,
+                      boxShadow: isLeader ? `0 0 16px ${n.color}60` : 'none',
                     }}
                   >
-                    {v.id}
+                    {n.id}
                   </div>
-                  <span className="text-[8px] font-bold text-zinc-450 uppercase">{v.id === leaderId ? 'PROPOSER' : `${Math.round((v.stake / totalStake) * 100)}%`}</span>
+                  <span className="text-[8px] font-bold text-zinc-450 uppercase">{isLeader ? variant.roleLabel : `${Math.round((n.weight / totalWeight) * 100)}%`}</span>
                 </div>
               );
             })}
           </div>
 
-          {/* Attestation indicator */}
           {step === 3 && (
             <div className="mt-4 text-xs font-mono text-blue-400 animate-pulse">
-              Attestations received: {attestations.length}/3 nodes signed
+              Signatures: {attestations.length}/3 nodes received
             </div>
           )}
           {step === 4 && (
             <div className="mt-4 text-xs font-mono text-emerald-400 flex items-center gap-1.5">
-              ✓ Supermajority reached. Block finalized!
+              ✓ Slot committed. Chain ledger updated.
             </div>
           )}
           {lotterySpin && (
             <div className="mt-4 text-xs font-mono text-purple-400 animate-pulse">
-              Selecting slot leader based on stakes...
+              Spinning lottery selector...
             </div>
           )}
         </div>
 
-        {/* Stake Adjustment Controls */}
         <div className="rounded-xl border border-zinc-900 bg-zinc-950/20 p-5 flex flex-col justify-between">
           <div>
             <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-4 border-b border-zinc-900 pb-2">
-              Stake Distribution
+              Parameters
             </h4>
             <div className="space-y-4">
-              {validators.map((v) => (
-                <div key={v.id} className="flex flex-col gap-1">
+              {nodes.map((n) => (
+                <div key={n.id} className="flex flex-col gap-1">
                   <div className="flex items-center justify-between text-[10px]">
-                    <span className="font-semibold text-zinc-400">{v.name}</span>
-                    <span className="font-mono text-zinc-300 font-semibold">{v.stake} ETH</span>
+                    <span className="font-semibold text-zinc-400">{variant.nodeNamePre} {n.id}</span>
+                    <span className="font-mono text-zinc-300 font-semibold">{n.weight}</span>
                   </div>
                   <input
                     type="range"
                     min="10"
                     max="600"
                     step="10"
-                    value={v.stake}
-                    onChange={(e) => updateStake(v.id, Number(e.target.value))}
+                    value={n.weight}
+                    onChange={(e) => updateWeight(n.id, Number(e.target.value))}
                     disabled={step > 0}
                     className="w-full accent-current"
-                    style={{ accentColor: v.color }}
+                    style={{ accentColor: n.color }}
                   />
                 </div>
               ))}
@@ -371,15 +465,14 @@ export default function ProofOfStakeVisualizer() {
           </div>
 
           <div className="mt-5 pt-3 border-t border-zinc-900 text-[10px] text-zinc-500 font-semibold leading-relaxed">
-            Adjusting a node's stake directly changes its mathematical probability of winning slot leadership.
+            {variant.bottomText}
           </div>
         </div>
       </div>
 
-      {/* Blockchain Blocks output */}
       <div className="mt-6 border-t border-zinc-900 pt-6">
         <h4 className="pos-mono text-[10px] text-zinc-550 uppercase tracking-widest mb-3">
-          slot_finalization_ledger
+          chain_extended_ledger
         </h4>
         <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin">
           {blockchain.map((b) => (
@@ -389,7 +482,7 @@ export default function ProofOfStakeVisualizer() {
             >
               <div>
                 <p className="pos-mono text-[9px] text-zinc-550">Height: #{b.height}</p>
-                <p className="font-bold text-zinc-200 mt-1 truncate">{b.proposer}</p>
+                <p className="font-bold text-zinc-300 mt-1 truncate">{b.proposer}</p>
               </div>
               <p className="pos-mono text-[9px] text-zinc-500 truncate">Hash: {b.hash}</p>
             </div>

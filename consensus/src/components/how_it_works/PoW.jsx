@@ -5,9 +5,9 @@ const STAGES = [
   { key: 'idle', label: 'Idle', detail: 'Network is at rest. No pending work.' },
   { key: 'broadcast', label: 'Broadcast', detail: 'A new transaction enters the mempool.' },
   { key: 'collect', label: 'Collect', detail: 'Miner assembles a candidate block.' },
-  { key: 'solve', label: 'Solve', detail: 'Miner searches for a valid nonce.' },
+  { key: 'solve', label: 'Solve', detail: 'Miner searches for a valid solution.' },
   { key: 'propagate', label: 'Propagate', detail: 'Solution found — block broadcast to peers.' },
-  { key: 'verify', label: 'Verify', detail: 'Peers confirm the hash. Chain extends.' },
+  { key: 'verify', label: 'Verify', detail: 'Peers confirm the solution. Chain extends.' },
 ];
 
 const THEME = {
@@ -37,19 +37,93 @@ function useHashRate(active) {
   return rate;
 }
 
-export default function ProofOfWorkVisualizer() {
+export default function ProofOfWorkVisualizer({ algorithm }) {
+  const algoId = algorithm?.id || "pow";
   const [step, setStep] = useState(0);
   const [nonce, setNonce] = useState(0);
   const [currentHash, setCurrentHash] = useState('0'.repeat(64));
   const [difficulty, setDifficulty] = useState(3);
   const [isAutoRunning, setIsAutoRunning] = useState(false);
   const [blockchain, setBlockchain] = useState([
-    { height: 0, hash: '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f', nonce: 2083236893, genesis: true },
+    { height: 0, hash: '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f', nonce: 2083236893 },
   ]);
 
   const miningIntervalRef = useRef(null);
   const autoRunTimeoutRef = useRef(null);
   const hashRate = useHashRate(step === 3);
+
+  // Customize based on consensus algorithm variant
+  const getVariantDetails = () => {
+    switch (algoId) {
+      case 'proofOfCapacity':
+        return {
+          title: 'Proof of Capacity / Space',
+          desc: 'Simulating disk plot scanning. Miners pre-allocate disk space for puzzle answers.',
+          sliderLabel: 'Allocated Space (TB)',
+          unitLabel: 'Plot scanning rate',
+          unitValue: `${(hashRate * 1.5).toFixed(0)} GB/s`,
+          nonceLabel: 'Plot Index Checked',
+          hashHeader: 'best_deadline_lookup()',
+          targetText: 'Deadlines found',
+          activeAction: 'Scanning plotted files on disk...',
+          color: '#E8A344',
+        };
+      case 'proofOfBurn':
+        return {
+          title: 'Proof of Burn',
+          desc: 'Simulating coin destruction. Burning coins buys virtual mining power.',
+          sliderLabel: 'Burned Multiplier',
+          unitLabel: 'Burn validation rate',
+          unitValue: `${(hashRate * 0.4).toFixed(1)} Burn/s`,
+          nonceLabel: 'Virtual Coins Burned',
+          hashHeader: 'burn_weight_tally()',
+          targetText: 'Burn probability met',
+          activeAction: 'Tallying burn transactions...',
+          color: '#F59E0B',
+        };
+      case 'proofOfElapsedTime':
+        return {
+          title: 'Proof of Elapsed Time',
+          desc: 'Simulating trusted enclave wait countdowns. Intel SGX assigns random timers.',
+          sliderLabel: 'SGX Timer Limit (s)',
+          unitLabel: 'Enclave clock ticks',
+          unitValue: `${(hashRate * 0.1).toFixed(1)} Ticks/s`,
+          nonceLabel: 'Elapsed Enclave Time',
+          hashHeader: 'trusted_sgx_wait_timer()',
+          targetText: 'Enclave timer expired',
+          activeAction: 'Awaiting trusted SGX enclave countdown...',
+          color: '#10B981',
+        };
+      case 'proofOfActivity':
+        return {
+          title: 'Proof of Activity',
+          desc: 'Simulating hybrid PoW/PoS consensus. PoW generates block, PoS validators sign.',
+          sliderLabel: 'Miners Difficulty',
+          unitLabel: 'Hash rate',
+          unitValue: `${hashRate.toFixed(0)} H/s`,
+          nonceLabel: 'Header Nonce',
+          hashHeader: 'hybrid_activity_solve()',
+          targetText: 'Header solved, signatures ready',
+          activeAction: 'Solving header + collecting PoS signs...',
+          color: '#3B82F6',
+        };
+      default:
+        return {
+          title: 'Proof of Work',
+          desc: 'Simulating cryptographic puzzles. Miners search for leading zeros.',
+          sliderLabel: 'Difficulty (Zeros)',
+          unitLabel: 'Hash rate',
+          unitValue: `${hashRate.toFixed(0)} H/s`,
+          nonceLabel: 'Nonce value',
+          hashHeader: 'candidate_block.mine()',
+          targetText: `target: ${difficulty} leading zeros`,
+          activeAction: 'Solving cryptographic puzzle...',
+          color: '#E8A344',
+        };
+    }
+  };
+
+  const variant = getVariantDetails();
 
   const generateRandomHash = (forceSuccess = false, diff = difficulty) => {
     const chars = '0123456789abcdef';
@@ -66,7 +140,7 @@ export default function ProofOfWorkVisualizer() {
       case 0: go(1, 700); break;
       case 1: go(2, 1100); break;
       case 2: go(3, 900); break;
-      case 3: break;
+      case 3: break; // Solve loop handles transitions
       case 4: go(5, 1300); break;
       case 5:
         autoRunTimeoutRef.current = setTimeout(() => {
@@ -117,6 +191,14 @@ export default function ProofOfWorkVisualizer() {
     }
   };
 
+  const resetSimulation = () => {
+    setIsAutoRunning(false);
+    setStep(0);
+    setNonce(0);
+    setCurrentHash('0'.repeat(64));
+    setBlockchain([{ height: 0, hash: '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f', nonce: 2083236893 }]);
+  };
+
   const stage = STAGES[step] || STAGES[0];
   const isSolving = step === 3;
   const isSolved = step >= 4;
@@ -131,7 +213,7 @@ export default function ProofOfWorkVisualizer() {
       style={{
         '--bg': THEME.bg, '--surface': THEME.surface, '--surface-2': THEME.surface2,
         '--border': THEME.border, '--border-strong': THEME.borderStrong,
-        '--amber': THEME.amber, '--amber-dim': THEME.amberDim,
+        '--amber': variant.color, '--amber-dim': `${variant.color}20`,
         '--green': THEME.green, '--green-dim': THEME.greenDim,
         '--text-1': THEME.text1, '--text-2': THEME.text2, '--text-3': THEME.text3,
         background: 'var(--bg)', color: 'var(--text-1)',
@@ -140,7 +222,6 @@ export default function ProofOfWorkVisualizer() {
       className="w-full max-w-4xl rounded-2xl border p-7"
     >
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
         .pow-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
         @keyframes pow-fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
         .pow-fade { animation: pow-fade-in 0.4s ease both; }
@@ -155,7 +236,7 @@ export default function ProofOfWorkVisualizer() {
         <div>
           <div className="pow-mono flex items-center gap-2 text-[11px] uppercase tracking-[0.18em]" style={{ color: 'var(--amber)' }}>
             <span className="h-1.5 w-1.5 rounded-full" style={{ background: 'var(--amber)' }} />
-            Consensus · Proof of Work
+            Consensus · {variant.title}
           </div>
           <h3 className="mt-2 text-2xl font-semibold tracking-tight" style={{ color: 'var(--text-1)' }}>
             {stage.label}
@@ -168,7 +249,7 @@ export default function ProofOfWorkVisualizer() {
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex flex-col gap-1.5 rounded-xl border px-3 py-2" style={{ borderColor: 'var(--border)', background: 'var(--surface)' }}>
             <div className="pow-mono flex items-center justify-between text-[10px] uppercase tracking-wider" style={{ color: 'var(--text-3)' }}>
-              <span>Difficulty</span>
+              <span>{variant.sliderLabel}</span>
               <span style={{ color: 'var(--text-1)' }}>{difficulty}</span>
             </div>
             <input
@@ -176,7 +257,7 @@ export default function ProofOfWorkVisualizer() {
               onChange={(e) => setDifficulty(Number(e.target.value))}
               disabled={isSolving}
               className="w-28 accent-current"
-              style={{ accentColor: THEME.amber }}
+              style={{ accentColor: variant.color }}
             />
           </div>
 
@@ -204,10 +285,17 @@ export default function ProofOfWorkVisualizer() {
             <button
               onClick={manualNextStep}
               disabled={isAutoRunning || isSolving}
-              className="pow-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer"
-              style={{ borderColor: 'var(--border)', background: 'var(--surface-2)', color: 'var(--text-1)' }}
+              className="pow-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer text-zinc-100 hover:bg-[#1C1F26]"
+              style={{ borderColor: 'var(--border)', background: 'var(--surface-2)' }}
             >
               {step === 5 ? 'Restart' : 'Step →'}
+            </button>
+            <button
+              onClick={resetSimulation}
+              className="pow-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors cursor-pointer text-zinc-400 hover:text-zinc-200 hover:bg-[#1C1F26]"
+              style={{ borderColor: 'var(--border)', background: 'var(--surface-2)' }}
+            >
+              Reset
             </button>
           </div>
         </div>
@@ -215,7 +303,6 @@ export default function ProofOfWorkVisualizer() {
 
       <div className="mt-7 flex items-center">
         {STAGES.map((s, i) => {
-          const done = i < step || step === 5 && i <= 5 ? i < step : i < step;
           const active = i === step;
           const passed = i < step;
           return (
@@ -232,7 +319,7 @@ export default function ProofOfWorkVisualizer() {
                   {passed ? '✓' : i}
                 </div>
                 <span
-                  className="text-[10px] uppercase tracking-wide"
+                  className="text-[10px] uppercase tracking-wide text-center"
                   style={{ color: active ? 'var(--text-1)' : 'var(--text-3)', fontWeight: active ? 600 : 400 }}
                 >
                   {s.label}
@@ -261,12 +348,12 @@ export default function ProofOfWorkVisualizer() {
             <span className="h-2.5 w-2.5 rounded-full" style={{ background: 'var(--amber)' }} />
             <span className="h-2.5 w-2.5 rounded-full" style={{ background: 'var(--green)' }} />
             <span className="pow-mono ml-2 text-[11px]" style={{ color: 'var(--text-3)' }}>
-              candidate_block.mine()
+              {variant.hashHeader}
             </span>
           </div>
           <div className="pow-mono flex items-center gap-1.5 text-[11px]" style={{ color: isSolving ? 'var(--amber)' : 'var(--text-3)' }}>
             {isSolving && <span className="pow-scan h-1.5 w-1.5 rounded-full" style={{ background: 'var(--amber)' }} />}
-            {isSolving ? `${hashRate.toFixed(0)} H/s` : isSolved ? 'solved' : 'standby'}
+            {isSolving ? variant.unitValue : isSolved ? 'solved' : 'standby'}
           </div>
         </div>
 
@@ -274,22 +361,25 @@ export default function ProofOfWorkVisualizer() {
           className={`grid gap-6 p-5 transition-opacity duration-500 md:grid-cols-[1fr_auto] ${step < 2 ? 'opacity-40' : 'opacity-100'}`}
         >
           <div className="pow-mono space-y-3 text-xs">
-            <Row label="prev_hash">
-              <span className="truncate opacity-60">{blockchain[blockchain.length - 1].hash}</span>
-            </Row>
-            <Row label="merkle_root">
+            <div className="flex items-center justify-between border-b pb-2" style={{ borderColor: 'var(--border)' }}>
+              <span style={{ color: 'var(--text-3)' }}>prev_hash</span>
+              <span className="truncate opacity-60 ml-4 max-w-[200px] md:max-w-xs">{blockchain[blockchain.length - 1].hash}</span>
+            </div>
+            <div className="flex items-center justify-between border-b pb-2" style={{ borderColor: 'var(--border)' }}>
+              <span style={{ color: 'var(--text-3)' }}>merkle_root</span>
               <span style={{ color: 'var(--green)' }}>a3f9c1…e21c8b</span>
-            </Row>
-            <Row label="nonce">
+            </div>
+            <div className="flex items-center justify-between border-b pb-2" style={{ borderColor: 'var(--border)' }}>
+              <span style={{ color: 'var(--text-3)' }}>{variant.nonceLabel}</span>
               <span className="text-base font-semibold tabular-nums" style={{ color: 'var(--text-1)' }}>
                 {nonce.toString().padStart(10, '0')}
               </span>
-            </Row>
+            </div>
 
             <div className="pt-1">
               <div className="mb-1.5 flex items-center justify-between text-[10px] uppercase tracking-wider" style={{ color: 'var(--text-3)' }}>
-                <span>hash output</span>
-                <span>target: {matchLen}/{difficulty} leading zeros</span>
+                <span>solution output</span>
+                <span>{variant.targetText}</span>
               </div>
               <div
                 className="break-all rounded-lg border p-3 text-[11px] leading-relaxed"
@@ -312,95 +402,28 @@ export default function ProofOfWorkVisualizer() {
               </div>
             </div>
           </div>
-
-          <div className="flex flex-row gap-1.5 md:flex-col md:justify-center">
-            {Array.from({ length: 5 }).map((_, i) => {
-              const filled = i < matchLen;
-              const isTarget = i < difficulty;
-              return (
-                <div
-                  key={i}
-                  className="pow-mono flex h-6 w-6 items-center justify-center rounded text-[10px] font-bold transition-all duration-200"
-                  style={{
-                    border: `1px solid ${isTarget ? (filled ? THEME.green : THEME.amber) : THEME.border}`,
-                    background: filled ? THEME.greenDim : 'transparent',
-                    color: filled ? THEME.green : isTarget ? THEME.amber : THEME.text3,
-                    opacity: isTarget ? 1 : 0.3,
-                  }}
-                >
-                  0
-                </div>
-              );
-            })}
-          </div>
         </div>
-
-        {step === 1 && (
-          <div
-            className="pow-fade pow-mono absolute right-4 top-14 rounded-lg border px-3 py-1.5 text-[11px]"
-            style={{ borderColor: 'var(--green)', background: 'var(--green-dim)', color: 'var(--green)' }}
-          >
-            tx received · alice → bob · 1.000 BTC
-          </div>
-        )}
       </div>
 
-      <div className="mt-7">
-        <div className="mb-3 flex items-center justify-between">
-          <h4 className="pow-mono text-[11px] uppercase tracking-[0.18em]" style={{ color: 'var(--text-3)' }}>
-            Verified Chain
-          </h4>
-          <span className="pow-mono text-[11px]" style={{ color: 'var(--text-3)' }}>
-            {blockchain.length} block{blockchain.length !== 1 ? 's' : ''}
-          </span>
-        </div>
-        <div className="flex gap-3 overflow-x-auto pb-2">
-          {blockchain.map((block, i) => (
-            <div key={i} className="flex shrink-0 items-center">
-              {i > 0 && <div className="mr-3 h-px w-4" style={{ background: 'var(--border-strong)' }} />}
-              <div
-                className="w-56 rounded-xl border p-3.5"
-                style={{ borderColor: block.genesis ? 'var(--border-strong)' : 'var(--border)', background: 'var(--surface)' }}
-              >
-                <div className="mb-2 flex items-center justify-between">
-                  <span className="pow-mono text-[11px] font-semibold" style={{ color: 'var(--text-1)' }}>
-                    #{block.height}{block.genesis && <span style={{ color: 'var(--text-3)' }}> · genesis</span>}
-                  </span>
-                  <span className="pow-mono text-[10px]" style={{ color: 'var(--amber)' }}>
-                    n·{block.nonce}
-                  </span>
-                </div>
-                <div className="pow-mono break-all text-[10px] leading-relaxed" style={{ color: 'var(--text-3)' }}>
-                  {block.hash}
-                </div>
+      <div className="mt-6 border-t border-zinc-900 pt-6">
+        <h4 className="pow-mono text-[10px] text-zinc-550 uppercase tracking-widest mb-3">
+          chain_extended_ledger
+        </h4>
+        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin">
+          {blockchain.map((b) => (
+            <div
+              key={b.height}
+              className="rounded-xl border border-zinc-900 bg-[#0C0D12] p-3 text-xs min-w-[125px] flex flex-col justify-between gap-2 shrink-0 animate-fade-in"
+            >
+              <div>
+                <p className="pow-mono text-[9px] text-zinc-550">Block: #{b.height}</p>
+                <p className="font-bold text-zinc-300 mt-1">Difficulty: {difficulty}</p>
               </div>
+              <p className="pow-mono text-[9px] text-zinc-500 truncate" title={b.hash}>Hash: {b.hash.slice(0, 8)}...</p>
             </div>
           ))}
-
-          {step === 5 && (
-            <div className="flex shrink-0 items-center">
-              <div className="mr-3 h-px w-4" style={{ background: 'var(--green)' }} />
-              <div
-                className="pow-fade flex w-56 items-center justify-center rounded-xl border border-dashed p-3.5"
-                style={{ borderColor: 'var(--green)', background: 'var(--green-dim)' }}
-              >
-                <span className="pow-mono text-[11px] font-semibold" style={{ color: 'var(--green)' }}>
-                  appending #{blockchain.length}…
-                </span>
-              </div>
-            </div>
-          )}
         </div>
       </div>
-    </div>
-  );
-}
-
-function Row({ label, children }) {
-  return (
-    <div className="flex items-center justify-between gap-4 border-b pb-2" style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
-      <span style={{ color: 'var(--text-3)' }}>{label}</span>
-      <span className="max-w-[65%] truncate text-right">{children}</span>
     </div>
   );
 }

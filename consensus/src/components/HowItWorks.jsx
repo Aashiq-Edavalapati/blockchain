@@ -18,7 +18,7 @@ export default function HowItWorks({ algorithm }) {
       id === "proofofactivity" || 
       id === "proofofelapsedtime"
     ) {
-      return <PoWVisualizer />;
+      return <PoWVisualizer algorithm={algorithm} />;
     }
     
     if (
@@ -31,7 +31,7 @@ export default function HowItWorks({ algorithm }) {
       id === "dbft" || 
       id === "raft"
     ) {
-      return <BFTVisualizer />;
+      return <BFTVisualizer algorithm={algorithm} />;
     }
     
     if (
@@ -40,11 +40,11 @@ export default function HowItWorks({ algorithm }) {
       id === "snowman" || 
       id === "snowball"
     ) {
-      return <DAGVisualizer />;
+      return <DAGVisualizer algorithm={algorithm} />;
     }
     
     // Default fallback is PoS visualizer
-    return <PoSVisualizer />;
+    return <PoSVisualizer algorithm={algorithm} />;
   };
 
   return (

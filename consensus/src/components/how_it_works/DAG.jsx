@@ -24,7 +24,6 @@ const THEME = {
   text3: '#57575E',
 };
 
-// 16 transaction items in a gossip grid
 const INITIAL_TRANSACTIONS = [
   { id: 1, color: '#3b82f6', confidence: 2 },
   { id: 2, color: '#EF4444', confidence: 1 },
@@ -44,20 +43,50 @@ const INITIAL_TRANSACTIONS = [
   { id: 16, color: '#EF4444', confidence: 3 },
 ];
 
-export default function DAGVisualizer() {
+export default function DAGVisualizer({ algorithm }) {
+  const algoId = algorithm?.id || "avalanche";
   const [step, setStep] = useState(0);
   const [transactions, setTransactions] = useState(INITIAL_TRANSACTIONS);
   const [isAutoRunning, setIsAutoRunning] = useState(false);
-  const [kSample, setKSample] = useState(5); // Sub-sample size
-  const [alpha, setAlpha] = useState(4); // Decision threshold
+  const [kSample, setKSample] = useState(5);
+  const [alpha, setAlpha] = useState(4);
   const [queryNode, setQueryNode] = useState(null);
   const [sampledPeers, setSampledPeers] = useState([]);
   const [voteTally, setVoteTally] = useState({ red: 0, blue: 0 });
 
   const autoRunTimeoutRef = useRef(null);
-
-  // Check if consensus is fully resolved
   const isConsensusReached = transactions.every(t => t.color === transactions[0].color);
+
+  const getVariantDetails = () => {
+    switch (algoId) {
+      case 'snowman':
+        return {
+          title: 'Snowman Consensus',
+          desc: 'Simulating linear block production built on top of Avalanche\'s sub-sampling queries.',
+          gridName: 'snowman_block_gossip_grid',
+          bottomText: 'Creates a strict linear blockchain using metastable voting mechanics.',
+          color: '#8B5CF6',
+        };
+      case 'snowball':
+        return {
+          title: 'Snowball Consensus',
+          desc: 'Simulating state confidence counters. The node retains historical query confidence parameters.',
+          gridName: 'snowball_confidence_state',
+          bottomText: 'Adds confidence state variables to increase security against adaptive attackers.',
+          color: '#EC4899',
+        };
+      default:
+        return {
+          title: 'Avalanche metastable Gossip',
+          desc: 'Simulating directed acyclic transaction vertex sub-sampling. Converges conflicting transaction preferences.',
+          gridName: 'metastable_dag_gossip_grid',
+          bottomText: 'Sub-sampling allows high throughput with zero coordination overhead.',
+          color: '#a855f7',
+        };
+    }
+  };
+
+  const variant = getVariantDetails();
 
   useEffect(() => {
     if (!isAutoRunning) {
@@ -82,7 +111,6 @@ export default function DAGVisualizer() {
         nextStep(1, 800);
         break;
       case 1:
-        // Pick a random query node and k random samples
         const qIdx = Math.floor(Math.random() * transactions.length);
         setQueryNode(transactions[qIdx].id);
 
@@ -97,7 +125,6 @@ export default function DAGVisualizer() {
         nextStep(2, 1000);
         break;
       case 2:
-        // Tally votes from peers
         let redVotes = 0;
         let blueVotes = 0;
         sampledPeers.forEach(id => {
@@ -109,7 +136,6 @@ export default function DAGVisualizer() {
         nextStep(3, 1200);
         break;
       case 3:
-        // Flip node preference if alpha threshold is met
         setTransactions(prev => {
           const qNode = prev.find(t => t.id === queryNode);
           if (!qNode) return prev;
@@ -135,7 +161,6 @@ export default function DAGVisualizer() {
         nextStep(0, 1000);
         break;
       case 4:
-        // Finished / Re-run
         break;
     }
 
@@ -211,7 +236,7 @@ export default function DAGVisualizer() {
       style={{
         '--bg': THEME.bg, '--surface': THEME.surface, '--surface-2': THEME.surface2,
         '--border': THEME.border, '--border-strong': THEME.borderStrong,
-        '--purple': THEME.purple, '--purple-dim': THEME.purpleDim,
+        '--purple': variant.color, '--purple-dim': `${variant.color}20`,
         '--red': THEME.red, '--blue': THEME.blue,
         '--text-1': THEME.text1, '--text-2': THEME.text2, '--text-3': THEME.text3,
         background: 'var(--bg)', color: 'var(--text-1)',
@@ -226,12 +251,11 @@ export default function DAGVisualizer() {
         .dag-track-fill { transition: width 0.4s ease; }
       `}</style>
 
-      {/* Header and controls */}
       <div style={{ borderColor: 'var(--border)' }} className="flex flex-wrap items-start justify-between gap-6 border-b pb-6">
         <div>
           <div className="dag-mono flex items-center gap-2 text-[11px] uppercase tracking-[0.18em]" style={{ color: 'var(--purple)' }}>
             <span className="h-1.5 w-1.5 rounded-full" style={{ background: 'var(--purple)' }} />
-            Consensus · metastable gossip (avalanche)
+            Consensus · {variant.title}
           </div>
           <h3 className="mt-2 text-2xl font-semibold tracking-tight" style={{ color: 'var(--text-1)' }}>
             {activeStage.label}
@@ -282,7 +306,6 @@ export default function DAGVisualizer() {
         </div>
       </div>
 
-      {/* Progress timeline */}
       <div className="mt-7 flex items-center">
         {STAGES.map((s, i) => {
           const active = i === step;
@@ -320,13 +343,11 @@ export default function DAGVisualizer() {
         })}
       </div>
 
-      {/* Gossip Grid Arena & Parameters */}
       <div className="grid grid-cols-1 md:grid-cols-[1fr_260px] gap-6 mt-7">
         
-        {/* Nodes Grid displaying Preferences */}
         <div className="rounded-xl border border-zinc-900 bg-[#08080A] p-6 flex flex-col items-center justify-center min-h-[280px] relative">
           <div className="absolute top-3 left-4 dag-mono text-[10px] text-zinc-550">
-            metastable_gossip_grid
+            {variant.gridName}
           </div>
 
           <div className="grid grid-cols-4 gap-4 max-w-[240px] w-full">
@@ -337,7 +358,7 @@ export default function DAGVisualizer() {
               let scale = 'scale(1)';
 
               if (isQueryNode) {
-                ringColor = '#a855f7';
+                ringColor = variant.color;
                 scale = 'scale(1.15)';
               } else if (isSampled) {
                 ringColor = '#3b82f6';
@@ -353,10 +374,9 @@ export default function DAGVisualizer() {
                     borderColor: ringColor !== 'transparent' ? ringColor : 'var(--border-strong)',
                     color: '#fff',
                     transform: scale,
-                    boxShadow: isQueryNode ? '0 0 14px rgba(168, 85, 247, 0.6)' : isSampled ? '0 0 8px rgba(59, 130, 246, 0.4)' : 'none',
+                    boxShadow: isQueryNode ? `0 0 14px ${variant.color}80` : isSampled ? '0 0 8px rgba(59, 130, 246, 0.4)' : 'none',
                     borderWidth: ringColor !== 'transparent' ? '2.5px' : '1px',
                   }}
-                  title={`Node #${tx.id} (Confidence: ${tx.confidence})`}
                 >
                   {tx.id}
                   <span className="absolute bottom-0.5 right-1 text-[7px] opacity-75">{tx.confidence}</span>
@@ -365,15 +385,13 @@ export default function DAGVisualizer() {
             })}
           </div>
 
-          {/* Consensus convergence message */}
           {isConsensusReached && (
             <div className="mt-5 text-xs font-mono text-emerald-400">
-              ✓ Consensus reached! Entire network converged on {transactions[0].color === '#3b82f6' ? 'BLUE' : 'RED'}
+              ✓ Consensus reached! Grid converged on {transactions[0].color === '#3b82f6' ? 'BLUE' : 'RED'}
             </div>
           )}
         </div>
 
-        {/* Custom Parameters */}
         <div className="rounded-xl border border-zinc-900 bg-zinc-950/20 p-5 flex flex-col justify-between">
           <div>
             <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-4 border-b border-zinc-900 pb-2">
@@ -389,7 +407,8 @@ export default function DAGVisualizer() {
                   type="range" min="2" max="8" value={kSample}
                   onChange={(e) => setKSample(Number(e.target.value))}
                   disabled={step > 0}
-                  className="w-full accent-purple-500"
+                  className="w-full accent-current"
+                  style={{ accentColor: variant.color }}
                 />
               </div>
 
@@ -402,25 +421,15 @@ export default function DAGVisualizer() {
                   type="range" min="2" max={kSample} value={alpha}
                   onChange={(e) => setAlpha(Number(e.target.value))}
                   disabled={step > 0}
-                  className="w-full accent-purple-500"
+                  className="w-full accent-current"
+                  style={{ accentColor: variant.color }}
                 />
               </div>
             </div>
           </div>
 
           <div className="mt-4 pt-3 border-t border-zinc-900 text-[10px] text-zinc-550 leading-relaxed font-semibold">
-            {step === 2 && (
-              <span className="text-purple-400 font-mono">
-                Query results: Blue={voteTally.blue}, Red={voteTally.red}.
-                {voteTally.blue >= alpha || voteTally.red >= alpha ? ' (Threshold met!)' : ' (No flip)'}
-              </span>
-            )}
-            {step === 3 && (
-              <span>Node updated preference matching the majority consensus.</span>
-            )}
-            {step === 0 && !isConsensusReached && (
-              <span>Standby. Ready to sub-sample network peers.</span>
-            )}
+            {variant.bottomText}
           </div>
         </div>
       </div>
