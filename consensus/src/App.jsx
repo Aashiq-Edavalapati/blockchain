@@ -424,8 +424,8 @@ export default function ConsensusExplorer() {
                             </div>
                           )}
 
-                          {activeTab === "details" && (
-                            <div className="max-w-3xl">
+                           {activeTab === "details" && (
+                            <div className="w-full">
                               <HowItWorks algorithm={active} />
                             </div>
                           )}
@@ -443,7 +443,7 @@ export default function ConsensusExplorer() {
                           )}
 
                           {activeTab === "reference" && (
-                            <div className="space-y-10 max-w-3xl">
+                            <div className="space-y-10 w-full">
                               <GlossarySection />
                               <TimelineSection />
                             </div>
