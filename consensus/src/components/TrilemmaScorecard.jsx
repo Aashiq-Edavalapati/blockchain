@@ -5,6 +5,7 @@ import {
 import { Clock, Zap } from "lucide-react";
 import { TOTAL, PILLARS } from "../data/constants";
 import IconByName from "./IconByName";
+import InfoTooltip from "./InfoTooltip";
 
 function PillarGauge({ value, color }) {
   const r = 32;
@@ -44,6 +45,13 @@ const formatMetric = (str) => {
     };
   }
   return { value: str, detail: "" };
+};
+
+const getPillarDescription = (key) => {
+  if (key === "decentralization") return "Measures how distributed network validation is, validator set size, hardware access barriers, and censorship resistance.";
+  if (key === "security") return "Measures cost to attack consensus rules, finality guarantees, and economic security budgets.";
+  if (key === "scalability") return "Measures transaction throughput capacity (TPS) and block propagation times under high load.";
+  return "";
 };
 
 export default function TrilemmaScorecard({ algorithm }) {
@@ -99,11 +107,12 @@ export default function TrilemmaScorecard({ algorithm }) {
                 <div className="mb-2">
                   <PillarGauge value={val} color={algorithm.color} />
                 </div>
-                <div className="flex items-center justify-center gap-1.5 text-[11px] font-semibold text-zinc-400">
+                <div className="flex items-center justify-center gap-1 text-[11px] font-semibold text-zinc-400">
                   <span className="opacity-70 flex items-center shrink-0" style={{ color: algorithm.color }}>
                     <IconByName name={iconName} size={11} />
                   </span>
                   <span>{label}</span>
+                  <InfoTooltip text={getPillarDescription(key)} size={10} />
                 </div>
               </div>
             );
@@ -116,8 +125,9 @@ export default function TrilemmaScorecard({ algorithm }) {
         {/* Block Time Card */}
         <div className="rounded-2xl border border-zinc-900/50 bg-[#0D0F14]/60 p-5 flex flex-col justify-between min-h-[110px] hover:border-zinc-800 transition-all duration-300">
           <div className="flex items-center justify-between">
-            <span className="text-[9px] font-bold uppercase tracking-wider text-zinc-550">
+            <span className="text-[9px] font-bold uppercase tracking-wider text-zinc-550 flex items-center gap-1">
               Block Time
+              <InfoTooltip text="The average time interval required to produce, validate, and broadcast a new block to the network." size={10} />
             </span>
             <span style={{ color: `${algorithm.color}aa` }}>
               <Clock size={12} />
@@ -138,8 +148,9 @@ export default function TrilemmaScorecard({ algorithm }) {
         {/* Throughput Card */}
         <div className="rounded-2xl border border-zinc-900/50 bg-[#0D0F14]/60 p-5 flex flex-col justify-between min-h-[110px] hover:border-zinc-800 transition-all duration-300">
           <div className="flex items-center justify-between">
-            <span className="text-[9px] font-bold uppercase tracking-wider text-zinc-550">
+            <span className="text-[9px] font-bold uppercase tracking-wider text-zinc-550 flex items-center gap-1">
               Throughput
+              <InfoTooltip text="Transactions Per Second (TPS) representing the rate of processed and finalized network operations." size={10} />
             </span>
             <span style={{ color: `${algorithm.color}aa` }}>
               <Zap size={12} />

@@ -1,4 +1,5 @@
 import CryptoIcon from "./CryptoIcon";
+import InfoTooltip from "./InfoTooltip";
 
 export default function LayerClassification({ chains, algorithm }) {
   const l1 = chains.filter((c) => c.layer === "L1");
@@ -30,6 +31,7 @@ export default function LayerClassification({ chains, algorithm }) {
           color="#10B981"
           algorithm={algorithm}
           description="Base settlement layer — secures itself"
+          tooltipText="Layer 1 (L1) is the core underlying blockchain architecture (e.g. Bitcoin, Ethereum, Solana) that processes, validates, and settles its own transactions independently."
         />
         <LayerGroup
           label="Layer 2"
@@ -38,13 +40,14 @@ export default function LayerClassification({ chains, algorithm }) {
           color="#F59E0B"
           algorithm={algorithm}
           description="Borrows security from an L1 below"
+          tooltipText="Layer 2 (L2) consists of secondary frameworks or protocols built on top of an L1 (e.g. Lightning Network, Arbitrum) to increase throughput and reduce fees by execution off-chain."
         />
       </div>
     </section>
   );
 }
 
-function LayerGroup({ label, icon, chains, color, algorithm, description }) {
+function LayerGroup({ label, icon, chains, color, algorithm, description, tooltipText }) {
   return (
     <div
       className="rounded-2xl border p-5 flex flex-col justify-between"
@@ -65,8 +68,11 @@ function LayerGroup({ label, icon, chains, color, algorithm, description }) {
           {icon}
         </div>
         <div>
-          <p className="text-xs font-bold text-zinc-100">{label}</p>
-          <p className="text-[10px] text-zinc-550 mt-0.5">{description}</p>
+          <div className="flex items-center gap-1.5">
+            <p className="text-xs font-bold text-zinc-100">{label}</p>
+            <InfoTooltip text={tooltipText} size={11} />
+          </div>
+          <p className="text-[10px] text-zinc-555 mt-0.5">{description}</p>
         </div>
         <span className="ml-auto font-mono text-xs font-bold" style={{ color }}>
           {chains.length}

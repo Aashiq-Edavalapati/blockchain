@@ -4,6 +4,7 @@ import { HelpCircle, Layers, CheckCircle2, AlertTriangle, ArrowRightLeft } from 
 
 import compatibility from "../data/compatibility.js";
 import CryptoIcon from "./CryptoIcon";
+import InfoTooltip from "./InfoTooltip";
 
 function pairKey(a, b) {
   return [a, b].sort().join("-");
@@ -28,14 +29,16 @@ export default function CompatibilityMatrix({ allChains, activeAlgorithm }) {
           <h3 className="text-sm font-bold text-white tracking-tight">Cross-Chain Compatibility Matrix</h3>
           <p className="text-[11px] text-zinc-500 mt-0.5">Stretching matrix of protocol interoperability</p>
         </div>
-        <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-wider text-zinc-550">
+        <div className="flex items-center gap-3.5 text-[10px] font-bold uppercase tracking-wider text-zinc-550">
           <span className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded bg-zinc-700" style={{ background: activeAlgorithm.color }} />
             Same consensus
+            <InfoTooltip text="Blockchains sharing the exact same consensus parameters, offering high native compatibility and easy state sharing." size={10} />
           </span>
           <span className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded bg-zinc-800" />
             Different
+            <InfoTooltip text="Blockchains utilizing different consensus mechanisms, requiring translation bridges or wrapped wrapper assets to interact." size={10} />
           </span>
         </div>
       </div>

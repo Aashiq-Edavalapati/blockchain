@@ -1,5 +1,6 @@
 import CryptoIcon from "./CryptoIcon";
 import LanguageIcon, { extractLanguages } from "./LanguageIcon";
+import InfoTooltip from "./InfoTooltip";
 
 export default function ChainMapping({ chains, algorithm }) {
   return (
@@ -8,14 +9,16 @@ export default function ChainMapping({ chains, algorithm }) {
         <h3 className="text-sm font-bold text-white tracking-tight">
           <span style={{ color: algorithm.color }}>{algorithm.shortName}</span> Mapped Blockchains
         </h3>
-        <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-wider text-zinc-550">
+        <div className="flex items-center gap-3.5 text-[10px] font-bold uppercase tracking-wider text-zinc-550">
           <span className="flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full" style={{ background: algorithm.color }} />
             Layer 1
+            <InfoTooltip text="Layer 1 (L1) refers to the base settlement layer of a blockchain network. L1 chains validate and finalize their own transactions." />
           </span>
           <span className="flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-zinc-700" />
             Layer 2
+            <InfoTooltip text="Layer 2 (L2) refers to scaling protocols built on top of an L1, inheriting its underlying security guarantees." />
           </span>
         </div>
       </div>
@@ -29,13 +32,13 @@ export default function ChainMapping({ chains, algorithm }) {
           {chains.map((c) => (
             <div
               key={c.id}
-              className="rounded-2xl relative overflow-hidden flex flex-col justify-between border bg-[#0D0F14]/40 hover:bg-[#0D0F14]/80 transition-all duration-300"
+              className="rounded-2xl relative flex flex-col justify-between border bg-[#0D0F14]/40 hover:bg-[#0D0F14]/80 transition-all duration-300"
               style={{
                 borderColor: c.layer === "L1" ? `${algorithm.color}25` : "var(--border)",
               }}
             >
-              {/* Card Header */}
-              <div className="flex items-center gap-3.5 p-4 border-b border-zinc-900/50 bg-[#0D0F14]/20">
+              {/* Card Header (with rounded-t-2xl to prevent clipping without overflow-hidden) */}
+              <div className="flex items-center gap-3.5 p-4 border-b border-zinc-900/50 bg-[#0D0F14]/20 rounded-t-2xl">
                 <div className="shrink-0 bg-zinc-900/60 p-1 rounded-xl border border-zinc-800/40">
                   <CryptoIcon symbol={c.symbol} size={26} />
                 </div>
@@ -87,8 +90,8 @@ export default function ChainMapping({ chains, algorithm }) {
                 </div>
               </div>
 
-              {/* Card Footer */}
-              <div className="px-4 py-2 border-t border-zinc-900/50 bg-[#0A0C10]/40 text-[9px] font-mono flex items-center justify-between text-zinc-650">
+              {/* Card Footer (with rounded-b-2xl to prevent clipping without overflow-hidden) */}
+              <div className="px-4 py-2 border-t border-zinc-900/50 bg-[#0A0C10]/40 text-[9px] font-mono flex items-center justify-between text-zinc-650 rounded-b-2xl">
                 <span>#{c.id.toUpperCase().slice(0, 8)}</span>
                 <span>{c.symbol}</span>
               </div>
