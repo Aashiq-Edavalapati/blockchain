@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import {
   RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer,
 } from "recharts";
+import { Clock, Zap } from "lucide-react";
 import { TOTAL, PILLARS } from "../data/constants";
 import IconByName from "./IconByName";
 
@@ -33,12 +34,27 @@ function PillarGauge({ value, color }) {
   );
 }
 
+const formatMetric = (str) => {
+  if (!str) return { value: "N/A", detail: "" };
+  const parts = str.split(" (");
+  if (parts.length > 1) {
+    return {
+      value: parts[0],
+      detail: parts[1].replace(")", ""),
+    };
+  }
+  return { value: str, detail: "" };
+};
+
 export default function TrilemmaScorecard({ algorithm }) {
   const radarData = [
     { subject: TOTAL.scalability, value: algorithm.score.scalability },
     { subject: TOTAL.security, value: algorithm.score.security },
     { subject: TOTAL.decentralization, value: algorithm.score.decentralization },
   ];
+
+  const blockTime = formatMetric(algorithm.typicalBlockTime);
+  const tps = formatMetric(algorithm.typicalTPS);
 
   return (
     <div className="flex flex-col gap-6">
@@ -72,7 +88,7 @@ export default function TrilemmaScorecard({ algorithm }) {
 
       {/* Ring Gauges Card */}
       <div className="rounded-2xl border border-zinc-900/50 bg-[#0D0F14]/60 p-6">
-        <h4 className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-5">
+        <h4 className="text-[10px] font-bold uppercase tracking-wider text-zinc-550 mb-5">
           Pillar Distribution
         </h4>
         <div className="grid grid-cols-3 gap-2">
@@ -97,21 +113,48 @@ export default function TrilemmaScorecard({ algorithm }) {
 
       {/* Stats Cards Row */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="rounded-2xl border border-zinc-900/50 bg-[#0D0F14]/60 p-5 text-center flex flex-col justify-center min-h-[90px]">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-2">
-            Block Time
-          </p>
-          <p className="font-mono text-[13px] font-semibold text-zinc-200 leading-snug">
-            {algorithm.typicalBlockTime}
-          </p>
+        {/* Block Time Card */}
+        <div className="rounded-2xl border border-zinc-900/50 bg-[#0D0F14]/60 p-5 flex flex-col justify-between min-h-[110px] hover:border-zinc-800 transition-all duration-300">
+          <div className="flex items-center justify-between">
+            <span className="text-[9px] font-bold uppercase tracking-wider text-zinc-550">
+              Block Time
+            </span>
+            <span style={{ color: `${algorithm.color}aa` }}>
+              <Clock size={12} />
+            </span>
+          </div>
+          <div className="mt-2.5 text-left">
+            <p className="font-mono text-[16px] font-bold text-white tracking-tight leading-none">
+              {blockTime.value}
+            </p>
+            {blockTime.detail && (
+              <p className="text-[10px] text-zinc-500 font-medium mt-2 leading-tight truncate" title={blockTime.detail}>
+                {blockTime.detail}
+              </p>
+            )}
+          </div>
         </div>
-        <div className="rounded-2xl border border-zinc-900/50 bg-[#0D0F14]/60 p-5 text-center flex flex-col justify-center min-h-[90px]">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-2">
-            Throughput
-          </p>
-          <p className="font-mono text-[13px] font-semibold text-zinc-200 leading-snug">
-            {algorithm.typicalTPS}
-          </p>
+
+        {/* Throughput Card */}
+        <div className="rounded-2xl border border-zinc-900/50 bg-[#0D0F14]/60 p-5 flex flex-col justify-between min-h-[110px] hover:border-zinc-800 transition-all duration-300">
+          <div className="flex items-center justify-between">
+            <span className="text-[9px] font-bold uppercase tracking-wider text-zinc-550">
+              Throughput
+            </span>
+            <span style={{ color: `${algorithm.color}aa` }}>
+              <Zap size={12} />
+            </span>
+          </div>
+          <div className="mt-2.5 text-left">
+            <p className="font-mono text-[16px] font-bold text-white tracking-tight leading-none">
+              {tps.value}
+            </p>
+            {tps.detail && (
+              <p className="text-[10px] text-zinc-500 font-medium mt-2 leading-tight truncate" title={tps.detail}>
+                {tps.detail}
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </div>

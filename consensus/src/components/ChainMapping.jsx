@@ -1,4 +1,5 @@
 import CryptoIcon from "./CryptoIcon";
+import LanguageIcon, { extractLanguages } from "./LanguageIcon";
 
 export default function ChainMapping({ chains, algorithm }) {
   return (
@@ -65,13 +66,24 @@ export default function ChainMapping({ chains, algorithm }) {
                     {c.why}
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[9px] font-bold uppercase tracking-wider text-zinc-550">
+                <div className="flex items-center gap-2.5 min-w-0 flex-wrap">
+                  <span className="text-[9px] font-bold uppercase tracking-wider text-zinc-550 shrink-0">
                     Smart Contract Client
                   </span>
-                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-900/60 border border-zinc-900/60 text-zinc-350 truncate">
-                    {c.lang}
-                  </span>
+                  <div className="flex items-center gap-1.5 overflow-hidden flex-wrap">
+                    {extractLanguages(c.lang).map((langObj) => {
+                      return (
+                        <div key={langObj.name} className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-zinc-900/60 border border-zinc-900/60 text-zinc-350 text-[9px] font-bold font-mono whitespace-nowrap">
+                          {langObj.id && (
+                            <span style={{ color: algorithm.color }}>
+                              <LanguageIcon name={langObj.id} size={11} />
+                            </span>
+                          )}
+                          <span>{langObj.name}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
 
