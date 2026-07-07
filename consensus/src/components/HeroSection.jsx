@@ -12,32 +12,31 @@ import {
   Triangle,
   Coins,
   GitBranch,
+  Search,
 } from "lucide-react";
-// Adjust these imports to your project structure
-import algorithms from "../data/algorithms";
-import families from "../data/families";
 
-const FONT_SANS = "'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif";
-const FONT_MONO = "'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace";
+// Drop-in font stack matching the high-end standard
+const FONT_SANS = "'Inter', ui-sans-serif, system-ui, sans-serif";
+const FONT_MONO = "'JetBrains Mono', 'IBM Plex Mono', monospace";
 
 function ConsensusDiagram() {
   const nodes = [
-    { x: 200, y: 68 },
-    { x: 313, y: 135 },
-    { x: 313, y: 265 },
-    { x: 200, y: 332 },
-    { x: 87, y: 265 },
-    { x: 87, y: 135 },
+    { x: 200, y: 40 },
+    { x: 338, y: 120 },
+    { x: 338, y: 280 },
+    { x: 200, y: 360 },
+    { x: 62, y: 280 },
+    { x: 62, y: 120 },
   ];
 
   return (
-    <div className="relative w-full max-w-md mx-auto lg:mx-0 select-none group">
-      {/* Background ambient glow */}
-      <div className="absolute inset-0 bg-[#2FD98A]/10 blur-[80px] rounded-full opacity-50 transition-opacity duration-700 group-hover:opacity-80" />
+    <div className="relative w-full max-w-[500px] mx-auto lg:ml-auto select-none group perspective-1000">
+      {/* Immersive core glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[250px] h-[250px] bg-[#ffffff]/5 blur-[100px] rounded-full pointer-events-none transition-all duration-1000 group-hover:bg-[#ffffff]/10 group-hover:w-[300px]" />
       
-      {/* Geometric Container */}
-      <div className="relative border border-white/10 bg-zinc-950/50 backdrop-blur-xl rounded-xl p-8 shadow-2xl">
-        <svg viewBox="0 0 400 400" className="w-full h-auto drop-shadow-lg" aria-hidden="true">
+      <div className="relative p-8 lg:p-10">
+        <svg viewBox="0 0 400 400" className="w-full h-auto drop-shadow-2xl" aria-hidden="true">
+          {/* Static mesh connections */}
           {nodes.map((n, i) => (
             <line
               key={`base-${i}`}
@@ -45,11 +44,31 @@ function ConsensusDiagram() {
               y1={n.y}
               x2="200"
               y2="200"
-              stroke="#27272A"
+              stroke="#ffffff"
+              strokeOpacity="0.08"
               strokeWidth="1"
+              className="transition-all duration-700 group-hover:stroke-opacity-20"
             />
           ))}
 
+          {/* Perimeter connections */}
+          {nodes.map((n, i) => {
+            const nextNode = nodes[(i + 1) % nodes.length];
+            return (
+              <line
+                key={`perimeter-${i}`}
+                x1={n.x}
+                y1={n.y}
+                x2={nextNode.x}
+                y2={nextNode.y}
+                stroke="#ffffff"
+                strokeOpacity="0.05"
+                strokeWidth="1"
+              />
+            );
+          })}
+
+          {/* Active data streams */}
           {nodes.map((n, i) => (
             <line
               key={`pulse-${i}`}
@@ -57,471 +76,400 @@ function ConsensusDiagram() {
               y1={n.y}
               x2="200"
               y2="200"
-              stroke="#2FD98A"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeDasharray="6 140"
-              className="consensus-pulse"
-              style={{ animationDelay: `${i * 0.28}s` }}
-            />
-          ))}
-
-          {nodes.map((n, i) => (
-            <circle
-              key={`node-${i}`}
-              cx={n.x}
-              cy={n.y}
-              r="6"
-              fill="#09090B"
-              stroke="#52525B"
+              stroke="#ffffff"
+              strokeOpacity="0.6"
               strokeWidth="1.5"
-              className="transition-colors duration-300 group-hover:stroke-zinc-400"
+              strokeLinecap="round"
+              strokeDasharray="4 160"
+              className="consensus-pulse"
+              style={{ animationDelay: `${i * 0.3}s` }}
             />
           ))}
 
+          {/* Peripheral Nodes */}
+          {nodes.map((n, i) => (
+            <g key={`node-group-${i}`}>
+              <circle
+                cx={n.x}
+                cy={n.y}
+                r="4"
+                fill="#000000"
+                stroke="#404040"
+                strokeWidth="1.5"
+                className="transition-all duration-500 group-hover:stroke-white group-hover:scale-125 origin-center"
+                style={{ transformOrigin: `${n.x}px ${n.y}px` }}
+              />
+            </g>
+          ))}
+
+          {/* Core Finality Node */}
           <circle
             cx="200"
             cy="200"
-            r="16"
+            r="12"
             fill="none"
-            stroke="#2FD98A"
-            strokeWidth="2"
+            stroke="#ffffff"
+            strokeOpacity="0.4"
+            strokeWidth="1"
             className="consensus-ring"
           />
-
-          <circle cx="200" cy="200" r="15" fill="#18181B" stroke="#71717A" strokeWidth="1.5" />
-          <circle cx="200" cy="200" r="4" fill="#A1A1AA" className="group-hover:fill-white transition-colors" />
+          <circle cx="200" cy="200" r="16" fill="#050505" stroke="#333333" strokeWidth="1" />
+          <circle cx="200" cy="200" r="3" fill="#ffffff" className="animate-pulse" />
         </svg>
 
-        <p
-          className="consensus-label text-center text-[11px] tracking-[0.2em] uppercase mt-4"
-          style={{ fontFamily: FONT_MONO, color: "#2FD98A" }}
-        >
-          Block finalized
-        </p>
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-700 translate-y-4 group-hover:translate-y-0">
+          <span className="text-[10px] tracking-widest text-[#888] uppercase" style={{ fontFamily: FONT_MONO }}>
+            State / 0x01
+          </span>
+          <span className="text-[12px] text-white font-medium tracking-wide">
+            Finalized Block
+          </span>
+        </div>
       </div>
 
       <style>{`
         .consensus-pulse {
-          animation: consensus-travel 1.8s linear infinite;
+          animation: consensus-travel 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
         }
         .consensus-ring {
           transform-origin: 200px 200px;
-          animation: consensus-flash 3s ease-out infinite;
+          animation: consensus-flash 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
         }
-        .consensus-label {
-          animation: consensus-label-flash 3s ease-out infinite;
-        }
-
         @keyframes consensus-travel {
-          from { stroke-dashoffset: 0; }
-          to { stroke-dashoffset: -146; }
+          0% { stroke-dashoffset: 0; opacity: 0; }
+          20% { opacity: 1; }
+          80% { opacity: 1; }
+          100% { stroke-dashoffset: -180; opacity: 0; }
         }
         @keyframes consensus-flash {
-          0%   { r: 15; opacity: 0; }
-          78%  { opacity: 0; }
-          88%  { r: 15; opacity: 0.9; }
-          100% { r: 34; opacity: 0; }
-        }
-        @keyframes consensus-label-flash {
-          0%, 82% { opacity: 0.25; }
-          90% { opacity: 1; }
-          100% { opacity: 0.25; }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .consensus-pulse, .consensus-ring, .consensus-label {
-            animation: none !important;
-          }
-          .consensus-ring { opacity: 0.5; }
-          .consensus-label { opacity: 0.6; }
+          0% { r: 12; opacity: 0; stroke-width: 2; }
+          50% { opacity: 1; }
+          100% { r: 35; opacity: 0; stroke-width: 0; }
         }
       `}</style>
     </div>
   );
 }
 
-function SectionEyebrow({ hex, label }) {
+function GridBackground() {
   return (
-    <div
-      className="inline-flex items-center gap-3 text-[11px] tracking-[0.15em] uppercase text-zinc-500 mb-6"
-      style={{ fontFamily: FONT_MONO }}
-    >
-      <span className="text-[#2FD98A]">{hex}</span>
-      <span className="w-6 h-px bg-white/10" />
-      <span className="font-medium text-zinc-400">{label}</span>
+    <div className="absolute inset-0 z-0 pointer-events-none flex justify-center overflow-hidden">
+      <div className="w-[120vw] h-[120vh] bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDQwIEwgMCAwIDQwIDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsIDI1NSwgMjU1LCAwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_0%,#000_10%,transparent_80%)]" />
     </div>
   );
 }
 
-function SpecRow({ hex, icon: Icon, title, description, tags, onClick }) {
-  const interactive = Boolean(onClick);
+function SectionEyebrow({ label }) {
   return (
-    <div
-      onClick={onClick}
-      className={`group grid grid-cols-1 md:grid-cols-[auto_1fr_auto] gap-4 md:gap-8 items-start md:items-center py-6 border-b border-white/5 last:border-0 ${
-        interactive ? "cursor-pointer hover:bg-white/[0.02]" : ""
-      } transition-all duration-200 px-4 -mx-4 rounded-xl`}
-    >
-      <div className="flex items-center gap-4 md:w-40">
-        <span
-          className="text-[11px] tracking-widest text-zinc-600"
-          style={{ fontFamily: FONT_MONO }}
-        >
-          {hex}
-        </span>
-        <span className="w-10 h-10 flex items-center justify-center border border-white/10 bg-zinc-900/50 text-zinc-400 rounded-lg group-hover:text-zinc-200 group-hover:border-white/20 transition-all">
-          <Icon size={16} strokeWidth={1.5} />
-        </span>
-      </div>
-
-      <div className="max-w-xl">
-        <h3 className="text-[15px] font-medium text-zinc-200 flex items-center gap-1.5 group-hover:text-white transition-colors">
-          {title}
-          {interactive && (
-            <ArrowUpRight
-              size={14}
-              className="opacity-0 -translate-x-1 translate-y-1 group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0 transition-all text-zinc-400"
-            />
-          )}
-        </h3>
-        <p className="text-[14px] leading-relaxed mt-1 text-zinc-500 group-hover:text-zinc-400 transition-colors">
-          {description}
-        </p>
-      </div>
-
-      <div className="flex flex-wrap gap-2 md:justify-end md:w-64 mt-2 md:mt-0">
-        {tags.map((tag) => (
-          <span
-            key={tag}
-            className="text-[10px] px-2.5 py-1 rounded-md border border-white/10 bg-zinc-900/30 text-zinc-400"
-            style={{ fontFamily: FONT_MONO }}
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
+    <div className="inline-flex items-center gap-3 text-[12px] font-medium tracking-widest uppercase text-white/40 mb-8" style={{ fontFamily: FONT_MONO }}>
+      <span className="w-8 h-[1px] bg-gradient-to-r from-transparent via-white/40 to-white/40" />
+      {label}
     </div>
-  );
-}
-
-function PropertyCard({ icon: Icon, term, tagline, description }) {
-  return (
-    <div className="group relative border border-white/10 rounded-2xl p-6 bg-zinc-950/50 hover:bg-zinc-900/50 hover:border-white/20 transition-all duration-300">
-      <div className="w-10 h-10 flex items-center justify-center border border-white/10 bg-zinc-900 rounded-lg text-[#2FD98A] mb-5 group-hover:scale-110 transition-transform duration-300">
-        <Icon size={18} strokeWidth={1.5} />
-      </div>
-      <h4 className="text-[15px] font-medium text-zinc-100 tracking-wide">{term}</h4>
-      <p
-        className="text-[11px] uppercase tracking-[0.1em] text-zinc-500 mt-1 mb-4"
-        style={{ fontFamily: FONT_MONO }}
-      >
-        {tagline}
-      </p>
-      <p className="text-[14px] leading-relaxed text-zinc-400">{description}</p>
-    </div>
-  );
-}
-
-function ProblemCard({ icon: Icon, title, children }) {
-  return (
-    <div className="flex gap-5 py-8 border-t border-white/5">
-      <div className="w-10 h-10 shrink-0 flex items-center justify-center border border-white/10 bg-zinc-900/50 rounded-lg text-zinc-400">
-        <Icon size={18} strokeWidth={1.5} />
-      </div>
-      <div>
-        <h4 className="text-[15px] font-medium text-zinc-100 mb-2">{title}</h4>
-        <p className="text-[14px] leading-relaxed text-zinc-400 max-w-xl">{children}</p>
-      </div>
-    </div>
-  );
-}
-
-function FamilyCard({ icon: Icon, name, mechanism, examples, onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      className="group text-left border border-white/10 rounded-2xl p-6 bg-zinc-950/50 hover:bg-zinc-900/80 hover:border-white/20 transition-all duration-300 cursor-pointer relative overflow-hidden"
-    >
-      <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-      <div className="relative z-10 flex items-start justify-between mb-5">
-        <div className="w-10 h-10 flex items-center justify-center border border-white/10 bg-zinc-900 rounded-lg text-zinc-400 group-hover:text-white transition-colors">
-          <Icon size={18} strokeWidth={1.5} />
-        </div>
-        <ArrowUpRight
-          size={16}
-          className="opacity-0 -translate-x-1 translate-y-1 group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0 transition-all text-zinc-400"
-        />
-      </div>
-      <h4 className="relative z-10 text-[15px] font-medium text-zinc-100">{name}</h4>
-      <p className="relative z-10 text-[14px] leading-relaxed mt-2 text-zinc-400">{mechanism}</p>
-      <div className="relative z-10 flex flex-wrap gap-2 mt-5">
-        {examples.map((ex) => (
-          <span
-            key={ex}
-            className="text-[10px] px-2.5 py-1 rounded-md border border-white/10 bg-zinc-900/50 text-zinc-400"
-            style={{ fontFamily: FONT_MONO }}
-          >
-            {ex}
-          </span>
-        ))}
-      </div>
-    </button>
   );
 }
 
 export default function HeroSection({ navigate }) {
-  // Fallbacks if data arrays aren't hooked up yet
-  const totalAlgos = algorithms?.length || 26;
-  const totalFamilies = families?.length || 6;
+  const totalAlgos = 26; // Hardcoded for preview, replace with your data length
+  const totalFamilies = 6;
 
   return (
-    <div className="bg-[#030303] text-zinc-200 min-h-screen selection:bg-[#2FD98A]/30" style={{ fontFamily: FONT_SANS }}>
-      {/* Hero */}
-      <div className="relative overflow-hidden border-b border-white/10">
-        {/* Modern ultra-subtle grid background */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+    <div className="bg-[#000000] text-white min-h-screen overflow-x-hidden selection:bg-white/20 selection:text-white" style={{ fontFamily: FONT_SANS }}>
+      
+      {/* ============================================================ */}
+      {/* HERO SECTION - Side-by-Side Layout */}
+      {/* ============================================================ */}
+      <div className="relative min-h-[90vh] flex items-center border-b border-white/[0.06]">
+        <GridBackground />
         
-        {/* Soft top-center glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-white/[0.03] blur-[120px] rounded-full pointer-events-none" />
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24 grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-16 items-center">
-          {/* Left: text */}
-          <div className="text-center lg:text-left z-10">
-            <div
-              className="inline-flex items-center gap-2.5 text-[11px] tracking-[0.15em] uppercase text-zinc-400 border border-white/10 bg-white/[0.02] backdrop-blur-md rounded-full px-3.5 py-1.5 mb-8 shadow-sm"
-              style={{ fontFamily: FONT_MONO }}
+        <div className="relative z-10 max-w-7xl mx-auto px-6 py-32 grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-12 lg:gap-8 items-center w-full">
+          
+          {/* Left: Text Content */}
+          <div className="text-center lg:text-left flex flex-col items-center lg:items-start">
+            <button 
+              onClick={() => navigate("/explorer")}
+              className="group inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] hover:bg-white/[0.08] hover:border-white/[0.15] transition-all duration-300 backdrop-blur-md mb-8 cursor-pointer"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#2FD98A] shadow-[0_0_8px_#2FD98A] animate-pulse" />
-              Interactive reference · v1.2.0
-            </div>
+              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+              <span className="text-[12px] font-medium text-white/70 group-hover:text-white transition-colors">
+                Consensus Explorer v1.2
+              </span>
+              <ArrowRight size={12} className="text-white/40 group-hover:text-white group-hover:translate-x-0.5 transition-all" />
+            </button>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-[3.8rem] font-semibold tracking-tight leading-[1.05] mb-6 text-transparent bg-clip-text bg-gradient-to-br from-white via-zinc-200 to-zinc-500">
-              The architecture of
-              <br />
-              <span className="font-medium text-[0.92em] text-white" style={{ fontFamily: FONT_MONO }}>
-                decentralized_consensus
+            <h1 className="text-5xl sm:text-6xl md:text-[4.5rem] font-bold tracking-tighter leading-[1.05] mb-6 text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40 drop-shadow-sm">
+              The architecture of <br />
+              <span className="inline-flex items-center gap-4 text-white/90 mt-2">
+                <span className="bg-white/10 px-4 py-1.5 rounded-2xl border border-white/10 italic text-[0.85em] font-light shadow-2xl">
+                  trustless
+                </span>
+                systems.
               </span>
             </h1>
 
-            <p className="text-[16px] text-zinc-400 max-w-lg mx-auto lg:mx-0 mb-10 leading-relaxed">
-              Compare and take apart the consensus mechanisms behind modern block
-              and graph-based networks — trade-offs, failure modes, and the
-              chains that run each one.
+            <p className="text-[17px] text-[#888] max-w-xl leading-relaxed mb-10 font-light">
+              Compare and take apart the consensus mechanisms behind modern block and graph-based networks — trade-offs, failure modes, and the chains that run each one.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4 mb-14">
+            <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto mb-12">
               <button
                 onClick={() => navigate("/explorer")}
-                className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 text-[14px] font-medium text-black bg-white rounded-lg hover:bg-zinc-200 hover:scale-[0.98] active:scale-95 transition-all cursor-pointer group shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+                className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 text-[14px] font-medium text-black bg-white rounded-full hover:scale-[0.98] hover:bg-[#ebebeb] active:scale-95 transition-all duration-200 cursor-pointer shadow-[0_0_40px_rgba(255,255,255,0.15)] group"
               >
-                Start exploring
-                <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                Launch Explorer
+                <div className="ml-2 bg-black/10 rounded-full p-1 group-hover:bg-black/20 transition-colors">
+                  <Search size={14} className="text-black" />
+                </div>
               </button>
 
               <button
                 onClick={() => {
-                  const el = document.getElementById("fundamentals");
-                  el?.scrollIntoView({ behavior: "smooth" });
+                  document.getElementById("fundamentals")?.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 text-[14px] font-medium text-zinc-300 bg-white/[0.03] border border-white/10 rounded-lg hover:bg-white/[0.08] hover:text-white active:scale-95 transition-all cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 text-[14px] font-medium text-white/70 bg-transparent border border-white/[0.12] rounded-full hover:bg-white/[0.05] hover:text-white active:scale-95 transition-all duration-200 cursor-pointer"
               >
                 What is consensus?
               </button>
             </div>
 
             <div
-              className="flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-3 text-[12px] text-zinc-500 pt-6"
+              className="flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-3 text-[12px] text-[#666]"
               style={{ fontFamily: FONT_MONO }}
             >
-              <span className="flex items-center gap-2"><Cpu size={14}/> {totalAlgos} algorithms</span>
-              <span className="text-zinc-700">/</span>
-              <span className="flex items-center gap-2"><GitBranch size={14}/> {totalFamilies} families</span>
-              <span className="text-zinc-700">/</span>
-              <span className="flex items-center gap-2"><Code size={14}/> Open source</span>
+              <span className="flex items-center gap-2"><Cpu size={14} className="text-white/40"/> {totalAlgos} algorithms</span>
+              <span className="text-white/20">/</span>
+              <span className="flex items-center gap-2"><GitBranch size={14} className="text-white/40"/> {totalFamilies} families</span>
+              <span className="text-white/20">/</span>
+              <span className="flex items-center gap-2"><Code size={14} className="text-white/40"/> 100% open source</span>
             </div>
           </div>
 
-          {/* Right: signature diagram */}
-          <ConsensusDiagram />
+          {/* Right: Diagram (Moved back to the side) */}
+          <div className="relative w-full">
+            <ConsensusDiagram />
+          </div>
+
         </div>
       </div>
 
       {/* ============================================================ */}
-      {/* Fundamentals */}
+      {/* FUNDAMENTALS - Restored Detailed Text */}
       {/* ============================================================ */}
-      <section id="fundamentals" className="border-b border-white/10 bg-zinc-950/20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
-          <SectionEyebrow hex="0x00" label="Fundamentals" />
-          <h2 className="text-2xl sm:text-3xl font-medium tracking-tight text-zinc-100 max-w-2xl">
+      <section id="fundamentals" className="relative py-32 border-b border-white/[0.06] bg-[#020202]">
+        <div className="max-w-6xl mx-auto px-6">
+          <SectionEyebrow label="Fundamentals" />
+          
+          <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-white max-w-2xl mb-6">
             Why decentralized networks need consensus
           </h2>
-          <p className="text-[15px] leading-relaxed text-zinc-400 max-w-2xl mt-5">
-            A blockchain is, at its core, a ledger with no single owner. Thousands of
-            independent computers around the world each hold a copy of the same
-            history, and none of them is in charge. A{" "}
-            <span className="text-zinc-200 font-medium">consensus mechanism</span> is the set of
-            rules that lets all of these strangers — who don't trust each other, can't
-            verify each other's identity, and may be offline, slow, or actively lying —
-            agree on a single, canonical version of that history anyway.
+          <p className="text-[16px] leading-relaxed text-[#888] max-w-3xl mb-16 font-light">
+            A blockchain is, at its core, a ledger with no single owner. Thousands of independent computers around the world each hold a copy of the same history, and none of them is in charge. A <span className="text-white font-medium">consensus mechanism</span> is the set of rules that lets all of these strangers — who don't trust each other, can't verify each other's identity, and may be offline, slow, or actively lying — agree on a single, canonical version of that history anyway.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 mt-12">
-            <ProblemCard icon={Users} title="The Byzantine Generals Problem">
-              The classic thought experiment behind every consensus algorithm: several
-              generals surround a city and can only coordinate by messenger. They must
-              all attack together or all retreat together — a split decision is a
-              disaster. Consensus mechanisms allow honest actors to agree on a single plan
-              even when participants are actively working against them.
-            </ProblemCard>
-            <ProblemCard icon={Copy} title="The Double-Spend Problem">
-              Digital information is trivially copyable, so what stops someone from
-              spending the same coin twice? A decentralized network requires every node 
-              to independently agree on one strict, ordered history
-              of transactions, allowing provable rejection of duplicate actions.
-            </ProblemCard>
-          </div>
-
-          <div className="mt-24">
-            <h3 className="text-[13px] font-medium uppercase tracking-[0.1em] text-zinc-500 mb-8">
-              Core Guarantees
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <PropertyCard
-                icon={Lock}
-                term="Safety"
-                tagline="Nothing bad happens"
-                description="All honest nodes agree on the same value and the same order. Once a transaction is finalized, it can never be reversed."
-              />
-              <PropertyCard
-                icon={RefreshCw}
-                term="Liveness"
-                tagline="Something good happens"
-                description="The network keeps producing new blocks and making progress, even while some nodes are offline, slow, or malicious."
-              />
-              <PropertyCard
-                icon={Shield}
-                term="Fault tolerance"
-                tagline="Survival threshold"
-                description="The maximum share of faulty or adversarial nodes a protocol can absorb while still holding safety and liveness guarantees."
-              />
+          {/* The Founding Problems */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-24">
+            <div className="p-8 rounded-3xl border border-white/[0.08] bg-[#050505] hover:border-white/[0.15] transition-all duration-300">
+              <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/[0.05] border border-white/10 text-white mb-6">
+                <Users size={18} />
+              </div>
+              <h4 className="text-lg font-semibold text-white mb-3">The Byzantine Generals Problem</h4>
+              <p className="text-[15px] leading-relaxed text-[#888]">
+                The classic thought experiment behind every consensus algorithm: several generals surround a city and can only coordinate by messenger. They must all attack together or all retreat together — a split decision is a disaster. Consensus mechanisms allow honest actors to agree on a single plan even when participants are actively working against them.
+              </p>
+            </div>
+            
+            <div className="p-8 rounded-3xl border border-white/[0.08] bg-[#050505] hover:border-white/[0.15] transition-all duration-300">
+              <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/[0.05] border border-white/10 text-white mb-6">
+                <Copy size={18} />
+              </div>
+              <h4 className="text-lg font-semibold text-white mb-3">The Double-Spend Problem</h4>
+              <p className="text-[15px] leading-relaxed text-[#888]">
+                Digital information is trivially copyable, so what stops someone from spending the same coin twice? A bank solves this with a central ledger. A decentralized network requires every node to independently agree on one strict, ordered history of transactions, allowing provable rejection of duplicate actions.
+              </p>
             </div>
           </div>
 
-          <div className="mt-24 border border-white/10 rounded-2xl p-10 bg-zinc-950/50 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-zinc-800/20 blur-[80px] rounded-full pointer-events-none" />
+          {/* Core Guarantees */}
+          <div className="mb-24">
+            <h3 className="text-[13px] font-medium tracking-widest uppercase text-white/40 mb-8" style={{ fontFamily: FONT_MONO }}>
+              What every algorithm has to guarantee
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                { icon: Lock, title: "Safety", sub: "Nothing bad happens", desc: "All honest nodes agree on the same value and the same order. Once a transaction is finalized, it can never be reversed or contradicted by a competing version of history." },
+                { icon: RefreshCw, title: "Liveness", sub: "Something good happens", desc: "The network keeps producing new blocks and making progress, even while some nodes are offline, slow, or malicious. A protocol that just stops is safe but useless." },
+                { icon: Shield, title: "Fault Tolerance", sub: "Survival threshold", desc: "The maximum share of faulty or adversarial nodes a protocol can absorb while still holding safety and liveness. PoW tolerates <50% hashpower; BFT tolerates <33% malicious nodes." }
+              ].map((prop, i) => (
+                <div key={i} className="group p-8 rounded-3xl border border-transparent hover:bg-[#050505] hover:border-white/[0.08] transition-all duration-300">
+                  <div className="w-10 h-10 flex items-center justify-center rounded-xl border border-white/10 bg-white/[0.02] text-white mb-5 group-hover:scale-110 transition-transform duration-500">
+                    <prop.icon size={18} />
+                  </div>
+                  <h4 className="text-[16px] font-medium text-white mb-1">{prop.title}</h4>
+                  <p className="text-[11px] uppercase tracking-widest text-white/40 mb-4" style={{ fontFamily: FONT_MONO }}>{prop.sub}</p>
+                  <p className="text-[14px] leading-relaxed text-[#888]">{prop.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* The Trilemma */}
+          <div className="relative p-10 lg:p-12 rounded-3xl border border-white/[0.08] bg-gradient-to-br from-[#050505] to-[#000000] overflow-hidden">
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-white/[0.02] blur-[100px] rounded-full pointer-events-none" />
             <div className="relative z-10 flex flex-col md:flex-row items-start gap-8">
-              <div className="w-12 h-12 shrink-0 flex items-center justify-center border border-white/10 bg-zinc-900 rounded-xl text-[#2FD98A] shadow-lg">
-                <Triangle size={20} strokeWidth={1.5} />
+              <div className="w-12 h-12 shrink-0 flex items-center justify-center rounded-2xl bg-white text-black shadow-[0_0_30px_rgba(255,255,255,0.2)]">
+                <Triangle size={20} className="fill-black" />
               </div>
               <div>
-                <h3 className="text-[18px] font-medium text-zinc-100">
+                <h3 className="text-2xl font-semibold text-white mb-4">
                   The Blockchain Trilemma
                 </h3>
-                <p className="text-[15px] leading-relaxed text-zinc-400 mt-3 max-w-3xl">
-                  Every consensus mechanism sits somewhere on a triangle of{" "}
-                  <span className="text-zinc-200">decentralization</span> (how many
-                  independent participants can validate), <span className="text-zinc-200">security</span> (how
-                  expensive an attack is), and{" "}
-                  <span className="text-zinc-200">scalability</span> (transactions per second). 
-                  Pushing hard on any two usually costs you the third. No algorithm escapes this trade-off.
+                <p className="text-[15px] leading-relaxed text-[#888] max-w-4xl font-light">
+                  Every consensus mechanism sits somewhere on a triangle of <span className="text-white font-medium">decentralization</span> (how many independent participants can validate the chain, and how cheap it is to become one), <span className="text-white font-medium">security</span> (how expensive an attack on the network's history would be), and <span className="text-white font-medium">scalability</span> (how many transactions it can finalize per second). Pushing hard on any two usually costs you the third: Bitcoin's Proof of Work leans on decentralization and security at the cost of throughput. No algorithm in this index escapes the trade-off — they just choose a different point on the triangle.
                 </p>
               </div>
             </div>
           </div>
-
-          <div className="mt-24">
-            <div className="flex items-end justify-between gap-4 mb-8">
-              <h3 className="text-[13px] font-medium uppercase tracking-[0.1em] text-zinc-500">
-                Primary Families
-              </h3>
-              <button
-                onClick={() => navigate("/explorer")}
-                className="hidden sm:inline-flex items-center gap-1.5 text-[12px] text-zinc-400 hover:text-white transition-colors cursor-pointer group"
-                style={{ fontFamily: FONT_MONO }}
-              >
-                View all {totalFamilies} families
-                <ArrowUpRight size={14} className="group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />
-              </button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FamilyCard
-                icon={Cpu}
-                name="Proof of Work"
-                mechanism="Nodes race to solve a costly cryptographic puzzle; whoever wins proposes the next block. Security comes from wasted energy."
-                examples={["Bitcoin", "Dogecoin", "Monero"]}
-                onClick={() => navigate("/explorer")}
-              />
-              <FamilyCard
-                icon={Coins}
-                name="Proof of Stake"
-                mechanism="Validators lock up capital as collateral, and are chosen to propose blocks. Security comes from money at risk."
-                examples={["Ethereum", "Cardano", "Polkadot"]}
-                onClick={() => navigate("/explorer")}
-              />
-              <FamilyCard
-                icon={Users}
-                name="BFT / Voting-based"
-                mechanism="A known set of validators explicitly votes on each block across multiple rounds, finalizing it the instant a supermajority agrees."
-                examples={["Tendermint", "PBFT"]}
-                onClick={() => navigate("/explorer")}
-              />
-              <FamilyCard
-                icon={GitBranch}
-                name="DAG-based"
-                mechanism="Transactions reference multiple prior transactions directly instead of being bundled into a single-file chain of blocks."
-                examples={["IOTA", "Hedera"]}
-                onClick={() => navigate("/explorer")}
-              />
-            </div>
-          </div>
         </div>
       </section>
 
-      {/* Spec index */}
-      <section className="bg-zinc-950/20">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
-          <SectionEyebrow hex="0x01" label="Index Contents" />
-          <div className="mb-8">
-            <h2 className="text-2xl font-medium text-zinc-100">What's in the explorer</h2>
-            <p className="text-[15px] text-zinc-400 mt-2">
-              Four analytical lenses to inspect every protocol.
-            </p>
-          </div>
-
-          <div className="bg-zinc-950/50 border border-white/5 rounded-2xl p-2 shadow-2xl">
-            <SpecRow
-              hex="0x01"
-              icon={Shield}
-              title="Trilemma Scorecard"
-              description="Compare decentralization, security, and scalability trade-offs, along with failure modes."
-              tags={["Decentralization", "Security", "Scalability"]}
-            />
-            <SpecRow
-              hex="0x02"
-              icon={Zap}
-              title="Protocol Explorer"
-              description="Filter by consensus family or search directly. Inspect leader election and finality rules."
-              tags={["Filter", "Search", "Rules"]}
+      {/* ============================================================ */}
+      {/* BENTO GRID: THE FAMILIES - Restored Detail */}
+      {/* ============================================================ */}
+      <section className="relative py-32 border-b border-white/[0.06]">
+        <div className="max-w-7xl mx-auto px-6">
+          <SectionEyebrow label="Consensus Architectures" />
+          
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+            <div className="max-w-2xl">
+              <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-white mb-4">
+                Four approaches to absolute truth.
+              </h2>
+            </div>
+            <button
               onClick={() => navigate("/explorer")}
-            />
-            <SpecRow
-              hex="0x03"
-              icon={Cpu}
-              title="Real-World Mapping"
-              description="See which production blockchains run which algorithm natively on their Layer 1."
-              tags={["Bitcoin", "Ethereum", "Solana"]}
-            />
-            <SpecRow
-              hex="0x04"
-              icon={Code}
-              title="Execution Languages"
-              description="Check client implementations across major languages and cross-client compatibility."
-              tags={["Go", "Rust", "Solidity"]}
-            />
+              className="group hidden sm:inline-flex items-center gap-2 text-[13px] text-white/50 hover:text-white transition-colors cursor-pointer"
+              style={{ fontFamily: FONT_MONO }}
+            >
+              See all {totalFamilies} families
+              <ArrowUpRight size={14} className="group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 auto-rows-[300px]">
+            {/* PoW */}
+            <div className="md:col-span-2 group relative p-8 rounded-3xl border border-white/[0.08] bg-[#050505] hover:bg-[#0a0a0a] transition-all duration-500 overflow-hidden cursor-pointer" onClick={() => navigate("/explorer?family=pow")}>
+              <div className="absolute top-0 right-0 w-96 h-96 bg-white/[0.02] blur-[80px] rounded-full group-hover:bg-white/[0.04] transition-all duration-700" />
+              <div className="relative z-10 h-full flex flex-col justify-between">
+                <div className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/[0.05] border border-white/10 text-white group-hover:scale-110 group-hover:bg-white transition-all duration-500">
+                  <Cpu size={20} className="group-hover:text-black transition-colors" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-semibold text-white mb-3">Proof of Work</h3>
+                  <p className="text-[#888] text-[15px] max-w-lg leading-relaxed">
+                    Nodes race to solve a costly cryptographic puzzle; whoever wins proposes the next block. Rewriting history means outrunning the entire network's combined computing power — security comes from wasted electricity.
+                  </p>
+                  <div className="flex gap-2 mt-6">
+                    {["Bitcoin", "Dogecoin", "Monero"].map(t => (
+                      <span key={t} className="text-[11px] font-mono text-white/50 px-3 py-1 rounded-full border border-white/10 bg-white/[0.02]">{t}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* PoS */}
+            <div className="md:row-span-2 group relative p-8 rounded-3xl border border-white/[0.08] bg-[#050505] hover:bg-[#0a0a0a] transition-all duration-500 overflow-hidden cursor-pointer" onClick={() => navigate("/explorer?family=pos")}>
+              <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-white/[0.03] to-transparent" />
+              <div className="relative z-10 h-full flex flex-col justify-between">
+                <div className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/[0.05] border border-white/10 text-white group-hover:scale-110 group-hover:bg-white transition-all duration-500">
+                  <Coins size={20} className="group-hover:text-black transition-colors" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-semibold text-white mb-3 mt-8">Proof of Stake</h3>
+                  <p className="text-[#888] text-[15px] leading-relaxed mb-6">
+                    Validators lock up capital as collateral, and are chosen to propose or attest to blocks roughly in proportion to their stake. Acting dishonestly gets that stake destroyed — security comes from money at risk.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {["Ethereum", "Solana", "Cardano"].map(t => (
+                      <span key={t} className="text-[11px] font-mono text-white/50 px-3 py-1 rounded-full border border-white/10 bg-white/[0.02]">{t}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* BFT */}
+            <div className="group relative p-8 rounded-3xl border border-white/[0.08] bg-[#050505] hover:bg-[#0a0a0a] transition-all duration-500 overflow-hidden cursor-pointer" onClick={() => navigate("/explorer?family=bft")}>
+              <div className="relative z-10 h-full flex flex-col justify-between">
+                <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/[0.05] border border-white/10 text-white group-hover:scale-110 transition-transform duration-500">
+                  <Users size={16} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-2">Voting-based (BFT)</h3>
+                  <p className="text-[#888] text-[14px] leading-relaxed">
+                    A known set of validators explicitly votes on each block, finalizing it the instant a supermajority agrees. Trades permissionless entry for absolute finality.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* DAG */}
+            <div className="group relative p-8 rounded-3xl border border-white/[0.08] bg-[#050505] hover:bg-[#0a0a0a] transition-all duration-500 overflow-hidden cursor-pointer" onClick={() => navigate("/explorer?family=dag")}>
+              <div className="relative z-10 h-full flex flex-col justify-between">
+                <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/[0.05] border border-white/10 text-white group-hover:scale-110 transition-transform duration-500">
+                  <GitBranch size={16} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-2">DAG-based</h3>
+                  <p className="text-[#888] text-[14px] leading-relaxed">
+                    Transactions reference multiple prior transactions directly instead of being bundled into a single-file chain, letting many branches confirm in parallel.
+                  </p>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
+
+      {/* ============================================================ */}
+      {/* INDEX CONTENTS - Restored Descriptions */}
+      {/* ============================================================ */}
+      <section className="relative py-32 bg-[#020202]">
+        <div className="max-w-4xl mx-auto px-6">
+          <SectionEyebrow label="In this index" />
+          
+          <h2 className="text-3xl font-semibold tracking-tight text-white mb-2">
+            What's in the explorer
+          </h2>
+          <p className="text-[15px] text-[#888] mb-12">
+            Four ways to read every protocol in the reference.
+          </p>
+
+          <div className="flex flex-col gap-2">
+            {[
+              { id: "01", icon: Shield, title: "Trilemma scorecard", desc: "Compare decentralization, security, and scalability trade-offs, along with failure modes and security budgets, for every algorithm." },
+              { id: "02", icon: Zap, title: "Protocol explorer", desc: "Filter by consensus family or search directly. Inspect leader election, finality rules, and fault tolerance for each entry." },
+              { id: "03", icon: Cpu, title: "Real-world mapping", desc: "See which production blockchains run which algorithm natively — Bitcoin on Proof of Work, Solana on Proof of History." },
+              { id: "04", icon: Code, title: "Execution languages", desc: "Check client implementations across major languages (Rust, Go, Solidity), plus a compatibility matrix for cross-client consensus." }
+            ].map((item) => (
+              <div 
+                key={item.id} 
+                className="group flex flex-col md:flex-row md:items-center gap-4 md:gap-6 p-6 rounded-3xl border border-transparent hover:border-white/[0.08] hover:bg-[#050505] transition-all duration-300 cursor-default"
+              >
+                <div className="hidden md:block text-[12px] font-mono text-white/20 w-6">{item.id}</div>
+                <div className="w-12 h-12 shrink-0 rounded-2xl border border-white/10 bg-white/[0.02] flex items-center justify-center text-white/50 group-hover:text-white transition-colors duration-300">
+                  <item.icon size={18} strokeWidth={1.5} />
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-[17px] font-medium text-white/90 group-hover:text-white mb-1">{item.title}</h4>
+                  <p className="text-[15px] text-[#888] leading-relaxed">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
     </div>
   );
 }
