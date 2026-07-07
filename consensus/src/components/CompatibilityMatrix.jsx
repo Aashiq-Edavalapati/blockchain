@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link2, Unlink, Info } from "lucide-react";
+
 import compatibility from "../data/compatibility.js";
+import CryptoIcon from "./CryptoIcon";
 
 function pairKey(a, b) {
   return [a, b].sort().join("-");
@@ -16,50 +17,35 @@ export default function CompatibilityMatrix({ allChains, activeAlgorithm }) {
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-        <div className="flex items-center gap-3">
-          <h3 className="section-heading">Cross-Chain Compatibility</h3>
-          <span
-            className="text-xs px-2.5 py-0.5 rounded-full font-mono"
-            style={{ background: `${activeAlgorithm.color}15`, color: activeAlgorithm.color }}
-          >
-            {allChains.length} × {allChains.length}
-          </span>
-        </div>
-        <div className="flex items-center gap-4 text-xs" style={{ color: "var(--muted)" }}>
+    <section>
+      <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+        <h3 className="text-base font-semibold tracking-tight">Cross-Chain Matrix</h3>
+        <div className="flex items-center gap-3 text-xs" style={{ color: "var(--text-2)" }}>
           <span className="flex items-center gap-1.5">
-            <span
-              className="w-3 h-3 rounded-sm inline-block"
-              style={{ background: `${activeAlgorithm.color}60` }}
-            />
-            Same mechanism
+            <span className="w-3 h-3 rounded" style={{ background: activeAlgorithm.color }} />
+            Same consensus
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-sm inline-block" style={{ background: "var(--surface-2)" }} />
+            <span className="w-3 h-3 rounded" style={{ background: "var(--surface-2)" }} />
             Different
           </span>
         </div>
       </div>
-      <p className="section-sub mb-4">
-        Hover any cell for a plain-language read on that pair&apos;s interoperability at the protocol level.
-      </p>
 
       <div
-        className="card-glass p-3 md:p-4 overflow-auto scrollbar-thin relative"
-        style={{ maxHeight: 560 }}
+        className="rounded-xl overflow-auto scrollbar-thin"
+        style={{ background: "var(--surface)", border: "1px solid var(--border)", maxHeight: 520 }}
       >
-        <table className="border-separate" style={{ borderSpacing: 3 }}>
+        <table className="border-separate" style={{ borderSpacing: 2 }}>
           <thead>
             <tr>
-              <th className="sticky left-0 top-0 z-20" style={{ background: "transparent" }} />
+              <th className="sticky left-0 top-0 z-10" style={{ background: "var(--surface)" }}>
+                <div className="w-8" />
+              </th>
               {allChains.map((c) => (
-                <th key={c.id} className="sticky top-0 z-10" style={{ background: "transparent" }}>
-                  <div
-                    className="font-mono text-[10px] px-1 py-2 -rotate-45 origin-bottom-left whitespace-nowrap w-6"
-                    style={{ color: c.algo === activeAlgorithm.id ? activeAlgorithm.color : "var(--muted)" }}
-                  >
-                    {c.symbol}
+                <th key={c.id} className="sticky top-0 z-10" style={{ background: "var(--surface)" }}>
+                  <div className="flex items-center justify-center py-1.5">
+                    <CryptoIcon symbol={c.symbol} size={16} />
                   </div>
                 </th>
               ))}
@@ -68,13 +54,13 @@ export default function CompatibilityMatrix({ allChains, activeAlgorithm }) {
           <tbody>
             {allChains.map((rowChain) => (
               <tr key={rowChain.id}>
-                <th className="sticky left-0 z-10 text-left pr-3" style={{ background: "var(--bg)" }}>
-                  <span
-                    className="font-mono text-[11px] whitespace-nowrap font-medium"
-                    style={{ color: rowChain.algo === activeAlgorithm.id ? activeAlgorithm.color : "var(--muted)" }}
-                  >
-                    {rowChain.symbol}
-                  </span>
+                <th className="sticky left-0 z-10 pr-2" style={{ background: "var(--surface)" }}>
+                  <div className="flex items-center gap-1.5 py-1">
+                    <CryptoIcon symbol={rowChain.symbol} size={14} />
+                    <span className="font-mono text-[9px]" style={{ color: rowChain.algo === activeAlgorithm.id ? activeAlgorithm.color : "var(--text-3)" }}>
+                      {rowChain.symbol}
+                    </span>
+                  </div>
                 </th>
                 {allChains.map((colChain) => {
                   const isSelf = rowChain.id === colChain.id;
@@ -84,31 +70,29 @@ export default function CompatibilityMatrix({ allChains, activeAlgorithm }) {
                     rowChain.algo === activeAlgorithm.id || colChain.algo === activeAlgorithm.id;
                   const key = pairKey(rowChain.id, colChain.id);
 
-                  const alpha = isSelf
-                    ? 1
-                    : compatible
-                    ? relatedToSelection ? 0.8 : 0.35
-                    : relatedToSelection ? 0.55 : 0.2;
+                  let bg = "var(--surface-2)";
+                  let border = "transparent";
+                  if (isSelf) bg = "var(--border)";
+                  else if (compatible) {
+                    bg = relatedToSelection
+                      ? `${activeAlgorithm.color}`
+                      : `${activeAlgorithm.color}55`;
+                    border = relatedToSelection ? `${activeAlgorithm.color}88` : "transparent";
+                  }
 
                   return (
                     <td key={colChain.id} className="p-0">
                       <button
-                        className="cell-btn w-6 h-6 rounded-md transition-transform duration-150"
+                        className="w-5 h-5 rounded-sm transition-all duration-150"
                         onMouseEnter={() => setHoverPair(key)}
                         onMouseLeave={() => setHoverPair((k) => (k === key ? null : k))}
                         onFocus={() => setHoverPair(key)}
                         style={{
-                          background: isSelf
-                            ? "var(--border)"
-                            : compatible
-                            ? activeAlgorithm.color + Math.round(alpha * 255).toString(16).padStart(2, "0")
-                            : "var(--surface-2)",
-                          opacity: relatedToSelection || compatible ? 1 : 0.45,
-                          transform: hoverPair === key ? "scale(1.4)" : "scale(1)",
-                          border: relatedToSelection
-                            ? `1px solid ${activeAlgorithm.color}60`
-                            : "1px solid transparent",
-                          boxShadow: hoverPair === key ? `0 0 12px ${activeAlgorithm.color}40` : "none",
+                          background: bg,
+                          opacity: isSelf ? 1 : (relatedToSelection || compatible ? 1 : 0.3),
+                          transform: hoverPair === key ? "scale(1.3)" : "scale(1)",
+                          border: hoverPair === key ? `1px solid ${activeAlgorithm.color}` : `1px solid ${border}`,
+                          boxShadow: hoverPair === key ? `0 0 12px ${activeAlgorithm.color}44` : "none",
                         }}
                         aria-label={`${rowChain.name} vs ${colChain.name}`}
                       />
@@ -127,11 +111,11 @@ export default function CompatibilityMatrix({ allChains, activeAlgorithm }) {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 6 }}
-            transition={{ duration: 0.2 }}
-            className="mt-3 card-glass px-4 py-3 text-sm flex items-start gap-2"
+            transition={{ duration: 0.15 }}
+            className="mt-3 rounded-lg px-4 py-3 text-sm"
+            style={{ background: "var(--surface-2)", border: "1px solid var(--border)" }}
           >
-            <Info size={14} className="shrink-0 mt-0.5" style={{ color: activeAlgorithm.color }} />
-            <span style={{ color: "var(--muted)" }}>
+            <span style={{ color: "var(--text-2)" }}>
               {(() => {
                 const [rId, cId] = hoverPair.split("-");
                 const p = compatMap[hoverPair];
@@ -144,6 +128,6 @@ export default function CompatibilityMatrix({ allChains, activeAlgorithm }) {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </section>
   );
 }

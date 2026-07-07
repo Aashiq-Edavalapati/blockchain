@@ -1,20 +1,11 @@
-import { ArrowRight, Info } from "lucide-react";
-
 export default function Footer() {
   return (
     <footer
-      className="px-4 sm:px-6 md:px-8 lg:px-10 py-6 text-xs flex items-center gap-2"
-      style={{
-        color: "var(--muted)",
-        borderTop: "1px solid rgba(255,255,255,0.06)",
-        background: "rgba(10, 13, 19, 0.5)",
-      }}
+      className="px-4 md:px-8 py-4 max-w-7xl mx-auto w-full text-xs"
+      style={{ color: "var(--text-3)", borderTop: "1px solid var(--border)" }}
     >
-      <Info size={12} className="shrink-0" />
-      <span>
-        Scores are illustrative, relative comparisons for teaching the trilemma trade-off — not precise
-        benchmarks, and real-world figures shift as protocols upgrade.
-      </span>
+      Scores are illustrative, relative comparisons for teaching the trilemma trade-off — not precise
+      benchmarks. Real-world figures shift as protocols upgrade.
     </footer>
   );
 }

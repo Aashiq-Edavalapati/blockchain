@@ -23,77 +23,73 @@ export default function GlossarySection() {
 
   return (
     <div>
-      <div className="flex items-center gap-3 mb-4">
-        <h3 className="section-heading">Glossary</h3>
+      <div className="flex items-center gap-3 mb-3">
+        <h3 className="text-base font-semibold tracking-tight">Glossary</h3>
         <span
-          className="text-xs px-2.5 py-0.5 rounded-full font-mono"
-          style={{ background: "rgba(139, 147, 255, 0.15)", color: "#8B93FF" }}
+          className="text-[10px] px-2 py-0.5 rounded font-mono"
+          style={{ background: `${"#8B93FF"}12`, color: "#8B93FF" }}
         >
           {glossary.length} terms
         </span>
       </div>
-      <p className="section-sub mb-6">
+      <p className="text-sm mb-5" style={{ color: "var(--text-2)" }}>
         Key blockchain consensus terminology explained simply.
       </p>
 
       {/* Search */}
       <div
-        className="flex items-center gap-2 px-3 py-2.5 rounded-xl mb-6 max-w-md transition-colors"
+        className="flex items-center gap-2 px-3 py-2 rounded-lg mb-5 max-w-md transition-colors"
         style={{
-          background: search ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.03)",
-          border: `1px solid ${search ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.06)"}`,
+          background: "var(--surface-2)",
+          border: `1px solid ${search ? "var(--border-2)" : "var(--border)"}`,
         }}
       >
-        <Search size={14} style={{ color: "var(--muted)" }} />
+        <Search size={13} style={{ color: "var(--text-3)" }} />
         <input
           type="text"
           placeholder="Search glossary..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="bg-transparent text-sm w-full outline-none placeholder:text-[#5A6275]"
+          className="bg-transparent text-sm w-full outline-none"
           style={{ color: "var(--text)" }}
           aria-label="Search glossary"
         />
       </div>
 
       {/* Terms */}
-      <div className="space-y-2">
-        {filtered.map((entry, i) => (
-          <motion.div
-            key={entry.term}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.015 }}
-          >
+      <div className="space-y-1.5">
+        {filtered.map((entry) => (
+          <motion.div key={entry.term} layout>
             <button
               onClick={() => toggleTerm(entry.term)}
-              className="card-glass w-full text-left p-4 transition-all duration-200"
+              className="w-full text-left rounded-lg p-4 transition-all duration-200"
               style={{
-                borderColor: expanded === entry.term ? "rgba(139, 147, 255, 0.2)" : "rgba(255,255,255,0.06)",
+                background: "var(--surface)",
+                border: `1px solid ${expanded === entry.term ? "#8B93FF30" : "var(--border)"}`,
               }}
             >
               <div className="flex items-start gap-3">
                 <div
                   className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
                   style={{
-                    background: expanded === entry.term ? "rgba(139, 147, 255, 0.15)" : "rgba(255,255,255,0.04)",
-                    color: expanded === entry.term ? "#8B93FF" : "var(--muted)",
+                    background: expanded === entry.term ? "#8B93FF15" : "var(--surface-2)",
+                    color: expanded === entry.term ? "#8B93FF" : "var(--text-3)",
                   }}
                 >
                   <BookText size={14} />
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="font-display text-sm font-semibold">{entry.term}</span>
+                    <span className="text-sm font-semibold">{entry.term}</span>
                     <motion.div
                       animate={{ rotate: expanded === entry.term ? 0 : -90 }}
-                      transition={{ duration: 0.2 }}
-                      style={{ color: "var(--muted)" }}
+                      transition={{ duration: 0.15 }}
+                      style={{ color: "var(--text-3)" }}
                     >
-                      <ChevronDown size={14} />
+                      <ChevronDown size={13} />
                     </motion.div>
                   </div>
-                  <p className="text-sm mt-1 leading-relaxed" style={{ color: "var(--muted)" }}>
+                  <p className="text-sm mt-1 leading-relaxed" style={{ color: "var(--text-2)" }}>
                     {entry.definition}
                   </p>
 
@@ -103,44 +99,37 @@ export default function GlossarySection() {
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
+                        transition={{ duration: 0.15 }}
                         className="overflow-hidden"
                       >
-                        <div className="mt-3 pt-3" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-                          {/* Simple explanation */}
+                        <div className="mt-3 pt-3" style={{ borderTop: "1px solid var(--border)" }}>
                           {entry.simpleExplanation && (
                             <div className="flex gap-2 mb-3">
-                              <Lightbulb size={13} className="shrink-0 mt-0.5" style={{ color: "#F59E0B" }} />
-                              <p className="text-xs leading-relaxed" style={{ color: "var(--muted)" }}>
+                              <Lightbulb size={12} className="shrink-0 mt-0.5" style={{ color: "#F59E0B" }} />
+                              <p className="text-xs leading-relaxed" style={{ color: "var(--text-2)" }}>
                                 {entry.simpleExplanation}
                               </p>
                             </div>
                           )}
 
-                          {/* Analogy */}
                           {entry.realWorldAnalogy && (
                             <div className="flex gap-2 mb-3">
-                              <Lightbulb size={13} className="shrink-0 mt-0.5" style={{ color: "#5FD98A" }} />
-                              <p className="text-xs leading-relaxed" style={{ color: "var(--muted)" }}>
+                              <Lightbulb size={12} className="shrink-0 mt-0.5" style={{ color: "#5FD98A" }} />
+                              <p className="text-xs leading-relaxed" style={{ color: "var(--text-2)" }}>
                                 <span style={{ color: "#5FD98A" }}>Analogy: </span>
                                 {entry.realWorldAnalogy}
                               </p>
                             </div>
                           )}
 
-                          {/* Related terms */}
                           {entry.relatedTerms && entry.relatedTerms.length > 0 && (
                             <div className="flex items-center gap-1.5 flex-wrap">
-                              <Link2 size={11} style={{ color: "var(--muted)" }} />
+                              <Link2 size={10} style={{ color: "var(--text-3)" }} />
                               {entry.relatedTerms.map((rt) => (
                                 <span
                                   key={rt}
-                                  className="text-[10px] font-mono px-2 py-0.5 rounded-md"
-                                  style={{
-                                    background: "rgba(139, 147, 255, 0.1)",
-                                    color: "#8B93FF",
-                                    border: "1px solid rgba(139, 147, 255, 0.15)",
-                                  }}
+                                  className="text-[9px] font-mono px-1.5 py-0.5 rounded"
+                                  style={{ background: "#8B93FF10", color: "#8B93FF", border: "1px solid #8B93FF18" }}
                                 >
                                   {rt}
                                 </span>
@@ -157,7 +146,7 @@ export default function GlossarySection() {
           </motion.div>
         ))}
         {filtered.length === 0 && (
-          <div className="card-glass p-8 text-center text-sm" style={{ color: "var(--muted)" }}>
+          <div className="rounded-xl p-8 text-center text-sm" style={{ background: "var(--surface)", border: "1px solid var(--border)", color: "var(--text-3)" }}>
             No terms match your search.
           </div>
         )}

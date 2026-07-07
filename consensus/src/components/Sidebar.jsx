@@ -1,8 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Search, X, ChevronDown, Star, Layers, Bookmark,
-} from "lucide-react";
+import { Search, X, ChevronDown, Star, Layers } from "lucide-react";
 import IconByName from "./IconByName";
 
 export default function Sidebar({
@@ -17,7 +15,6 @@ export default function Sidebar({
   activeFamily,
   onFamilyChange,
   families,
-  familyNameToId,
   familyAlgorithms,
   familyData,
   favorites,
@@ -37,14 +34,6 @@ export default function Sidebar({
     });
   };
 
-  const familyCounts = useMemo(() => {
-    const counts = {};
-    for (const [id, algos] of Object.entries(familyAlgorithms)) {
-      counts[id] = algos.length;
-    }
-    return counts;
-  }, [familyAlgorithms]);
-
   const isSearching = searchQuery.length > 0;
 
   const favoriteAlgorithms = useMemo(
@@ -56,79 +45,77 @@ export default function Sidebar({
     <aside
       className={`
         fixed lg:sticky top-0 left-0 z-40 h-screen
-        w-[280px] shrink-0 overflow-hidden
+        w-[260px] shrink-0 overflow-hidden
         flex flex-col
         transition-transform duration-300 ease-out
         ${open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
       `}
       style={{
-        background: "rgba(12, 15, 22, 0.92)",
-        backdropFilter: "blur(32px)",
-        WebkitBackdropFilter: "blur(32px)",
-        borderRight: "1px solid rgba(255,255,255,0.06)",
+        background: "var(--surface)",
+        borderRight: "1px solid var(--border)",
       }}
     >
       {/* Logo */}
       <div
-        className="flex items-center justify-between px-5 py-4 shrink-0"
-        style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+        className="flex items-center justify-between px-4 py-3 shrink-0"
+        style={{ borderBottom: "1px solid var(--border)" }}
       >
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2">
           <div
             className="w-7 h-7 rounded-lg flex items-center justify-center"
             style={{ background: "var(--accent)", color: "#fff" }}
           >
             <Layers size={14} />
           </div>
-          <span className="font-display text-sm font-semibold tracking-tight">Consensus</span>
+          <span className="text-sm font-semibold tracking-tight">Consensus</span>
         </div>
         <button
           onClick={onClose}
           className="lg:hidden p-1 rounded-md transition-colors"
-          style={{ color: "var(--muted)" }}
+          style={{ color: "var(--text-3)" }}
           aria-label="Close sidebar"
         >
-          <X size={16} />
+          <X size={15} />
         </button>
       </div>
 
       {/* Search */}
-      <div className="px-4 pt-4 pb-2 shrink-0">
+      <div className="px-3 pt-3 pb-2 shrink-0">
         <div
-          className="flex items-center gap-2 px-3 py-2 rounded-xl transition-colors duration-200"
+          className="flex items-center gap-2 px-3 py-2 rounded-lg transition-colors duration-200"
           style={{
-            background: searchQuery ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.04)",
-            border: `1px solid ${searchQuery ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.06)"}`,
+            background: searchQuery ? "var(--surface-2)" : "var(--surface-2)",
+            border: `1px solid ${searchQuery ? "var(--border-2)" : "var(--border)"}`,
           }}
         >
-          <Search size={14} style={{ color: "var(--muted)" }} />
+          <Search size={13} style={{ color: "var(--text-3)" }} />
           <input
             type="text"
             placeholder="Search algorithms..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="bg-transparent text-sm w-full outline-none placeholder:text-[#5A6275]"
+            className="bg-transparent text-xs w-full outline-none"
             style={{ color: "var(--text)" }}
             aria-label="Search algorithms"
           />
           {searchQuery && (
-            <button onClick={() => onSearchChange("")} className="p-0.5" style={{ color: "var(--muted)" }}>
-              <X size={13} />
+            <button onClick={() => onSearchChange("")} className="p-0.5" style={{ color: "var(--text-3)" }}>
+              <X size={12} />
             </button>
           )}
         </div>
       </div>
 
       {/* Family filter chips */}
-      <div className="px-4 pb-3 shrink-0 overflow-x-auto scrollbar-thin">
-        <div className="flex gap-1.5 flex-wrap">
+      <div className="px-3 pb-2 shrink-0 overflow-x-auto scrollbar-thin">
+        <div className="flex gap-1 flex-wrap">
           <button
             onClick={() => onFamilyChange(null)}
-            className="text-[11px] font-medium px-2.5 py-1 rounded-lg transition-all duration-200 whitespace-nowrap"
+            className="text-[10px] font-medium px-2 py-1 rounded-lg transition-all duration-200 whitespace-nowrap"
             style={{
-              background: !activeFamily ? "var(--accent)" : "rgba(255,255,255,0.05)",
-              color: !activeFamily ? "#fff" : "var(--muted)",
-              border: `1px solid ${!activeFamily ? "transparent" : "rgba(255,255,255,0.06)"}`,
+              background: !activeFamily ? "var(--accent)" : "var(--surface-2)",
+              color: !activeFamily ? "#fff" : "var(--text-3)",
+              border: `1px solid ${!activeFamily ? "transparent" : "var(--border)"}`,
             }}
           >
             All
@@ -137,11 +124,11 @@ export default function Sidebar({
             <button
               key={f.id}
               onClick={() => onFamilyChange(activeFamily === f.id ? null : f.id)}
-              className="text-[11px] font-medium px-2.5 py-1 rounded-lg transition-all duration-200 whitespace-nowrap"
+              className="text-[10px] font-medium px-2 py-1 rounded-lg transition-all duration-200 whitespace-nowrap"
               style={{
-                background: activeFamily === f.id ? "var(--accent)" : "rgba(255,255,255,0.05)",
-                color: activeFamily === f.id ? "#fff" : "var(--muted)",
-                border: `1px solid ${activeFamily === f.id ? "transparent" : "rgba(255,255,255,0.06)"}`,
+                background: activeFamily === f.id ? "var(--accent)" : "var(--surface-2)",
+                color: activeFamily === f.id ? "#fff" : "var(--text-3)",
+                border: `1px solid ${activeFamily === f.id ? "transparent" : "var(--border)"}`,
               }}
             >
               {f.name.split(" ")[0]}
@@ -151,14 +138,14 @@ export default function Sidebar({
       </div>
 
       {/* Scrollable algorithm list */}
-      <div className="flex-1 overflow-y-auto sidebar-scroll px-2 pb-4">
+      <div className="flex-1 overflow-y-auto px-1 pb-4 scrollbar-thin">
         {/* Search results */}
         {isSearching && (
-          <div className="px-3 py-2">
-            <p className="text-[11px] font-medium" style={{ color: "var(--muted)" }}>
+          <div className="px-2 py-2">
+            <p className="text-[10px] font-medium mb-2" style={{ color: "var(--text-3)" }}>
               Results ({filteredAlgorithms.length})
             </p>
-            <div className="mt-2 space-y-0.5">
+            <div className="space-y-0.5">
               {filteredAlgorithms.map((a) => (
                 <AlgorithmItem
                   key={a.id}
@@ -170,8 +157,8 @@ export default function Sidebar({
                 />
               ))}
               {filteredAlgorithms.length === 0 && (
-                <p className="text-xs py-4 text-center" style={{ color: "var(--muted)" }}>
-                  No algorithms match your search.
+                <p className="text-xs py-4 text-center" style={{ color: "var(--text-3)" }}>
+                  No matches.
                 </p>
               )}
             </div>
@@ -188,23 +175,23 @@ export default function Sidebar({
             const famInfo = familyData[f.id];
 
             return (
-              <div key={f.id} className="mb-1">
+              <div key={f.id} className="mb-0.5">
                 <button
                   onClick={() => toggleFamily(f.id)}
-                  className="flex items-center justify-between w-full px-3 py-2 rounded-xl text-xs font-medium transition-colors duration-150"
+                  className="flex items-center justify-between w-full px-3 py-1.5 rounded-lg text-xs font-medium transition-colors duration-150"
                   style={{
-                    color: hasActive ? "var(--accent)" : "var(--muted)",
+                    color: hasActive ? "var(--accent)" : "var(--text-3)",
                   }}
                 >
-                  <div className="flex items-center gap-2 overflow-hidden">
-                    <span className="truncate">{famInfo ? famInfo.name : f.id}</span>
-                    <span className="text-[10px] opacity-50 shrink-0">{algos.length}</span>
+                  <div className="flex items-center gap-1.5 overflow-hidden">
+                    <span className="truncate text-[11px]">{famInfo ? famInfo.name : f.id}</span>
+                    <span className="text-[9px] opacity-50 shrink-0">{algos.length}</span>
                   </div>
                   <motion.div
                     animate={{ rotate: isExpanded ? 0 : -90 }}
-                    transition={{ duration: 0.2 }}
+                    transition={{ duration: 0.15 }}
                   >
-                    <ChevronDown size={12} />
+                    <ChevronDown size={11} />
                   </motion.div>
                 </button>
                 <AnimatePresence initial={false}>
@@ -214,10 +201,10 @@ export default function Sidebar({
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
+                      transition={{ duration: 0.15 }}
                       className="overflow-hidden"
                     >
-                      <div className="space-y-0.5 pl-2 pr-1 pb-1">
+                      <div className="space-y-0.5">
                         {algos.map((a) => (
                           <AlgorithmItem
                             key={a.id}
@@ -238,12 +225,12 @@ export default function Sidebar({
 
         {/* Favorites */}
         {favoriteAlgorithms.length > 0 && !isSearching && (
-          <div className="mt-4 pt-3" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-            <div className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium" style={{ color: "var(--muted)" }}>
-              <Star size={11} />
+          <div className="mt-3 pt-3" style={{ borderTop: "1px solid var(--border)" }}>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-medium" style={{ color: "var(--text-3)" }}>
+              <Star size={10} />
               Favorites
             </div>
-            <div className="space-y-0.5 pl-2">
+            <div className="space-y-0.5">
               {favoriteAlgorithms.map((a) => (
                 <AlgorithmItem
                   key={a.id}
@@ -261,8 +248,8 @@ export default function Sidebar({
 
       {/* Bottom stats */}
       <div
-        className="shrink-0 px-5 py-3 text-[10px] flex items-center justify-between"
-        style={{ borderTop: "1px solid rgba(255,255,255,0.06)", color: "var(--muted)" }}
+        className="shrink-0 px-4 py-2 text-[9px] flex items-center justify-between"
+        style={{ borderTop: "1px solid var(--border)", color: "var(--text-3)" }}
       >
         <span>{allAlgorithms.length} algorithms</span>
         <span>{families.length} families</span>
@@ -275,39 +262,33 @@ function AlgorithmItem({ algorithm, isActive, isFavorite, onSelect, onToggleFavo
   return (
     <button
       onClick={() => onSelect(algorithm.id)}
-      className="sidebar-item flex items-center gap-2.5 w-full px-3 py-2 rounded-xl text-sm transition-all duration-150 group"
+      className="flex items-center gap-2 w-full px-3 py-1.5 rounded-lg text-xs transition-all duration-150 group"
       style={{
-        background: isActive ? `${algorithm.color}15` : "transparent",
-        color: isActive ? algorithm.color : "var(--text)",
-      }}
-      onMouseEnter={(e) => {
-        if (!isActive) e.currentTarget.style.background = "rgba(255,255,255,0.04)";
-      }}
-      onMouseLeave={(e) => {
-        if (!isActive) e.currentTarget.style.background = "transparent";
+        background: isActive ? `${algorithm.color}10` : "transparent",
+        color: isActive ? algorithm.color : "var(--text-2)",
       }}
     >
       <span
-        className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0"
+        className="w-5 h-5 rounded flex items-center justify-center shrink-0"
         style={{
-          background: isActive ? `${algorithm.color}22` : "rgba(255,255,255,0.05)",
-          color: isActive ? algorithm.color : "var(--muted)",
+          background: isActive ? `${algorithm.color}18` : "var(--surface-2)",
+          color: isActive ? algorithm.color : "var(--text-3)",
         }}
       >
-        <IconByName name={algorithm.iconName} size={12} />
+        <IconByName name={algorithm.id} size={10} />
       </span>
-      <span className="truncate text-[13px] font-medium">{algorithm.shortName}</span>
+      <span className="truncate text-[11px] font-medium">{algorithm.shortName}</span>
 
       <button
         onClick={(e) => {
           e.stopPropagation();
           onToggleFavorite(algorithm.id);
         }}
-        className="ml-auto shrink-0 p-0.5 rounded transition-opacity duration-150 opacity-0 group-hover:opacity-100"
-        style={{ color: isFavorite ? "#F59E0B" : "var(--muted)" }}
+        className="ml-auto shrink-0 p-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+        style={{ color: isFavorite ? "#F59E0B" : "var(--text-3)" }}
         aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
       >
-        <Star size={11} fill={isFavorite ? "#F59E0B" : "none"} />
+        <Star size={9} fill={isFavorite ? "#F59E0B" : "none"} />
       </button>
     </button>
   );
