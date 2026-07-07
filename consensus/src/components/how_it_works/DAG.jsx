@@ -266,13 +266,6 @@ export default function DAGVisualizer({ algorithm }) {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <button
-            onClick={resetSimulation}
-            className="dag-mono px-3 py-2 text-xs font-semibold bg-zinc-950 border border-zinc-900 rounded-xl text-zinc-400 hover:text-zinc-200 transition-all cursor-pointer"
-          >
-            Reset Grid
-          </button>
-
           <div className="flex overflow-hidden rounded-xl border" style={{ borderColor: 'var(--border)' }}>
             <button
               onClick={toggleAutoRun}
@@ -297,10 +290,17 @@ export default function DAGVisualizer({ algorithm }) {
             <button
               onClick={manualNextStep}
               disabled={isAutoRunning}
-              className="dag-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer"
-              style={{ borderColor: 'var(--border)', background: 'var(--surface-2)', color: 'var(--text-1)' }}
+              className="dag-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer text-zinc-100 hover:bg-[#1C1F26]"
+              style={{ borderColor: 'var(--border)', background: 'var(--surface-2)' }}
             >
               {step === 4 ? 'Restart' : 'Step →'}
+            </button>
+            <button
+              onClick={resetSimulation}
+              className="dag-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors cursor-pointer text-zinc-400 hover:text-zinc-200 hover:bg-[#1C1F26]"
+              style={{ borderColor: 'var(--border)', background: 'var(--surface-2)' }}
+            >
+              Reset
             </button>
           </div>
         </div>

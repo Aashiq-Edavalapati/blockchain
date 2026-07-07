@@ -18,6 +18,7 @@ import ChainMapping from "./components/ChainMapping";
 import LanguagesSection from "./components/LanguagesSection";
 import LayerClassification from "./components/LayerClassification";
 import CompatibilityMatrix from "./components/CompatibilityMatrix";
+import CompareSection from "./components/CompareSection";
 import GlossarySection from "./components/GlossarySection";
 import TimelineSection from "./components/TimelineSection";
 import Footer from "./components/Footer";
@@ -27,6 +28,7 @@ const TABS = [
   { id: "details", label: "How It Works" },
   { id: "chains", label: "Chains" },
   { id: "compatibility", label: "Compatibility" },
+  { id: "compare", label: "Compare" },
   { id: "reference", label: "Reference" },
 ];
 
@@ -626,6 +628,10 @@ export default function ConsensusExplorer() {
 
                           {activeTab === "compatibility" && (
                             <CompatibilityMatrix allChains={chains} activeAlgorithm={active} />
+                          )}
+
+                          {activeTab === "compare" && (
+                            <CompareSection activeAlgorithm={active} allAlgorithms={algorithms} />
                           )}
 
                           {activeTab === "reference" && (

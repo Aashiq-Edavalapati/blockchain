@@ -77,9 +77,9 @@ export default function TrilemmaScorecard({ algorithm }) {
         <div className="rounded-xl border border-zinc-900 bg-zinc-950/30 p-2 overflow-hidden flex items-center justify-center">
           <div style={{ width: "100%", height: 180 }} className="flex items-center justify-center">
             <ResponsiveContainer>
-              <RadarChart data={radarData} outerRadius="70%">
+              <RadarChart data={radarData} outerRadius="58%">
                 <PolarGrid stroke="#262B37" />
-                <PolarAngleAxis dataKey="subject" tick={{ fill: "#A0A5B5", fontSize: 10, fontWeight: 500 }} />
+                <PolarAngleAxis dataKey="subject" tick={{ fill: "#A0A5B5", fontSize: 9, fontWeight: 500 }} />
                 <Radar
                   dataKey="value"
                   stroke={algorithm.color}
