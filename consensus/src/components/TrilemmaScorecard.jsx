@@ -10,12 +10,14 @@ function PillarGauge({ value, color }) {
   const circumference = 2 * Math.PI * r;
   const offset = circumference - (value / 100) * circumference;
   return (
-    <svg width="80" height="80" viewBox="0 0 80 80">
-      <circle cx="40" cy="40" r={r} fill="none" stroke="var(--surface-2)" strokeWidth="6" />
+    <svg width="76" height="76" viewBox="0 0 80 80" className="mx-auto">
+      {/* Background ring */}
+      <circle cx="40" cy="40" r={r} fill="none" stroke="#1A1D26" strokeWidth="5.5" />
+      {/* Active ring */}
       <motion.circle
         cx="40" cy="40" r={r}
         fill="none" stroke={color}
-        strokeWidth="6"
+        strokeWidth="5.5"
         strokeLinecap="round"
         strokeDasharray={circumference}
         initial={{ strokeDashoffset: circumference }}
@@ -24,7 +26,7 @@ function PillarGauge({ value, color }) {
         transform="rotate(-90 40 40)"
       />
       <text x="40" y="40" textAnchor="middle" dominantBaseline="central"
-        fill="var(--text)" fontSize="16" fontWeight="600" fontFamily="'JetBrains Mono', monospace">
+        fill="#F4F4F7" fontSize="15" fontWeight="700" fontFamily="monospace">
         {value}
       </text>
     </svg>
@@ -39,29 +41,28 @@ export default function TrilemmaScorecard({ algorithm }) {
   ];
 
   return (
-    <div className="flex flex-col gap-5">
-      {/* Radar chart */}
-      <div
-        className="rounded-xl p-5"
-        style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
-      >
-        <h3 className="font-semibold tracking-tight mb-1">Trilemma Scorecard</h3>
-        <p className="text-xs mb-4" style={{ color: "var(--text-2)" }}>
-          Relative 0–100 scale per pillar
-        </p>
-        <div className="rounded-lg" style={{ background: "var(--surface-2)" }}>
-          <div style={{ width: "100%", height: 200 }}>
+    <div className="flex flex-col gap-6">
+      {/* Radar Chart Card */}
+      <div className="rounded-2xl border border-zinc-900/50 bg-[#0D0F14]/60 p-6 flex flex-col justify-between">
+        <div>
+          <h3 className="text-sm font-bold text-white tracking-tight">Trilemma Scorecard</h3>
+          <p className="text-[11px] text-zinc-500 mt-1 mb-4">
+            Relative 0–100 scale per key pillar
+          </p>
+        </div>
+        <div className="rounded-xl border border-zinc-900 bg-zinc-950/30 p-2 overflow-hidden flex items-center justify-center">
+          <div style={{ width: "100%", height: 180 }} className="flex items-center justify-center">
             <ResponsiveContainer>
-              <RadarChart data={radarData} outerRadius="68%">
-                <PolarGrid stroke="#2A3144" />
-                <PolarAngleAxis dataKey="subject" tick={{ fill: "#8B93A7", fontSize: 11 }} />
+              <RadarChart data={radarData} outerRadius="70%">
+                <PolarGrid stroke="#262B37" />
+                <PolarAngleAxis dataKey="subject" tick={{ fill: "#A0A5B5", fontSize: 10, fontWeight: 500 }} />
                 <Radar
                   dataKey="value"
                   stroke={algorithm.color}
                   fill={algorithm.color}
-                  fillOpacity={0.12}
-                  strokeWidth={2}
-                  dot={{ fill: algorithm.color, r: 3, strokeWidth: 0 }}
+                  fillOpacity={0.08}
+                  strokeWidth={1.5}
+                  dot={{ fill: algorithm.color, r: 2.5, strokeWidth: 0 }}
                 />
               </RadarChart>
             </ResponsiveContainer>
@@ -69,21 +70,24 @@ export default function TrilemmaScorecard({ algorithm }) {
         </div>
       </div>
 
-      {/* Gauge indicators */}
-      <div
-        className="rounded-xl p-5"
-        style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
-      >
+      {/* Ring Gauges Card */}
+      <div className="rounded-2xl border border-zinc-900/50 bg-[#0D0F14]/60 p-6">
+        <h4 className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-5">
+          Pillar Distribution
+        </h4>
         <div className="grid grid-cols-3 gap-2">
           {PILLARS.map(({ key, label, iconName }) => {
             const val = algorithm.score[key];
             return (
               <div key={key} className="text-center">
-                <div className="flex justify-center mb-1">
+                <div className="mb-2">
                   <PillarGauge value={val} color={algorithm.color} />
                 </div>
-                <div className="flex items-center justify-center gap-1 text-[10px] font-medium" style={{ color: "var(--text-3)" }}>
-                  <IconByName name={iconName} size={10} /> {label}
+                <div className="flex items-center justify-center gap-1.5 text-[11px] font-semibold text-zinc-400">
+                  <span className="opacity-70 flex items-center shrink-0" style={{ color: algorithm.color }}>
+                    <IconByName name={iconName} size={11} />
+                  </span>
+                  <span>{label}</span>
                 </div>
               </div>
             );
@@ -91,33 +95,21 @@ export default function TrilemmaScorecard({ algorithm }) {
         </div>
       </div>
 
-      {/* Stats tiles */}
-      <div className="grid grid-cols-2 gap-3">
-        <div
-          className="rounded-xl p-4 text-center"
-          style={{
-            background: `linear-gradient(135deg, ${algorithm.color}08, transparent)`,
-            border: `1px solid ${algorithm.color}20`,
-          }}
-        >
-          <p className="text-[9px] uppercase tracking-widest font-semibold mb-1.5" style={{ color: "var(--text-3)" }}>
+      {/* Stats Cards Row */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="rounded-2xl border border-zinc-900/50 bg-[#0D0F14]/60 p-5 text-center flex flex-col justify-center min-h-[90px]">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-2">
             Block Time
           </p>
-          <p className="font-mono text-lg font-bold" style={{ color: algorithm.color }}>
+          <p className="font-mono text-[13px] font-semibold text-zinc-200 leading-snug">
             {algorithm.typicalBlockTime}
           </p>
         </div>
-        <div
-          className="rounded-xl p-4 text-center"
-          style={{
-            background: `linear-gradient(135deg, ${algorithm.color}08, transparent)`,
-            border: `1px solid ${algorithm.color}20`,
-          }}
-        >
-          <p className="text-[9px] uppercase tracking-widest font-semibold mb-1.5" style={{ color: "var(--text-3)" }}>
+        <div className="rounded-2xl border border-zinc-900/50 bg-[#0D0F14]/60 p-5 text-center flex flex-col justify-center min-h-[90px]">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-2">
             Throughput
           </p>
-          <p className="font-mono text-lg font-bold" style={{ color: algorithm.color }}>
+          <p className="font-mono text-[13px] font-semibold text-zinc-200 leading-snug">
             {algorithm.typicalTPS}
           </p>
         </div>

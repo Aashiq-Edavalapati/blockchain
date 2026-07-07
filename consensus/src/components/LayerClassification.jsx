@@ -1,4 +1,4 @@
-import { monogram } from "../utils/helpers";
+import CryptoIcon from "./CryptoIcon";
 
 export default function LayerClassification({ chains, algorithm }) {
   const l1 = chains.filter((c) => c.layer === "L1");
@@ -7,17 +7,38 @@ export default function LayerClassification({ chains, algorithm }) {
   if (l1.length === 0 && l2.length === 0) return null;
 
   return (
-    <section>
-      <div className="flex items-center gap-3 mb-4">
-        <h3 className="text-base font-semibold tracking-tight">Layer Distribution</h3>
-        <span className="text-[10px] px-2 py-0.5 rounded font-mono" style={{ background: `${algorithm.color}12`, color: algorithm.color }}>
+    <section className="space-y-4">
+      <div className="flex items-center gap-3 pb-2 border-b border-zinc-900/60">
+        <h3 className="text-sm font-bold text-white tracking-tight">Layer Distribution</h3>
+        <span
+          className="text-[10px] font-bold font-mono px-2 py-0.5 rounded border"
+          style={{
+            background: `${algorithm.color}10`,
+            borderColor: `${algorithm.color}25`,
+            color: algorithm.color,
+          }}
+        >
           L1 · L2
         </span>
       </div>
 
-      <div className="grid sm:grid-cols-2 gap-4">
-        <LayerGroup label="Layer 1" icon="L1" chains={l1} color="#5FD98A" algorithm={algorithm} description="Base settlement layer — secures itself" />
-        <LayerGroup label="Layer 2" icon="L2" chains={l2} color="#E8B94C" algorithm={algorithm} description="Borrows security from an L1 below" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <LayerGroup
+          label="Layer 1"
+          icon="L1"
+          chains={l1}
+          color="#10B981"
+          algorithm={algorithm}
+          description="Base settlement layer — secures itself"
+        />
+        <LayerGroup
+          label="Layer 2"
+          icon="L2"
+          chains={l2}
+          color="#F59E0B"
+          algorithm={algorithm}
+          description="Borrows security from an L1 below"
+        />
       </div>
     </section>
   );
@@ -25,40 +46,47 @@ export default function LayerClassification({ chains, algorithm }) {
 
 function LayerGroup({ label, icon, chains, color, algorithm, description }) {
   return (
-    <div className="rounded-xl p-4" style={{ background: "var(--surface)", border: `1px solid ${color}25` }}>
-      <div className="flex items-center gap-3 mb-3">
+    <div
+      className="rounded-2xl border p-5 flex flex-col justify-between"
+      style={{
+        background: "rgba(13, 15, 20, 0.4)",
+        borderColor: `${color}20`,
+      }}
+    >
+      <div className="flex items-center gap-3 mb-4">
         <div
-          className="w-8 h-8 rounded-lg flex items-center justify-center font-mono text-xs font-bold"
-          style={{ background: `${color}15`, color, border: `1px solid ${color}30` }}
+          className="w-8.5 h-8.5 rounded-xl flex items-center justify-center font-mono text-xs font-bold border"
+          style={{
+            background: `${color}10`,
+            color,
+            borderColor: `${color}25`,
+          }}
         >
           {icon}
         </div>
         <div>
-          <p className="text-sm font-semibold">{label}</p>
-          <p className="text-[10px]" style={{ color: "var(--text-3)" }}>{description}</p>
+          <p className="text-xs font-bold text-zinc-100">{label}</p>
+          <p className="text-[10px] text-zinc-550 mt-0.5">{description}</p>
         </div>
-        <span className="ml-auto font-mono text-sm font-bold" style={{ color }}>{chains.length}</span>
+        <span className="ml-auto font-mono text-xs font-bold" style={{ color }}>
+          {chains.length}
+        </span>
       </div>
-      <div className="space-y-1">
+
+      <div className="space-y-1.5">
         {chains.map((c) => (
           <div
             key={c.id}
-            className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm"
-            style={{ background: "var(--surface-2)" }}
+            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs border border-zinc-900/50 bg-zinc-950/20"
           >
-            <div
-              className="w-6 h-6 rounded-full flex items-center justify-center font-mono text-[9px] font-semibold shrink-0"
-              style={{ background: `${algorithm.color}12`, color: algorithm.color }}
-            >
-              {monogram(c.name)}
-            </div>
-            <span className="truncate text-xs font-medium">{c.name}</span>
-            <span className="font-mono text-[10px] ml-auto" style={{ color: "var(--text-3)" }}>{c.symbol}</span>
+            <CryptoIcon symbol={c.symbol} size={18} />
+            <span className="truncate text-zinc-300 font-medium">{c.name}</span>
+            <span className="font-mono text-[10px] ml-auto text-zinc-550">{c.symbol}</span>
           </div>
         ))}
         {chains.length === 0 && (
-          <p className="text-xs py-3 text-center" style={{ color: "var(--text-3)" }}>
-            No {icon} chains for {algorithm.shortName}
+          <p className="text-xs py-5 text-center text-zinc-500 font-medium">
+            No {icon} chains mapped for {algorithm.shortName}
           </p>
         )}
       </div>

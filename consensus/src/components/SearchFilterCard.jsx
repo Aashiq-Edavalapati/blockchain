@@ -38,12 +38,12 @@ export default function SearchFilterCard({
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto mb-8">
+    <div className="w-full max-w-4xl mx-auto">
       {/* Centered Obsidian Search & Filter Card */}
       <div className="relative rounded-2xl border border-zinc-800/80 bg-[#0B0D12]/90 shadow-2xl backdrop-blur-md overflow-hidden transition-all duration-300 hover:border-zinc-700/60">
         
         {/* Search Input Row */}
-        <div className="relative flex items-center px-4 py-3.5 border-b border-zinc-800/60">
+        <div className="relative flex items-center px-4 py-2.5 border-b border-zinc-800/60">
           <Search size={18} className="text-zinc-500 mr-3 shrink-0" />
           <input
             ref={inputRef}
@@ -64,7 +64,7 @@ export default function SearchFilterCard({
         </div>
 
         {/* Filter Pills Row */}
-        <div className="flex items-center gap-1.5 px-4 py-3 overflow-x-auto scrollbar-none whitespace-nowrap">
+        <div className="flex items-center gap-1.5 px-4 py-2 overflow-x-auto scrollbar-none whitespace-nowrap">
           {/* All Families */}
           <button
             onClick={() => handleFilterClick("all")}

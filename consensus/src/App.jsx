@@ -206,23 +206,25 @@ export default function ConsensusExplorer() {
           <HeroSection navigate={navigate} />
         ) : (
           // EXPLORER PATH: '/explorer'
-          <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex-1 flex flex-col">
+          <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-8 flex-1 flex flex-col">
             
-            {/* Top Search & Filter Card from Image */}
-            <SearchFilterCard
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-              activeFilter={activeFilter}
-              onFilterChange={setActiveFilter}
-              advancedFilters={advancedFilters}
-              onAdvancedFilterChange={handleAdvancedFilterChange}
-            />
+            {/* Top Search & Filter Card from Image (Sticky) */}
+            <div className="sticky top-16 z-40 bg-[#08090C] pt-4 pb-4 border-b border-zinc-900/30 mb-6">
+              <SearchFilterCard
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                activeFilter={activeFilter}
+                onFilterChange={setActiveFilter}
+                advancedFilters={advancedFilters}
+                onAdvancedFilterChange={handleAdvancedFilterChange}
+              />
+            </div>
 
             {/* Split Screen Layout */}
             <div className="flex-1 grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8 items-start">
               
               {/* Desktop Left Column: Algorithm List (Hidden on Mobile) */}
-              <aside className="hidden lg:flex flex-col bg-[#0D0F14]/75 border border-zinc-800/80 rounded-2xl p-4 sticky top-24 max-h-[calc(100vh-10rem)] overflow-hidden">
+              <aside className="hidden lg:flex flex-col bg-[#0D0F14]/75 border border-zinc-800/80 rounded-2xl p-4 sticky top-[180px] max-h-[calc(100vh-210px)] overflow-hidden">
                 <div className="flex items-center justify-between mb-3.5 pb-2 border-b border-zinc-800/60">
                   <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
                     Algorithms ({filteredAlgorithms.length})
@@ -298,8 +300,8 @@ export default function ConsensusExplorer() {
                 </div>
               </aside>
 
-              {/* Mobile Horizontal Selector (Hidden on Desktop) */}
-              <div className="block lg:hidden w-full overflow-hidden">
+              {/* Mobile Horizontal Selector (Sticky below search) */}
+              <div className="block lg:hidden w-full overflow-hidden sticky top-[180px] z-30 bg-[#08090C] pt-2 pb-3 border-b border-zinc-900/30 mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">
                     Select Algorithm ({filteredAlgorithms.length})
@@ -317,7 +319,7 @@ export default function ConsensusExplorer() {
                   </button>
                 </div>
                 
-                <div className="flex gap-2 overflow-x-auto pb-3 scrollbar-none whitespace-nowrap">
+                <div className="flex gap-2 overflow-x-auto pb-1.5 scrollbar-none whitespace-nowrap">
                   {filteredAlgorithms.map((a) => {
                     const isActive = a.id === active.id;
                     return (
@@ -372,8 +374,8 @@ export default function ConsensusExplorer() {
                 ) : (
                   /* Active Algorithm Details */
                   <div className="space-y-6">
-                    {/* Tab Navigation */}
-                    <nav className="border-b border-zinc-800/60 pb-px">
+                    {/* Tab Navigation (Sticky) */}
+                    <nav className="sticky top-[180px] z-30 bg-[#08090C] py-2 border-b border-zinc-800/60 pb-px">
                       <div className="flex gap-2 overflow-x-auto scrollbar-none">
                         {TABS.map((tab) => {
                           const isActive = tab.id === activeTab;
