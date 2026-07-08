@@ -14,6 +14,7 @@ import {
   GitBranch,
   Search,
 } from "lucide-react";
+import TimelineSection from "./TimelineSection";
 
 // Drop-in font stack matching the high-end standard
 const FONT_SANS = "'Inter', ui-sans-serif, system-ui, sans-serif";
@@ -522,6 +523,9 @@ export default function HeroSection({ navigate }) {
           </div>
         </div>
       </section>
+      
+      {/* HISTORICAL TIMELINE */}
+      <TimelineSection />
 
     </div>
   );

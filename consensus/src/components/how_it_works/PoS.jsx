@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause } from 'lucide-react';
+import { Play, Pause, Layers, Cpu, Coins, RotateCcw, SkipForward } from 'lucide-react';
 
 const STAGES = [
   { key: 'idle', label: 'Idle', detail: 'Wait for next slot. Nodes standing by.' },
@@ -254,7 +254,6 @@ export default function ProofOfStakeVisualizer({ algorithm }) {
   };
 
   const activeStage = STAGES[step] || STAGES[0];
-
   return (
     <div
       style={{
@@ -263,228 +262,170 @@ export default function ProofOfStakeVisualizer({ algorithm }) {
         '--blue': variant.color, '--blue-dim': `${variant.color}20`,
         '--green': THEME.green, '--green-dim': THEME.greenDim,
         '--text-1': THEME.text1, '--text-2': THEME.text2, '--text-3': THEME.text3,
-        background: 'var(--bg)', color: 'var(--text-1)',
-        fontFamily: "'Raleway', 'Inter', sans-serif",
       }}
-      className="w-full max-w-4xl rounded-2xl border p-7"
+      className="w-full max-w-5xl mx-auto bg-black border border-white/[0.08] rounded-2xl overflow-hidden shadow-[0_0_100px_rgba(0,0,0,1)] text-[#EDEDED] font-sans relative"
     >
       <style>{`
         .pos-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
         @keyframes pos-pulse { 0%, 100% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.06); opacity: 1; } }
         .pos-active-leader { animation: pos-pulse 1.4s ease-in-out infinite; }
         .pos-track-fill { transition: width 0.4s ease; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
       `}</style>
 
-      <div style={{ borderColor: 'var(--border)' }} className="flex flex-wrap items-start justify-between gap-6 border-b pb-6">
-        <div>
-          <div className="pos-mono flex items-center gap-2 text-[11px] uppercase tracking-[0.18em]" style={{ color: 'var(--blue)' }}>
-            <span className="h-1.5 w-1.5 rounded-full" style={{ background: 'var(--blue)' }} />
-            Consensus · {variant.title}
+      {/* 1. NAVIGATION HEADER */}
+      <div className="flex items-center justify-between px-10 py-6 border-b border-white/[0.06] bg-[#050505]/95 backdrop-blur-xl">
+        <div className="flex items-center gap-10">
+          <div className="flex flex-col">
+            <span className="pos-mono text-[10px] text-white/40 uppercase tracking-[0.4em] mb-1">Status</span>
+            <div className="flex items-center gap-3">
+              <span className="text-3xl font-bold font-mono text-white leading-none">0{step + 1}</span>
+              <span className="text-white/20 font-mono text-xl">/ 05</span>
+            </div>
           </div>
-          <h3 className="mt-2 text-2xl font-semibold tracking-tight" style={{ color: 'var(--text-1)' }}>
-            {activeStage.label}
-          </h3>
-          <p className="mt-1 max-w-sm text-sm leading-relaxed" style={{ color: 'var(--text-2)' }}>
-            {activeStage.detail}
-          </p>
+          <div className="h-12 w-px bg-white/[0.08]" />
+          <div className="space-y-1">
+            <span className="pos-mono text-[10px] uppercase tracking-[0.18em]" style={{ color: 'var(--blue)' }}>
+              Consensus · {variant.title}
+            </span>
+            <h2 className="text-sm font-bold text-white uppercase tracking-[0.2em]">{activeStage.label}</h2>
+            <p className="text-xs text-white/50 font-medium tracking-tight max-w-sm">{activeStage.detail}</p>
+          </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex overflow-hidden rounded-xl border" style={{ borderColor: 'var(--border)' }}>
-            <button
-              onClick={toggleAutoRun}
-              className="pos-mono px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors flex items-center gap-1.5 cursor-pointer"
-              style={{
-                background: isAutoRunning ? 'rgba(224,90,90,0.12)' : 'var(--blue-dim)',
-                color: isAutoRunning ? '#E05A5A' : 'var(--blue)',
-              }}
-            >
-              {isAutoRunning ? (
-                <>
-                  <Pause size={12} />
-                  <span>Pause</span>
-                </>
-              ) : (
-                <>
-                  <Play size={12} />
-                  <span>Run</span>
-                </>
-              )}
-            </button>
-            <button
-              onClick={manualNextStep}
-              disabled={isAutoRunning || lotterySpin}
-              className="pos-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer text-white hover:bg-white/[0.06]"
-              style={{ borderColor: 'var(--border)', background: 'var(--surface-2)' }}
-            >
-              {step === 4 ? 'Restart' : 'Step →'}
-            </button>
-            <button
-              onClick={resetSimulation}
-              className="pos-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors cursor-pointer text-white/60 hover:text-white hover:bg-white/[0.06]"
-              style={{ borderColor: 'var(--border)', background: 'var(--surface-2)' }}
-            >
-              Reset
-            </button>
-          </div>
+        {/* Speed / Run controls */}
+        <div className="flex bg-zinc-900/30 p-1 rounded-xl border border-white/[0.05]">
+          <button onClick={toggleAutoRun} className={`p-3 rounded-lg transition-all ${isAutoRunning ? 'bg-white text-black' : 'text-zinc-400 hover:text-white'}`}>
+            {isAutoRunning ? <Pause size={20} strokeWidth={2.5} /> : <Play size={20} strokeWidth={2.5} />}
+          </button>
+          <button onClick={manualNextStep} disabled={isAutoRunning || lotterySpin} className="p-3 text-zinc-400 hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"><SkipForward size={20} /></button>
+          <button onClick={resetSimulation} className="p-3 text-zinc-400 hover:text-white transition-all"><RotateCcw size={20} /></button>
         </div>
       </div>
 
-      <div className="mt-7 flex items-center">
-        {STAGES.map((s, i) => {
-          const active = i === step;
-          const passed = i < step;
-          return (
-            <React.Fragment key={s.key}>
-              <div className="flex flex-col items-center gap-2" style={{ minWidth: 64 }}>
-                <div
-                  className="pos-mono flex h-8 w-8 items-center justify-center rounded-full border text-[11px] font-semibold transition-all"
-                  style={{
-                    borderColor: active || passed ? 'var(--blue)' : 'var(--border-strong)',
-                    background: active ? 'var(--blue)' : passed ? 'var(--blue-dim)' : 'var(--surface)',
-                    color: active ? '#0A0A0C' : passed ? 'var(--blue)' : 'var(--text-3)',
-                  }}
-                >
-                  {passed ? '✓' : i}
-                </div>
-                <span
-                  className="text-[10px] uppercase tracking-wide text-center"
-                  style={{ color: active ? 'var(--text-1)' : 'var(--text-3)', fontWeight: active ? 600 : 400 }}
-                >
-                  {s.label}
-                </span>
-              </div>
-              {i < STAGES.length - 1 && (
-                <div className="mx-1 h-px flex-1" style={{ background: 'var(--border)', marginBottom: 18 }}>
+      {/* Body Inner Section wrapper */}
+      <div className="p-8 pb-0">
+        {/* 2. STEPPER */}
+        <div className="flex items-center justify-between pb-8">
+          {STAGES.map((s, i) => {
+            const active = i === step;
+            const passed = i < step;
+            return (
+              <React.Fragment key={s.key}>
+                <div className="flex flex-col items-center gap-2" style={{ minWidth: 64 }}>
                   <div
-                    className="pos-track-fill h-px"
-                    style={{ background: 'var(--blue)', width: i < step ? '100%' : '0%' }}
-                  />
+                    className="pos-mono flex h-8 w-8 items-center justify-center rounded-full border text-[11px] font-semibold transition-all"
+                    style={{
+                      borderColor: active || passed ? 'var(--blue)' : 'var(--border-strong)',
+                      background: active ? 'var(--blue)' : passed ? 'var(--blue-dim)' : 'var(--surface)',
+                      color: active ? '#0A0A0C' : passed ? 'var(--blue)' : 'var(--text-3)',
+                    }}
+                  >
+                    {passed ? '✓' : i}
+                  </div>
+                  <span
+                    className="text-[10px] uppercase tracking-wide text-center"
+                    style={{ color: active ? 'var(--text-1)' : 'var(--text-3)', fontWeight: active ? 600 : 400 }}
+                  >
+                    {s.label}
+                  </span>
                 </div>
-              )}
-            </React.Fragment>
-          );
-        })}
+                {i < STAGES.length - 1 && (
+                  <div className="mx-1 h-px flex-1" style={{ background: 'var(--border)', marginBottom: 18 }}>
+                    <div
+                      className="pos-track-fill h-px"
+                      style={{ background: 'var(--blue)', width: i < step ? '100%' : '0%' }}
+                    />
+                  </div>
+                )}
+              </React.Fragment>
+            );
+          })}
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_260px] gap-6 mt-7">
-        
-        <div className="rounded-xl border border-white/[0.08] bg-[#050505] p-6 flex flex-col items-center justify-center min-h-[280px] relative">
-          <div className="absolute top-3 left-4 pos-mono text-[10px] text-white/40">
+      {/* 3. DYNAMIC VISUALIZATION STAGE */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[480px]">
+        {/* LEFT PANEL: ARENA */}
+        <div className="lg:col-span-7 p-10 border-r border-white/[0.06] flex items-center justify-center relative bg-[#010101]">
+          <div className="absolute top-4 left-6 pos-mono text-[9px] text-white/40 uppercase tracking-[0.2em]">
             consensus_selection_arena
           </div>
 
-          <div className="relative w-48 h-48 flex items-center justify-center">
-            <div className="absolute w-20 h-20 rounded-full border border-white/[0.08] bg-white/[0.02] flex flex-col items-center justify-center z-10 text-center p-2 shadow-2xl">
+          <div className="relative w-56 h-56 flex items-center justify-center">
+            <div className="absolute w-24 h-24 rounded-full border border-white/[0.08] bg-black flex flex-col items-center justify-center z-10 text-center p-3 shadow-2xl">
               <span className="pos-mono text-[8px] uppercase tracking-wider text-white/40">
                 {algoId === 'poh' ? 'VDF tick' : 'Active Slot'}
               </span>
-              <span className="text-xs font-bold text-white leading-none mt-1">
-                {algoId === 'poh' && step === 2 ? `${vdfTicks}` : `#${blockchain.length}`}
+              <span className="text-sm font-bold text-white leading-none mt-1">
+                {algoId === 'poh' && step === 2 ? `${vdfTicks}%` : `#${blockchain.length}`}
               </span>
             </div>
 
             {nodes.map((n, i) => {
               const angle = (i * 360) / nodes.length;
-              const radius = 76; 
+              const radius = 88; 
               const x = radius * Math.cos((angle * Math.PI) / 180);
               const y = radius * Math.sin((angle * Math.PI) / 180);
               const isLeader = n.id === leaderId;
               const hasAttested = attestations.includes(n.id);
 
               return (
-                <div
-                  key={n.id}
-                  className="absolute flex flex-col items-center gap-1 transition-all duration-300"
-                  style={{
-                    transform: `translate(${x}px, ${y}px)`,
-                  }}
-                >
-                  <div
-                    className={`w-11 h-11 rounded-full border flex items-center justify-center font-mono text-xs font-bold transition-all ${
-                      isLeader ? 'pos-active-leader shadow-lg' : ''
-                    }`}
-                    style={{
-                      background: isLeader ? n.color : hasAttested ? `${n.color}25` : 'rgba(255, 255, 255, 0.02)',
-                      borderColor: isLeader || hasAttested ? n.color : 'var(--border-strong)',
-                      color: isLeader ? '#000' : n.color,
-                      boxShadow: isLeader ? `0 0 16px ${n.color}60` : 'none',
-                    }}
-                  >
+                <div key={n.id} className="absolute flex flex-col items-center gap-1.5 transition-all duration-300" style={{ transform: `translate(${x}px, ${y}px)` }}>
+                  <div className={`w-12 h-12 rounded-full border flex items-center justify-center font-mono text-sm font-bold transition-all ${isLeader ? 'pos-active-leader shadow-lg' : ''}`} style={{ background: isLeader ? n.color : hasAttested ? `${n.color}25` : 'rgba(255, 255, 255, 0.02)', borderColor: isLeader || hasAttested ? n.color : 'var(--border-strong)', color: isLeader ? '#000' : n.color, boxShadow: isLeader ? `0 0 16px ${n.color}60` : 'none' }}>
                     {n.id}
                   </div>
-                  <span className="text-[8px] font-bold text-white/40 uppercase">{isLeader ? variant.roleLabel : `${Math.round((n.weight / totalWeight) * 100)}%`}</span>
+                  <span className="text-[8.5px] font-bold text-white/40 uppercase">{isLeader ? variant.roleLabel : `${Math.round((n.weight / totalWeight) * 100)}%`}</span>
                 </div>
               );
             })}
           </div>
 
-          {step === 3 && (
-            <div className="mt-4 text-xs font-mono text-blue-400 animate-pulse">
-              Signatures: {attestations.length}/3 nodes received
-            </div>
-          )}
-          {step === 4 && (
-            <div className="mt-4 text-xs font-mono text-emerald-400 flex items-center gap-1.5">
-              ✓ Slot committed. Chain ledger updated.
-            </div>
-          )}
-          {lotterySpin && (
-            <div className="mt-4 text-xs font-mono text-purple-400 animate-pulse">
-              Spinning lottery selector...
-            </div>
-          )}
+          <div className="absolute bottom-4 left-6 right-6 flex items-center justify-center text-center">
+            {step === 3 && <div className="text-xs font-mono text-blue-400 animate-pulse">Signatures: {attestations.length}/3 nodes received</div>}
+            {step === 4 && <div className="text-xs font-mono text-emerald-400 flex items-center gap-1.5">✓ Slot committed. Chain ledger updated.</div>}
+            {lotterySpin && <div className="text-xs font-mono text-purple-400 animate-pulse">Spinning lottery selector...</div>}
+          </div>
         </div>
 
-        <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-5 flex flex-col justify-between">
+        {/* RIGHT PANEL: PARAMETERS */}
+        <div className="lg:col-span-5 p-10 flex flex-col justify-between bg-black">
           <div>
-            <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-4 border-b border-white/[0.06] pb-2">
-              Parameters
-            </h4>
-            <div className="space-y-4">
+            <h4 className="text-[10px] font-mono text-white/40 uppercase tracking-[0.2em] mb-6 pb-2 border-b border-white/[0.04]">Active Parameter settings</h4>
+            <div className="space-y-6">
               {nodes.map((n) => (
-                <div key={n.id} className="flex flex-col gap-1">
+                <div key={n.id} className="flex flex-col gap-2">
                   <div className="flex items-center justify-between text-[10px]">
-                    <span className="font-semibold text-[#888]">{variant.nodeNamePre} {n.id}</span>
-                    <span className="font-mono text-white font-semibold">{n.weight}</span>
+                    <span className="font-semibold text-white/60">{variant.nodeNamePre} {n.id}</span>
+                    <span className="font-mono text-white font-bold">{n.weight} ETH</span>
                   </div>
-                  <input
-                    type="range"
-                    min="10"
-                    max="600"
-                    step="10"
-                    value={n.weight}
-                    onChange={(e) => updateWeight(n.id, Number(e.target.value))}
-                    disabled={step > 0}
-                    className="w-full accent-current"
-                    style={{ accentColor: n.color }}
-                  />
+                  <input type="range" min="10" max="600" step="10" value={n.weight} onChange={(e) => updateWeight(n.id, Number(e.target.value))} disabled={step > 0} className="w-full accent-current h-1 bg-white/10 rounded-lg appearance-none cursor-pointer" style={{ accentColor: n.color }} />
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="mt-5 pt-3 border-t border-white/[0.06] text-[10px] text-white/40 font-semibold leading-relaxed">
-            {variant.bottomText}
-          </div>
+          <div className="mt-8 pt-4 border-t border-white/[0.04] text-[10.5px] text-white/40 leading-relaxed font-sans">{variant.bottomText}</div>
         </div>
       </div>
 
-      <div className="mt-6 border-t border-white/[0.06] pt-6">
-        <h4 className="pos-mono text-[10px] text-white/40 uppercase tracking-widest mb-3">
-          chain_extended_ledger
-        </h4>
-        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin">
+      {/* 4. ENHANCED BLOCKCHAIN LEDGER */}
+      <div className="bg-[#050505] border-t border-white/[0.06] p-10">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <Layers size={18} className="text-white/40" />
+            <span className="pos-mono text-[10px] uppercase tracking-[0.4em] text-white/40">Verified Ledger Archive</span>
+          </div>
+          <div className="text-[10px] font-mono text-white/40 uppercase tracking-widest">Tip: Block #{blockchain.length-1}</div>
+        </div>
+        <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
           {blockchain.map((b) => (
-            <div
-              key={b.height}
-              className="rounded-xl border border-white/[0.08] bg-[#050505] p-3 text-xs min-w-[125px] flex flex-col justify-between gap-2 shrink-0"
-            >
+            <div key={b.height} className="shrink-0 w-64 rounded-2xl border border-white/[0.08] bg-black p-5 flex flex-col gap-3 relative transition-all duration-500">
               <div>
                 <p className="pos-mono text-[9px] text-white/40">Height: #{b.height}</p>
-                <p className="font-bold text-white mt-1 truncate">{b.proposer}</p>
+                <p className="font-bold text-white mt-1 truncate">Proposer: {b.proposer}</p>
               </div>
-              <p className="pos-mono text-[9px] text-white/40 truncate">Hash: {b.hash}</p>
+              <p className="pos-mono text-[9.5px] text-white/40 truncate bg-white/[0.02] p-2 rounded border border-white/[0.04]">Hash: {b.hash}</p>
             </div>
           ))}
         </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause } from 'lucide-react';
+import { Play, Pause, Layers, RotateCcw, SkipForward } from 'lucide-react';
 
 const STAGES = [
   { key: 'idle', label: 'Idle', detail: 'Transactions in mempool have conflicting preferences (Red vs Blue).' },
@@ -230,7 +230,6 @@ export default function DAGVisualizer({ algorithm }) {
   };
 
   const activeStage = STAGES[step] || STAGES[0];
-
   return (
     <div
       style={{
@@ -239,121 +238,101 @@ export default function DAGVisualizer({ algorithm }) {
         '--purple': variant.color, '--purple-dim': `${variant.color}20`,
         '--red': THEME.red, '--blue': THEME.blue,
         '--text-1': THEME.text1, '--text-2': THEME.text2, '--text-3': THEME.text3,
-        background: 'var(--bg)', color: 'var(--text-1)',
-        fontFamily: "'Raleway', 'Inter', sans-serif",
       }}
-      className="w-full max-w-4xl rounded-2xl border p-7"
+      className="w-full max-w-5xl mx-auto bg-black border border-white/[0.08] rounded-2xl overflow-hidden shadow-[0_0_100px_rgba(0,0,0,1)] text-[#EDEDED] font-sans relative"
     >
       <style>{`
         .dag-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
         @keyframes dag-query { 0%, 100% { border-color: #242429; } 50% { border-color: #a855f7; } }
         .dag-query-active { animation: dag-query 1s infinite; }
         .dag-track-fill { transition: width 0.4s ease; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
       `}</style>
 
-      <div style={{ borderColor: 'var(--border)' }} className="flex flex-wrap items-start justify-between gap-6 border-b pb-6">
-        <div>
-          <div className="dag-mono flex items-center gap-2 text-[11px] uppercase tracking-[0.18em]" style={{ color: 'var(--purple)' }}>
-            <span className="h-1.5 w-1.5 rounded-full" style={{ background: 'var(--purple)' }} />
-            Consensus · {variant.title}
+      {/* 1. NAVIGATION HEADER */}
+      <div className="flex items-center justify-between px-10 py-6 border-b border-white/[0.06] bg-[#050505]/95 backdrop-blur-xl">
+        <div className="flex items-center gap-10">
+          <div className="flex flex-col">
+            <span className="dag-mono text-[10px] text-white/40 uppercase tracking-[0.4em] mb-1">Status</span>
+            <div className="flex items-center gap-3">
+              <span className="text-3xl font-bold font-mono text-white leading-none">0{step + 1}</span>
+              <span className="text-white/20 font-mono text-xl">/ 05</span>
+            </div>
           </div>
-          <h3 className="mt-2 text-2xl font-semibold tracking-tight" style={{ color: 'var(--text-1)' }}>
-            {activeStage.label}
-          </h3>
-          <p className="mt-1 max-w-sm text-sm leading-relaxed" style={{ color: 'var(--text-2)' }}>
-            {activeStage.detail}
-          </p>
+          <div className="h-12 w-px bg-white/[0.08]" />
+          <div className="space-y-1">
+            <span className="dag-mono text-[10px] uppercase tracking-[0.18em]" style={{ color: 'var(--purple)' }}>
+              Consensus · {variant.title}
+            </span>
+            <h2 className="text-sm font-bold text-white uppercase tracking-[0.2em]">{activeStage.label}</h2>
+            <p className="text-xs text-white/50 font-medium tracking-tight max-w-sm">{activeStage.detail}</p>
+          </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex overflow-hidden rounded-xl border" style={{ borderColor: 'var(--border)' }}>
-            <button
-              onClick={toggleAutoRun}
-              className="dag-mono px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors flex items-center gap-1.5 cursor-pointer"
-              style={{
-                background: isAutoRunning ? 'rgba(224,90,90,0.12)' : 'var(--purple-dim)',
-                color: isAutoRunning ? '#E05A5A' : 'var(--purple)',
-              }}
-            >
-              {isAutoRunning ? (
-                <>
-                  <Pause size={12} />
-                  <span>Pause</span>
-                </>
-              ) : (
-                <>
-                  <Play size={12} />
-                  <span>Run</span>
-                </>
-              )}
-            </button>
-            <button
-              onClick={manualNextStep}
-              disabled={isAutoRunning}
-              className="dag-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer text-white hover:bg-white/[0.06]"
-              style={{ borderColor: 'var(--border)', background: 'var(--surface-2)' }}
-            >
-              {step === 4 ? 'Restart' : 'Step →'}
-            </button>
-            <button
-              onClick={resetSimulation}
-              className="dag-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors cursor-pointer text-white/60 hover:text-white hover:bg-white/[0.06]"
-              style={{ borderColor: 'var(--border)', background: 'var(--surface-2)' }}
-            >
-              Reset
-            </button>
-          </div>
+        {/* Speed / Run controls */}
+        <div className="flex bg-zinc-900/30 p-1 rounded-xl border border-white/[0.05]">
+          <button onClick={toggleAutoRun} className={`p-3 rounded-lg transition-all ${isAutoRunning ? 'bg-white text-black' : 'text-zinc-400 hover:text-white'}`}>
+            {isAutoRunning ? <Pause size={20} strokeWidth={2.5} /> : <Play size={20} strokeWidth={2.5} />}
+          </button>
+          <button onClick={manualNextStep} disabled={isAutoRunning} className="p-3 text-zinc-400 hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"><SkipForward size={20} /></button>
+          <button onClick={resetSimulation} className="p-3 text-zinc-400 hover:text-white transition-all"><RotateCcw size={20} /></button>
         </div>
       </div>
 
-      <div className="mt-7 flex items-center">
-        {STAGES.map((s, i) => {
-          const active = i === step;
-          const passed = i < step;
-          return (
-            <React.Fragment key={s.key}>
-              <div className="flex flex-col items-center gap-2" style={{ minWidth: 64 }}>
-                <div
-                  className="dag-mono flex h-8 w-8 items-center justify-center rounded-full border text-[11px] font-semibold transition-all"
-                  style={{
-                    borderColor: active || passed ? 'var(--purple)' : 'var(--border-strong)',
-                    background: active ? 'var(--purple)' : passed ? 'var(--purple-dim)' : 'var(--surface)',
-                    color: active ? '#0A0A0C' : passed ? 'var(--purple)' : 'var(--text-3)',
-                  }}
-                >
-                  {passed ? '✓' : i}
-                </div>
-                <span
-                  className="text-[10px] uppercase tracking-wide text-center"
-                  style={{ color: active ? 'var(--text-1)' : 'var(--text-3)', fontWeight: active ? 600 : 400 }}
-                >
-                  {s.label}
-                </span>
-              </div>
-              {i < STAGES.length - 1 && (
-                <div className="mx-1 h-px flex-1" style={{ background: 'var(--border)', marginBottom: 18 }}>
+      {/* Body Inner Section wrapper */}
+      <div className="p-8 pb-0">
+        {/* 2. STEPPER */}
+        <div className="flex items-center justify-between pb-8">
+          {STAGES.map((s, i) => {
+            const active = i === step;
+            const passed = i < step;
+            return (
+              <React.Fragment key={s.key}>
+                <div className="flex flex-col items-center gap-2" style={{ minWidth: 64 }}>
                   <div
-                    className="dag-track-fill h-px"
-                    style={{ background: 'var(--purple)', width: i < step ? '100%' : '0%' }}
-                  />
+                    className="dag-mono flex h-8 w-8 items-center justify-center rounded-full border text-[11px] font-semibold transition-all"
+                    style={{
+                      borderColor: active || passed ? 'var(--purple)' : 'var(--border-strong)',
+                      background: active ? 'var(--purple)' : passed ? 'var(--purple-dim)' : 'var(--surface)',
+                      color: active ? '#0A0A0C' : passed ? 'var(--purple)' : 'var(--text-3)',
+                    }}
+                  >
+                    {passed ? '✓' : i}
+                  </div>
+                  <span
+                    className="text-[10px] uppercase tracking-wide text-center"
+                    style={{ color: active ? 'var(--text-1)' : 'var(--text-3)', fontWeight: active ? 600 : 400 }}
+                  >
+                    {s.label}
+                  </span>
                 </div>
-              )}
-            </React.Fragment>
-          );
-        })}
+                {i < STAGES.length - 1 && (
+                  <div className="mx-1 h-px flex-1" style={{ background: 'var(--border)', marginBottom: 18 }}>
+                    <div
+                      className="dag-track-fill h-px"
+                      style={{ background: 'var(--purple)', width: i < step ? '100%' : '0%' }}
+                    />
+                  </div>
+                )}
+              </React.Fragment>
+            );
+          })}
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_260px] gap-6 mt-7">
-        
-        <div className="rounded-xl border border-white/[0.08] bg-[#050505] p-6 flex flex-col items-center justify-center min-h-[280px] relative">
-          <div className="absolute top-3 left-4 dag-mono text-[10px] text-white/40">
-            {variant.gridName}
+      {/* 3. DYNAMIC VISUALIZATION STAGE */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[480px]">
+        {/* LEFT PANEL: ARENA */}
+        <div className="lg:col-span-7 p-10 border-r border-white/[0.06] flex flex-col items-center justify-center relative bg-[#010101]">
+          <div className="absolute top-4 left-6 pos-mono text-[9px] text-white/40 uppercase tracking-[0.2em]">
+            consensus_subsampling_grid
           </div>
 
-          <div className="grid grid-cols-4 gap-4 max-w-[240px] w-full">
+          <div className="grid grid-cols-4 gap-3 w-56 max-w-full">
             {transactions.map((tx) => {
               const isQueryNode = tx.id === queryNode;
               const isSampled = sampledPeers.includes(tx.id);
+
               let ringColor = 'transparent';
               let scale = 'scale(1)';
 
@@ -386,49 +365,50 @@ export default function DAGVisualizer({ algorithm }) {
           </div>
 
           {isConsensusReached && (
-            <div className="mt-5 text-xs font-mono text-emerald-400">
+            <div className="absolute bottom-4 text-xs font-mono text-emerald-400">
               ✓ Consensus reached! Grid converged on {transactions[0].color === '#3b82f6' ? 'BLUE' : 'RED'}
             </div>
           )}
         </div>
 
-        <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-5 flex flex-col justify-between">
+        {/* RIGHT PANEL: PARAMETERS */}
+        <div className="lg:col-span-5 p-10 flex flex-col justify-between bg-black">
           <div>
-            <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-4 border-b border-white/[0.06] pb-2">
-              Parameters
+            <h4 className="text-[10px] font-mono text-white/40 uppercase tracking-[0.2em] mb-6 pb-2 border-b border-white/[0.04]">
+              Active Parameter settings
             </h4>
-            <div className="space-y-4">
-              <div className="flex flex-col gap-1.5">
+            <div className="space-y-6">
+              <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between text-[10px]">
-                  <span className="font-semibold text-[#888]">Sample size (k)</span>
-                  <span className="font-mono text-white font-semibold">{kSample} peers</span>
+                  <span className="font-semibold text-white/60">Sample size (k)</span>
+                  <span className="font-mono text-white font-bold">{kSample} peers</span>
                 </div>
                 <input
                   type="range" min="2" max="8" value={kSample}
                   onChange={(e) => setKSample(Number(e.target.value))}
                   disabled={step > 0}
-                  className="w-full accent-current"
+                  className="w-full accent-current h-1 bg-white/10 rounded-lg appearance-none cursor-pointer"
                   style={{ accentColor: variant.color }}
                 />
               </div>
 
-              <div className="flex flex-col gap-1.5">
+              <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between text-[10px]">
-                  <span className="font-semibold text-[#888]">Threshold (α)</span>
-                  <span className="font-mono text-white font-semibold">{alpha} votes</span>
+                  <span className="font-semibold text-white/60">Threshold (α)</span>
+                  <span className="font-mono text-white font-bold">{alpha} votes</span>
                 </div>
                 <input
                   type="range" min="2" max={kSample} value={alpha}
                   onChange={(e) => setAlpha(Number(e.target.value))}
                   disabled={step > 0}
-                  className="w-full accent-current"
+                  className="w-full accent-current h-1 bg-white/10 rounded-lg appearance-none cursor-pointer"
                   style={{ accentColor: variant.color }}
                 />
               </div>
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-white/[0.06] text-[10px] text-white/40 leading-relaxed font-semibold">
+          <div className="mt-8 pt-4 border-t border-white/[0.04] text-[10.5px] text-white/40 leading-relaxed font-sans font-semibold">
             {variant.bottomText}
           </div>
         </div>
