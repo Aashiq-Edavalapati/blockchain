@@ -1,428 +1,404 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause } from 'lucide-react';
+import { 
+  Play, Pause, SkipForward, RotateCcw, Cpu, Network, 
+  CheckCircle2, Zap, Server, Database, Hash, Info, 
+  Layers, Coins, GitFork, Gauge, ArrowDown, Activity, Boxes, Trophy, Link as LinkIcon
+} from 'lucide-react';
 
 const STAGES = [
-  { key: 'idle', label: 'Idle', detail: 'Network is at rest. No pending work.' },
-  { key: 'broadcast', label: 'Broadcast', detail: 'A new transaction enters the mempool.' },
-  { key: 'collect', label: 'Collect', detail: 'Miner assembles a candidate block.' },
-  { key: 'solve', label: 'Solve', detail: 'Miner searches for a valid solution.' },
-  { key: 'propagate', label: 'Propagate', detail: 'Solution found — block broadcast to peers.' },
-  { key: 'verify', label: 'Verify', detail: 'Peers confirm the solution. Chain extends.' },
+  { id: 'broadcast', label: 'Broadcast', desc: 'Transactions flooding the global P2P mempool.' },
+  { id: 'assembly', label: 'Assembly', desc: 'Miners bundling transactions into Merkle Trees.' },
+  { id: 'mining', label: 'Mining Race', desc: 'Multiple miners competing to solve the PoW puzzle.' },
+  { id: 'propagate', label: 'Winner Found', desc: 'Winning miner broadcasts the solution to the network.' },
+  { id: 'verify', label: 'Audit', desc: 'Nodes independently verifying the block and signatures.' },
+  { id: 'extend', label: 'Extend', desc: 'Adding validated block to the global chain tip.' },
+  { id: 'reward', label: 'Minting', desc: 'Winning miner receives the 6.25 BTC block reward.' },
+  { id: 'fork', label: 'Fork Logic', desc: 'Resolving conflicts via the longest chain rule.' },
+  { id: 'adjust', label: 'Retarget', desc: 'Difficulty recalibrating for 10min block intervals.' },
 ];
 
-const THEME = {
-  bg: '#000000',
-  surface: '#050505',
-  surface2: '#020202',
-  border: 'rgba(255, 255, 255, 0.08)',
-  borderStrong: 'rgba(255, 255, 255, 0.15)',
-  amber: '#ffffff',
-  amberDim: 'rgba(255, 255, 255, 0.1)',
-  green: '#ffffff',
-  greenDim: 'rgba(255, 255, 255, 0.1)',
-  text1: '#ffffff',
-  text2: '#888888',
-  text3: '#666666',
-};
-
-function useHashRate(active) {
-  const [rate, setRate] = useState(0);
-  useEffect(() => {
-    if (!active) { setRate(0); return; }
-    const id = setInterval(() => {
-      setRate(180 + Math.random() * 65);
-    }, 140);
-    return () => clearInterval(id);
-  }, [active]);
-  return rate;
-}
-
-export default function ProofOfWorkVisualizer({ algorithm }) {
-  const algoId = algorithm?.id || "pow";
+export default function ProofOfWorkVisualizer() {
   const [step, setStep] = useState(0);
-  const [nonce, setNonce] = useState(0);
-  const [currentHash, setCurrentHash] = useState('0'.repeat(64));
   const [difficulty, setDifficulty] = useState(3);
   const [isAutoRunning, setIsAutoRunning] = useState(false);
+  const [nonce, setNonce] = useState(0);
+  const [currentHash, setCurrentHash] = useState('0'.repeat(64));
   const [blockchain, setBlockchain] = useState([
-    { height: 0, hash: '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f', nonce: 2083236893 },
+    { height: 0, hash: '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f', nonce: 2083236893, time: 'Genesis' }
   ]);
 
-  const miningIntervalRef = useRef(null);
-  const autoRunTimeoutRef = useRef(null);
-  const hashRate = useHashRate(step === 3);
+  const autoRunTimer = useRef(null);
+  const miningTimer = useRef(null);
+  const isMining = step === 2;
 
-  // Customize based on consensus algorithm variant
-  const getVariantDetails = () => {
-    switch (algoId) {
-      case 'proofOfCapacity':
-        return {
-          title: 'Proof of Capacity / Space',
-          desc: 'Simulating disk plot scanning. Miners pre-allocate disk space for puzzle answers.',
-          sliderLabel: 'Allocated Space (TB)',
-          unitLabel: 'Plot scanning rate',
-          unitValue: `${(hashRate * 1.5).toFixed(0)} GB/s`,
-          nonceLabel: 'Plot Index Checked',
-          hashHeader: 'best_deadline_lookup()',
-          targetText: 'Deadlines found',
-          activeAction: 'Scanning plotted files on disk...',
-          color: '#E8A344',
-        };
-      case 'proofOfBurn':
-        return {
-          title: 'Proof of Burn',
-          desc: 'Simulating coin destruction. Burning coins buys virtual mining power.',
-          sliderLabel: 'Burned Multiplier',
-          unitLabel: 'Burn validation rate',
-          unitValue: `${(hashRate * 0.4).toFixed(1)} Burn/s`,
-          nonceLabel: 'Virtual Coins Burned',
-          hashHeader: 'burn_weight_tally()',
-          targetText: 'Burn probability met',
-          activeAction: 'Tallying burn transactions...',
-          color: '#F59E0B',
-        };
-      case 'proofOfElapsedTime':
-        return {
-          title: 'Proof of Elapsed Time',
-          desc: 'Simulating trusted enclave wait countdowns. Intel SGX assigns random timers.',
-          sliderLabel: 'SGX Timer Limit (s)',
-          unitLabel: 'Enclave clock ticks',
-          unitValue: `${(hashRate * 0.1).toFixed(1)} Ticks/s`,
-          nonceLabel: 'Elapsed Enclave Time',
-          hashHeader: 'trusted_sgx_wait_timer()',
-          targetText: 'Enclave timer expired',
-          activeAction: 'Awaiting trusted SGX enclave countdown...',
-          color: '#10B981',
-        };
-      case 'proofOfActivity':
-        return {
-          title: 'Proof of Activity',
-          desc: 'Simulating hybrid PoW/PoS consensus. PoW generates block, PoS validators sign.',
-          sliderLabel: 'Miners Difficulty',
-          unitLabel: 'Hash rate',
-          unitValue: `${hashRate.toFixed(0)} H/s`,
-          nonceLabel: 'Header Nonce',
-          hashHeader: 'hybrid_activity_solve()',
-          targetText: 'Header solved, signatures ready',
-          activeAction: 'Solving header + collecting PoS signs...',
-          color: '#3B82F6',
-        };
-      default:
-        return {
-          title: 'Proof of Work',
-          desc: 'Simulating cryptographic puzzles. Miners search for leading zeros.',
-          sliderLabel: 'Difficulty (Zeros)',
-          unitLabel: 'Hash rate',
-          unitValue: `${hashRate.toFixed(0)} H/s`,
-          nonceLabel: 'Nonce value',
-          hashHeader: 'candidate_block.mine()',
-          targetText: `target: ${difficulty} leading zeros`,
-          activeAction: 'Solving cryptographic puzzle...',
-          color: '#E8A344',
-        };
-    }
-  };
-
-  const variant = getVariantDetails();
-
-  const generateRandomHash = (forceSuccess = false, diff = difficulty) => {
-    const chars = '0123456789abcdef';
-    let hash = forceSuccess ? '0'.repeat(diff) : '';
-    const length = forceSuccess ? 64 - diff : 64;
-    for (let i = 0; i < length; i++) hash += chars[Math.floor(Math.random() * 16)];
-    return hash;
-  };
-
+  // Auto-Simulation Engine
   useEffect(() => {
-    if (!isAutoRunning) { clearTimeout(autoRunTimeoutRef.current); return; }
-    const go = (next, delay) => { autoRunTimeoutRef.current = setTimeout(() => setStep(next), delay); };
-    switch (step) {
-      case 0: go(1, 700); break;
-      case 1: go(2, 1100); break;
-      case 2: go(3, 900); break;
-      case 3: break; // Solve loop handles transitions
-      case 4: go(5, 1300); break;
-      case 5:
-        autoRunTimeoutRef.current = setTimeout(() => {
-          setBlockchain(prev => [...prev, { height: prev.length, hash: currentHash, nonce }]);
-          setNonce(0);
-          setCurrentHash('0'.repeat(64));
-          setStep(0);
-        }, 900);
-        break;
-      default: break;
-    }
-    return () => clearTimeout(autoRunTimeoutRef.current);
-  }, [step, isAutoRunning, currentHash, nonce]);
-
-  useEffect(() => {
-    if (step === 3) {
-      let attempts = 0;
-      const targetAttempts = Math.floor(Math.random() * 20 * Math.pow(1.5, difficulty)) + 10;
-      miningIntervalRef.current = setInterval(() => {
-        attempts++;
-        setNonce(prev => prev + 1);
-        if (attempts >= targetAttempts) {
-          clearInterval(miningIntervalRef.current);
-          setCurrentHash(generateRandomHash(true, difficulty));
-          setStep(4);
-        } else {
-          setCurrentHash(generateRandomHash(false));
-        }
-      }, 40);
-    }
-    return () => clearInterval(miningIntervalRef.current);
-  }, [step, difficulty]);
-
-  const toggleAutoRun = () => {
-    setIsAutoRunning(!isAutoRunning);
-    if (!isAutoRunning && step === 5) setStep(0);
-  };
-
-  const manualNextStep = () => {
-    setIsAutoRunning(false);
+    if (!isAutoRunning) { clearTimeout(autoRunTimer.current); return; }
+    const transition = (delay) => { autoRunTimer.current = setTimeout(() => setStep(s => (s + 1) % 9), delay); };
+    
+    if (isMining) return; 
+    
+    // Trigger block commit at the start of step 5 (Extend)
     if (step === 5) {
-      setBlockchain(prev => [...prev, { height: prev.length, hash: currentHash, nonce }]);
-      setNonce(0);
-      setCurrentHash('0'.repeat(64));
-      setStep(0);
-    } else {
-      setStep(prev => prev + 1);
+      commitBlock();
     }
+
+    const delays = [2500, 3000, 0, 2000, 2000, 1800, 2500, 3000, 2500];
+    transition(delays[step]);
+
+    return () => clearTimeout(autoRunTimer.current);
+  }, [step, isAutoRunning, isMining]);
+
+  // Hashing Engine Simulation
+  useEffect(() => {
+    if (isMining) {
+      const target = 45 + (difficulty * 30);
+      let count = 0;
+      miningTimer.current = setInterval(() => {
+        count++;
+        setNonce(n => n + 1);
+        if (count >= target) {
+          clearInterval(miningTimer.current);
+          setCurrentHash('0'.repeat(difficulty) + Math.random().toString(16).slice(2, 66 - difficulty));
+          setStep(3);
+        } else {
+          setCurrentHash(Math.random().toString(16).slice(2, 66));
+        }
+      }, 35);
+    }
+    return () => clearInterval(miningTimer.current);
+  }, [isMining, difficulty]);
+
+  const commitBlock = () => {
+    setBlockchain(prev => {
+      // Prevent duplicate commits if auto-run triggers twice
+      if (prev.some(b => b.hash === currentHash)) return prev;
+      return [...prev, { 
+        height: prev.length, 
+        hash: currentHash, 
+        nonce: nonce, 
+        time: new Date().toLocaleTimeString() 
+      }];
+    });
   };
 
-  const resetSimulation = () => {
+  const handleManual = () => {
     setIsAutoRunning(false);
+    if (step === 5) commitBlock();
+    setStep(s => (s + 1) % 9);
+  };
+
+  const resetSim = () => {
     setStep(0);
+    setBlockchain([blockchain[0]]);
+    setIsAutoRunning(false);
     setNonce(0);
     setCurrentHash('0'.repeat(64));
-    setBlockchain([{ height: 0, hash: '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f', nonce: 2083236893 }]);
   };
 
-  const stage = STAGES[step] || STAGES[0];
-  const isSolving = step === 3;
-  const isSolved = step >= 4;
-  const matchLen = (() => {
-    let n = 0;
-    while (n < difficulty && currentHash[n] === '0') n++;
-    return isSolved ? difficulty : n;
-  })();
-
   return (
-    <div
-      style={{
-        '--bg': THEME.bg, '--surface': THEME.surface, '--surface-2': THEME.surface2,
-        '--border': THEME.border, '--border-strong': THEME.borderStrong,
-        '--amber': variant.color, '--amber-dim': `${variant.color}20`,
-        '--green': THEME.green, '--green-dim': THEME.greenDim,
-        '--text-1': THEME.text1, '--text-2': THEME.text2, '--text-3': THEME.text3,
-        background: 'var(--bg)', color: 'var(--text-1)',
-        fontFamily: "'Raleway', 'Inter', sans-serif",
-      }}
-      className="w-full max-w-4xl rounded-2xl border p-7"
-    >
+    <div className="w-full max-w-5xl mx-auto bg-black border border-white/[0.08] rounded-2xl overflow-hidden shadow-[0_0_100px_rgba(0,0,0,1)] text-[#EDEDED] font-sans relative">
       <style>{`
-        .pow-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
-        @keyframes pow-fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-        .pow-fade { animation: pow-fade-in 0.4s ease both; }
-        @keyframes pow-glow-pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(63,206,142,0.35); } 50% { box-shadow: 0 0 0 6px rgba(63,206,142,0); } }
-        .pow-glow { animation: pow-glow-pulse 1.8s ease-in-out infinite; }
-        @keyframes pow-scan { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
-        .pow-scan { animation: pow-scan 0.6s ease-in-out infinite; }
-        .pow-track-fill { transition: width 0.5s cubic-bezier(0.4,0,0.2,1); }
+        @keyframes stream { 0% { transform: translateY(-30px); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(30px); opacity: 0; } }
+        .animate-stream { animation: stream 1.2s infinite linear; }
+        @keyframes block-drop { 0% { transform: translateY(-50px) scale(0.8); opacity: 0; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
+        .animate-drop { animation: block-drop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes reward-float { 0% { transform: translateY(0); opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(-60px); opacity: 0; } }
+        .reward-anim { animation: reward-float 2s infinite ease-out; }
+        @keyframes scan { 0% { transform: translateY(-150%); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(150%); opacity: 0; } }
+        .node-pos { position: absolute; transform: translate(-50%, -50%); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
       `}</style>
 
-      <div style={{ borderColor: 'var(--border)' }} className="flex flex-wrap items-start justify-between gap-6 border-b pb-6">
-        <div>
-          <div className="pow-mono flex items-center gap-2 text-[11px] uppercase tracking-[0.18em]" style={{ color: 'var(--amber)' }}>
-            <span className="h-1.5 w-1.5 rounded-full" style={{ background: 'var(--amber)' }} />
-            Consensus · {variant.title}
+      {/* 1. NAVIGATION HEADER */}
+      <div className="flex items-center justify-between px-10 py-6 border-b border-white/[0.06] bg-[#050505]/95 backdrop-blur-xl sticky top-0 z-50">
+        <div className="flex items-center gap-10">
+          <div className="flex flex-col">
+            <span className="text-[10px] font-mono text-zinc-600 uppercase tracking-[0.4em] mb-1">Status</span>
+            <div className="flex items-center gap-3">
+              <span className="text-3xl font-bold font-mono text-white leading-none">0{step + 1}</span>
+              <span className="text-zinc-800 font-mono text-xl">/ 09</span>
+            </div>
           </div>
-          <h3 className="mt-2 text-2xl font-semibold tracking-tight" style={{ color: 'var(--text-1)' }}>
-            {stage.label}
-          </h3>
-          <p className="mt-1 max-w-sm text-sm leading-relaxed" style={{ color: 'var(--text-2)' }}>
-            {stage.detail}
-          </p>
+          <div className="h-12 w-px bg-white/[0.08]" />
+          <div className="space-y-1">
+            <h2 className="text-sm font-bold text-white uppercase tracking-[0.2em]">{STAGES[step].label}</h2>
+            <p className="text-xs text-zinc-500 font-medium tracking-tight">{STAGES[step].desc}</p>
+          </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex flex-col gap-1.5 rounded-xl border px-3 py-2" style={{ borderColor: 'var(--border)', background: 'var(--surface)' }}>
-            <div className="pow-mono flex items-center justify-between text-[10px] uppercase tracking-wider" style={{ color: 'var(--text-3)' }}>
-              <span>{variant.sliderLabel}</span>
-              <span style={{ color: 'var(--text-1)' }}>{difficulty}</span>
-            </div>
-            <input
-              type="range" min="1" max="5" value={difficulty}
-              onChange={(e) => setDifficulty(Number(e.target.value))}
-              disabled={isSolving}
-              className="w-28 accent-current"
-              style={{ accentColor: variant.color }}
-            />
-          </div>
-
-          <div className="flex overflow-hidden rounded-xl border" style={{ borderColor: 'var(--border)' }}>
-            <button
-              onClick={toggleAutoRun}
-              className="pow-mono px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors flex items-center gap-1.5 cursor-pointer"
-              style={{
-                background: isAutoRunning ? 'rgba(224,90,90,0.12)' : 'var(--green-dim)',
-                color: isAutoRunning ? '#E05A5A' : 'var(--green)',
-              }}
-            >
-              {isAutoRunning ? (
-                <>
-                  <Pause size={12} />
-                  <span>Pause</span>
-                </>
-              ) : (
-                <>
-                  <Play size={12} />
-                  <span>Run</span>
-                </>
-              )}
-            </button>
-            <button
-              onClick={manualNextStep}
-              disabled={isAutoRunning || isSolving}
-              className="pow-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer text-white hover:bg-white/[0.06]"
-              style={{ borderColor: 'var(--border)', background: 'var(--surface-2)' }}
-            >
-              {step === 5 ? 'Restart' : 'Step →'}
-            </button>
-            <button
-              onClick={resetSimulation}
-              className="pow-mono border-l px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors cursor-pointer text-white/60 hover:text-white hover:bg-white/[0.06]"
-              style={{ borderColor: 'var(--border)', background: 'var(--surface-2)' }}
-            >
-              Reset
-            </button>
-          </div>
+        <div className="flex bg-zinc-900/30 p-1 rounded-xl border border-white/[0.05]">
+          <button onClick={() => setIsAutoRunning(!isAutoRunning)} className={`p-3 rounded-lg transition-all ${isAutoRunning ? 'bg-white text-black' : 'text-zinc-400 hover:text-white'}`}>
+            {isAutoRunning ? <Pause size={20} strokeWidth={2.5} /> : <Play size={20} strokeWidth={2.5} />}
+          </button>
+          <button onClick={handleManual} className="p-3 text-zinc-400 hover:text-white transition-all"><SkipForward size={20} /></button>
+          <button onClick={resetSim} className="p-3 text-zinc-400 hover:text-white transition-all"><RotateCcw size={20} /></button>
         </div>
       </div>
 
-      <div className="mt-7 flex items-center">
-        {STAGES.map((s, i) => {
-          const active = i === step;
-          const passed = i < step;
-          return (
-            <React.Fragment key={s.key}>
-              <div className="flex flex-col items-center gap-2" style={{ minWidth: 64 }}>
-                <div
-                  className={`pow-mono flex h-8 w-8 items-center justify-center rounded-full border text-[11px] font-semibold transition-all ${active ? 'pow-glow' : ''}`}
-                  style={{
-                    borderColor: active || passed ? 'var(--amber)' : 'var(--border-strong)',
-                    background: active ? 'var(--amber)' : passed ? 'var(--amber-dim)' : 'var(--surface)',
-                    color: active ? '#0A0A0C' : passed ? 'var(--amber)' : 'var(--text-3)',
-                  }}
-                >
-                  {passed ? '✓' : i}
+      {/* 2. DYNAMIC VISUALIZATION STAGE */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[520px]">
+        
+        {/* LEFT PANEL: NETWORK TOPOLOGY */}
+        <div className="lg:col-span-5 p-12 border-r border-white/[0.06] flex items-center justify-center relative bg-[#010101]">
+          
+          <div className="relative w-80 h-80">
+            <div className="absolute inset-0 rounded-full border border-white/[0.03] scale-110" />
+            
+            {/* STEP 01: BROADCAST */}
+            {step === 0 && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+                <div className="grid grid-cols-4 gap-3 opacity-40">
+                   {[...Array(16)].map((_, i) => <div key={i} className="w-2 h-2 rounded-full bg-indigo-500 animate-stream" style={{ animationDelay: `${i * 0.1}s` }} />)}
                 </div>
-                <span
-                  className="text-[10px] uppercase tracking-wide text-center"
-                  style={{ color: active ? 'var(--text-1)' : 'var(--text-3)', fontWeight: active ? 600 : 400 }}
-                >
-                  {s.label}
-                </span>
+                <span className="text-[10px] font-mono text-indigo-400 uppercase tracking-widest bg-indigo-500/5 px-3 py-1 rounded-full border border-indigo-500/20">Syncing Mempool</span>
               </div>
-              {i < STAGES.length - 1 && (
-                <div className="mx-1 h-px flex-1" style={{ background: 'var(--border)', marginBottom: 18 }}>
-                  <div
-                    className="pow-track-fill h-px"
-                    style={{ background: 'var(--amber)', width: i < step ? '100%' : '0%' }}
-                  />
+            )}
+
+            {/* STEP 02: MERKLE ROOT */}
+            {step === 1 && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                 <div className="flex gap-10 mb-4 animate-pulse">
+                    <div className="w-8 h-8 border border-zinc-800 rounded bg-zinc-900/50" />
+                    <div className="w-8 h-8 border border-zinc-800 rounded bg-zinc-900/50" />
+                 </div>
+                 <div className="w-px h-12 bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
+                 <div className="w-14 h-14 border-2 border-indigo-500 rounded-xl flex items-center justify-center bg-indigo-500/10 mt-2">
+                    <Hash size={24} className="text-indigo-400" />
+                 </div>
+              </div>
+            )}
+
+            {/* MULTI-MINER COMPETITION (STEPS 3-7) */}
+            {(step >= 2 && step <= 6) && (
+              <>
+                {[0, 120, 240].map((angle, i) => (
+                  <div key={i} className="node-pos" style={{ top: `${50 + 42 * Math.sin(angle * Math.PI / 180)}%`, left: `${50 + 42 * Math.cos(angle * Math.PI / 180)}%` }}>
+                    <div className={`w-16 h-16 rounded-2xl border flex items-center justify-center transition-all duration-700 relative
+                      ${(i === 0 && step === 2) ? 'border-amber-500 bg-amber-500/5' : 
+                        (i === 0 && step >= 3) ? 'border-emerald-500 bg-emerald-500/10 shadow-[0_0_30px_rgba(16,185,129,0.2)]' :
+                        (i !== 0 && step === 2) ? 'border-zinc-800 opacity-60 animate-pulse' :
+                        (i !== 0 && step === 4) ? 'border-indigo-500 bg-indigo-500/10 shadow-[0_0_30px_rgba(99,102,241,0.2)]' :
+                        'border-zinc-800 opacity-30'
+                      }`}>
+                      
+                      {/* Icons based on state */}
+                      {i === 0 && step >= 3 ? (
+                        <Trophy size={28} className="text-emerald-400" />
+                      ) : i !== 0 && step === 4 ? (
+                        <Database size={24} className="text-indigo-400 animate-pulse" />
+                      ) : (
+                        <Server size={24} className="text-zinc-700" />
+                      )}
+
+                      {/* STEP 4 (Audit): PEER VERIFICATION SCANNER */}
+                      {i !== 0 && step === 4 && (
+                        <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
+                          <div className="w-full h-0.5 bg-indigo-400 shadow-[0_0_10px_#818cf8] animate-[scan_1.2s_ease-in-out_infinite]" />
+                        </div>
+                      )}
+
+                      {/* STEP 5 (Extend): WINNER DROPS BLOCK */}
+                      {i === 0 && step === 5 && (
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                          <div className="w-full h-full border-2 border-emerald-500 rounded-2xl animate-ping opacity-50" />
+                          <ArrowDown className="text-emerald-400 absolute -bottom-12 animate-bounce" />
+                        </div>
+                      )}
+
+                      {/* STEP 5 (Extend): PEERS ACCEPT BLOCK */}
+                      {i !== 0 && step === 5 && (
+                         <div className="absolute -bottom-6">
+                            <CheckCircle2 size={18} className="text-emerald-500 animate-bounce" />
+                         </div>
+                      )}
+
+                      {/* STEP 6 (Reward): MINTING ANIMATION */}
+                      {i === 0 && step === 6 && (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                          <div className="reward-anim absolute flex flex-col items-center pointer-events-none">
+                             <Coins className="text-amber-400" size={32} />
+                             <span className="text-amber-400 font-mono text-[10px] font-bold mt-1 whitespace-nowrap">+6.25 BTC</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Node Labels */}
+                    <span className="text-[9px] font-mono text-zinc-600 mt-3 block text-center uppercase tracking-tighter">
+                      {i === 0 ? 'Miner_01' : `Peer_0${i}`}
+                    </span>
+
+                    {/* Active Audit Status Indicator */}
+                    {i !== 0 && step === 4 && (
+                      <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 text-[8px] font-mono text-indigo-400 bg-indigo-500/10 px-2 py-1 rounded border border-indigo-500/30 whitespace-nowrap">
+                        Verifying Hash...
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </>
+            )}
+
+            {/* STEP 08: FORK LOGIC */}
+            {step === 7 && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+                 <div className="flex gap-2 items-end">
+                    <div className="w-6 h-6 border border-zinc-800 rounded bg-zinc-900 opacity-20" />
+                    <div className="w-6 h-12 border-2 border-emerald-500 rounded bg-emerald-500/10" />
+                 </div>
+                 <div className="text-center">
+                    <GitFork size={32} className="text-zinc-600 mx-auto" />
+                    <p className="text-[10px] font-mono text-emerald-400 uppercase tracking-widest mt-2">Heaviest Chain Consensus</p>
+                 </div>
+              </div>
+            )}
+
+            {/* STEP 09: RETARGETING */}
+            {step === 8 && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                 <div className="w-40 h-40 rounded-full border-2 border-zinc-800 flex items-center justify-center relative">
+                    <Gauge size={48} className="text-indigo-500" />
+                    <div className="absolute inset-0 border-2 border-indigo-500/20 rounded-full border-t-transparent animate-spin" />
+                 </div>
+                 <span className="text-[10px] font-mono mt-6 text-zinc-500 tracking-[0.3em]">Recalibrating Difficulty</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* RIGHT PANEL: COMPUTATION CORE */}
+        <div className="lg:col-span-7 bg-[#000] p-12">
+           <div className="mb-8 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className={`w-2 h-2 rounded-full transition-colors ${isMining ? 'bg-amber-500 shadow-[0_0_10px_#F5A623]' : 'bg-zinc-800'}`} />
+                <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-zinc-500">Miner_Node_Stdout</span>
+              </div>
+              <div className="flex gap-6">
+                <span className="text-[10px] font-mono text-zinc-600">Temp: <span className="text-zinc-300">74°C</span></span>
+                <span className={`text-[10px] font-mono ${isMining ? 'text-amber-500' : 'text-zinc-500'}`}>{isMining ? 'HASHING_ACTIVE' : 'STANDBY'}</span>
+              </div>
+           </div>
+
+           <div className={`h-full rounded-2xl border transition-all duration-700 overflow-hidden ${isMining ? 'border-amber-500/30 bg-amber-500/[0.01]' : 'border-white/[0.06] bg-[#050505]'}`}>
+              <div className="px-10 py-10 space-y-12">
+                <div className="grid grid-cols-2 gap-12">
+                   <div className="space-y-3">
+                      <span className="text-[9px] font-mono uppercase text-zinc-600 tracking-[0.2em]">Previous Hash</span>
+                      <p className="text-[11px] font-mono text-zinc-400 truncate border-b border-white/[0.04] pb-2 leading-none">{blockchain[blockchain.length-1].hash}</p>
+                   </div>
+                   <div className="space-y-3">
+                      <span className="text-[9px] font-mono uppercase text-zinc-600 tracking-[0.2em]">Merkle Root</span>
+                      <p className="text-[11px] font-mono text-zinc-400 truncate border-b border-white/[0.04] pb-2 leading-none">{step >= 1 ? '77d2...f3a1' : 'Awaiting sync...'}</p>
+                   </div>
+                </div>
+
+                <div className="flex items-center justify-between">
+                   <div className="space-y-2">
+                      <span className="text-[9px] font-mono uppercase text-zinc-600 tracking-[0.2em]">Current Nonce</span>
+                      <p className={`text-6xl font-bold font-mono tracking-tighter tabular-nums leading-none ${isMining ? 'text-white' : 'text-zinc-800'}`}>
+                        {nonce.toString().padStart(9, '0')}
+                      </p>
+                   </div>
+                   <div className="text-right space-y-4">
+                      <span className="text-[9px] font-mono uppercase text-zinc-600 tracking-[0.2em]">Difficulty Target</span>
+                      <div className="flex gap-2 justify-end">
+                        {[...Array(5)].map((_, i) => (
+                          <div key={i} className={`w-5 h-7 rounded border-r-2 transition-all ${i < difficulty ? 'bg-amber-500 border-amber-400' : 'border-white/10'}`} />
+                        ))}
+                      </div>
+                   </div>
+                </div>
+
+                <div className="space-y-4">
+                   <div className="flex items-center justify-between">
+                      <span className="text-[9px] font-mono uppercase text-zinc-600 tracking-[0.2em]">Block Hash Digest</span>
+                      {step >= 3 && <span className="text-[10px] font-bold text-emerald-500 tracking-widest flex items-center gap-2">✓ SOLUTION_MATCH</span>}
+                   </div>
+                   <div className={`p-6 rounded-2xl border font-mono text-xs leading-loose break-all transition-all duration-500 ${step >= 3 ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-400' : 'border-white/[0.04] bg-black text-zinc-700'}`}>
+                      <span className={currentHash.startsWith('0'.repeat(difficulty)) ? 'text-white font-bold bg-white/20 rounded-sm' : ''}>
+                        {currentHash.slice(0, difficulty)}
+                      </span>
+                      {currentHash.slice(difficulty)}
+                   </div>
+                </div>
+              </div>
+           </div>
+        </div>
+      </div>
+
+      {/* 3. ENHANCED BLOCKCHAIN LEDGER */}
+      <div className="bg-[#050505] border-t border-white/[0.06] p-10">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <Layers size={18} className="text-zinc-600" />
+            <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-zinc-600">Verified Ledger Archive</span>
+          </div>
+          <div className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest">Tip: Block #{blockchain.length-1}</div>
+        </div>
+
+        <div className="flex gap-8 overflow-x-auto no-scrollbar pb-4 snap-x">
+          {blockchain.map((b, i) => (
+            <div key={i} className={`shrink-0 w-80 rounded-2xl border bg-black p-6 flex flex-col gap-4 relative transition-all duration-500 snap-start
+              ${i === blockchain.length - 1 && i !== 0 ? 'border-emerald-500/40 shadow-[0_0_30px_rgba(16,185,129,0.1)] animate-drop' : 'border-white/[0.08] opacity-80'}
+            `}>
+              {i > 0 && (
+                <div className="absolute -left-8 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 z-10">
+                  <div className="w-8 h-px bg-zinc-800" />
+                  <LinkIcon size={12} className="text-zinc-700" />
                 </div>
               )}
-            </React.Fragment>
-          );
-        })}
-      </div>
-
-      <div
-        className="relative mt-7 overflow-hidden rounded-xl border"
-        style={{ borderColor: isSolved ? 'var(--green)' : 'var(--border)', background: '#050505', transition: 'border-color 0.4s ease' }}
-      >
-        <div className="flex items-center justify-between border-b px-4 py-2.5" style={{ borderColor: 'var(--border)', background: 'var(--surface)' }}>
-          <div className="flex items-center gap-2">
-            <span className="h-2.5 w-2.5 rounded-full" style={{ background: '#E05A5A' }} />
-            <span className="h-2.5 w-2.5 rounded-full" style={{ background: 'var(--amber)' }} />
-            <span className="h-2.5 w-2.5 rounded-full" style={{ background: 'var(--green)' }} />
-            <span className="pow-mono ml-2 text-[11px]" style={{ color: 'var(--text-3)' }}>
-              {variant.hashHeader}
-            </span>
-          </div>
-          <div className="pow-mono flex items-center gap-1.5 text-[11px]" style={{ color: isSolving ? 'var(--amber)' : 'var(--text-3)' }}>
-            {isSolving && <span className="pow-scan h-1.5 w-1.5 rounded-full" style={{ background: 'var(--amber)' }} />}
-            {isSolving ? variant.unitValue : isSolved ? 'solved' : 'standby'}
-          </div>
-        </div>
-
-        <div
-          className={`grid gap-6 p-5 transition-opacity duration-500 md:grid-cols-[1fr_auto] ${step < 2 ? 'opacity-40' : 'opacity-100'}`}
-        >
-          <div className="pow-mono space-y-3 text-xs">
-            <div className="flex items-center justify-between border-b pb-2" style={{ borderColor: 'var(--border)' }}>
-              <span style={{ color: 'var(--text-3)' }}>prev_hash</span>
-              <span className="truncate opacity-60 ml-4 max-w-[200px] md:max-w-xs">{blockchain[blockchain.length - 1].hash}</span>
-            </div>
-            <div className="flex items-center justify-between border-b pb-2" style={{ borderColor: 'var(--border)' }}>
-              <span style={{ color: 'var(--text-3)' }}>merkle_root</span>
-              <span style={{ color: 'var(--green)' }}>a3f9c1…e21c8b</span>
-            </div>
-            <div className="flex items-center justify-between border-b pb-2" style={{ borderColor: 'var(--border)' }}>
-              <span style={{ color: 'var(--text-3)' }}>{variant.nonceLabel}</span>
-              <span className="text-base font-semibold tabular-nums" style={{ color: 'var(--text-1)' }}>
-                {nonce.toString().padStart(10, '0')}
-              </span>
-            </div>
-
-            <div className="pt-1">
-              <div className="mb-1.5 flex items-center justify-between text-[10px] uppercase tracking-wider" style={{ color: 'var(--text-3)' }}>
-                <span>solution output</span>
-                <span>{variant.targetText}</span>
+              
+              <div className="flex justify-between items-start">
+                <div>
+                  <h4 className="text-white text-sm font-bold">Block #{b.height}</h4>
+                  <span className="text-[9px] font-mono text-zinc-500 uppercase">{b.time}</span>
+                </div>
+                <div className="bg-white/[0.05] p-2 rounded-lg border border-white/[0.05]">
+                  <Database size={16} className="text-emerald-500" />
+                </div>
               </div>
-              <div
-                className="break-all rounded-lg border p-3 text-[11px] leading-relaxed"
-                style={{
-                  borderColor: isSolved ? 'var(--green)' : 'var(--border)',
-                  background: isSolved ? 'var(--green-dim)' : 'var(--surface-2)',
-                  color: isSolved ? '#B7F3D6' : 'var(--text-2)',
-                }}
-              >
-                <span
-                  className="rounded-sm font-bold"
-                  style={{
-                    color: isSolved ? 'var(--green)' : matchLen > 0 ? 'var(--amber)' : 'var(--text-2)',
-                    background: matchLen > 0 ? 'rgba(255,255,255,0.08)' : 'transparent',
-                  }}
-                >
-                  {currentHash.substring(0, difficulty)}
-                </span>
-                {currentHash.substring(difficulty)}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <div className="mt-6 border-t border-white/[0.06] pt-6">
-        <h4 className="pow-mono text-[10px] text-white/40 uppercase tracking-widest mb-3">
-          chain_extended_ledger
-        </h4>
-        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin">
-          {blockchain.map((b) => (
-            <div
-              key={b.height}
-              className="rounded-xl border border-white/[0.08] bg-[#050505] p-3 text-xs min-w-[125px] flex flex-col justify-between gap-2 shrink-0 animate-fade-in"
-            >
-              <div>
-                <p className="pow-mono text-[9px] text-white/40">Block: #{b.height}</p>
-                <p className="font-bold text-white mt-1">Difficulty: {difficulty}</p>
+              <div className="space-y-3">
+                <div className="space-y-1">
+                  <span className="text-[9px] font-mono text-zinc-600 uppercase">Block Hash</span>
+                  <p className="text-[10px] font-mono text-zinc-400 break-all leading-relaxed bg-white/[0.02] p-2 rounded border border-white/[0.03]">
+                    <span className="text-emerald-500 font-bold">{b.hash.slice(0, difficulty)}</span>
+                    {b.hash.slice(difficulty)}
+                  </p>
+                </div>
+                <div className="flex justify-between items-center px-1">
+                  <div className="flex flex-col">
+                    <span className="text-[8px] text-zinc-600 uppercase">Nonce</span>
+                    <span className="text-[10px] font-mono text-zinc-300">{b.nonce}</span>
+                  </div>
+                  <div className="flex flex-col text-right">
+                    <span className="text-[8px] text-zinc-600 uppercase">Status</span>
+                    <span className="text-[10px] font-mono text-emerald-500 font-bold">Immutable</span>
+                  </div>
+                </div>
               </div>
-              <p className="pow-mono text-[9px] text-white/40 truncate" title={b.hash}>Hash: {b.hash.slice(0, 8)}...</p>
             </div>
           ))}
+
+          {/* Syncing/Pending Ghost Block */}
+          {step > 1 && step < 5 && (
+             <div className="shrink-0 w-80 rounded-2xl border border-dashed border-zinc-800 bg-transparent flex flex-col items-center justify-center p-6 animate-pulse opacity-40">
+                <Boxes size={32} className="text-zinc-700 mb-4" />
+                <span className="text-[10px] font-mono text-zinc-700 uppercase tracking-[0.4em]">Mining Candidate...</span>
+             </div>
+          )}
         </div>
+      </div>
+
+      {/* 4. INDUSTRY CONTEXT */}
+      <div className="bg-black border-t border-white/[0.06] p-10 flex gap-8 items-start">
+        <div className="p-3 bg-indigo-500/10 rounded-xl border border-indigo-500/20">
+          <Info size={24} className="text-indigo-400" />
+        </div>
+        <p className="text-[12px] leading-relaxed text-zinc-500 max-w-5xl">
+          <strong className="text-zinc-200">Protocol Design:</strong> In professional environments, Proof of Work acts as a decentralized clock. <strong className="text-zinc-200">Step 05 (Extend)</strong> and <strong className="text-zinc-200">Step 06 (Reward)</strong> are the economic engine; nodes only extend the chain once validation is perfect, and the subsidy ensures honest participation. <strong className="text-zinc-200">Steps 08 & 09</strong> manage the infrastructure, ensuring that even as global hardware increases in power, the network difficulty recalibrates to keep block production steady and secure.
+        </p>
       </div>
     </div>
   );
