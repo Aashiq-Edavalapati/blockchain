@@ -9,13 +9,15 @@
  *       or  npm run generate
  */
 
-import { writeFileSync } from "fs";
+import { mkdirSync, writeFileSync } from "fs";
 import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, "..");
 const OUT = resolve(ROOT, "src/data/generated");
+
+mkdirSync(OUT, { recursive: true });
 
 // ---------------------------------------------------------------------------
 // Import primary sources
