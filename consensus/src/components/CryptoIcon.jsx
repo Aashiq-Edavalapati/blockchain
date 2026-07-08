@@ -7,6 +7,9 @@ const SYMBOL_MAP = {
   XLM: "xlm", XRP: "xrp", NEO: "neo", XTZ: "xtz", ALGO: "algo",
   NEAR: "near", HBAR: "hbar", FLOW: "flow", EGLD: "egld", CRO: "cro",
   KLAY: "klay", EOS: "eos", ARB: "arb",
+  SUI: "sui", APT: "apt", BASE: "base", OP: "op", ZK: "zk", STRK: "strk",
+  CELO: "celo", OSMO: "osmo", ICP: "icp", XCH: "xch", XEM: "xem",
+  DCR: "dcr", SLM: "slm", LN: "ln"
 };
 
 const FALLBACK_COLORS = {
@@ -31,9 +34,32 @@ const NAME_MAP = {
   TRX: "TRON",
   BNB: "BNB Chain",
   VET: "VeChain",
-  ATOM: "Cosmos",
+  ATOM: "Cosmos Hub",
   XRP: "XRP Ledger",
   SOL: "Solana",
+  XLM: "Stellar",
+  NEO: "NEO",
+  XTZ: "Tezos",
+  ALGO: "Algorand",
+  NEAR: "NEAR Protocol",
+  HBAR: "Hedera Hashgraph",
+  FLOW: "Flow",
+  EGLD: "MultiversX",
+  CRO: "Cronos",
+  KLAY: "Klaytn",
+  SUI: "Sui",
+  APT: "Aptos",
+  BASE: "Base",
+  OP: "Optimism",
+  ZK: "zkSync Era",
+  STRK: "Starknet",
+  CELO: "Celo",
+  OSMO: "Osmosis",
+  ICP: "Internet Computer",
+  XCH: "Chia Network",
+  XEM: "NEM",
+  DCR: "Decred",
+  SLM: "Slimcoin",
 };
 
 export default function CryptoIcon({ symbol, size = 20 }) {

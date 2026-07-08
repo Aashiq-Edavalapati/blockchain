@@ -37,6 +37,9 @@ export function extractLanguages(langStr) {
     else if (lower.includes("move")) matched = { id: "rust", name: "Move" };
     else if (lower.includes("assemblyscript") || lower.includes("typescript")) matched = { id: "ts", name: "TypeScript" };
     else if (lower.includes("javascript") || lower.includes("js")) matched = { id: "js", name: "JavaScript" };
+    else if (lower.includes("typescript")) matched = { id: "ts", name: "TypeScript" };
+    else if (lower.includes("java")) matched = { id: "java", name: "Java" };
+    else if (lower.includes("python")) matched = { id: "python", name: "Python" };
     else if (lower.includes("cairo")) matched = { id: "py", name: "Cairo" };
     else if (lower.includes("c-like") || lower.includes("hooks")) matched = { id: "cpp", name: "C" };
     
