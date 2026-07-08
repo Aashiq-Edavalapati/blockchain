@@ -6,7 +6,7 @@ export default function Footer() {
       {/* Subtle background glow to ground the page */}
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[150px] bg-white/[0.02] blur-[100px] rounded-full pointer-events-none" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 py-12 flex flex-col gap-10">
+      <div className="relative z-10 max-w-[1360px] mx-auto px-6 py-12 flex flex-col gap-10">
         
         {/* Top Row: Status & Command Hint */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-white/[0.04] pb-8">

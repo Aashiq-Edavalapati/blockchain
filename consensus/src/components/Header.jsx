@@ -2,7 +2,7 @@ import { Menu } from "lucide-react";
 
 export default function Header({ onMenuClick }) {
   return (
-    <header className="px-4 md:px-8 pt-6 pb-3 max-w-7xl mx-auto w-full flex items-center justify-between">
+    <header className="px-4 md:px-8 pt-6 pb-3 max-w-[1360px] mx-auto w-full flex items-center justify-between">
       <div>
         <p className="text-[10px] font-semibold uppercase tracking-[0.15em]" style={{ color: "var(--text-3)" }}>
           Blockchain Protocol Reference

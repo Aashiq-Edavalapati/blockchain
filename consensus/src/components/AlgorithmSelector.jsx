@@ -10,7 +10,7 @@ export default function AlgorithmSelector({ algorithms, activeId, onSelect }) {
     <nav
       role="tablist"
       aria-label="Select a consensus algorithm"
-      className="relative px-4 md:px-8 max-w-7xl mx-auto w-full"
+      className="relative px-4 md:px-8 max-w-[1360px] mx-auto w-full"
       style={{ background: "var(--bg)" }}
     >
       <div

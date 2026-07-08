@@ -234,7 +234,7 @@ export default function HeroSection({ navigate }) {
       <div className="relative min-h-[90vh] flex items-center border-b border-white/[0.06]">
         <GridBackground />
         
-        <div className="relative z-10 max-w-7xl mx-auto px-6 py-32 grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-12 lg:gap-8 items-center w-full">
+        <div className="relative z-10 max-w-[1360px] mx-auto px-6 py-32 grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-12 lg:gap-8 items-center w-full">
           
           {/* Left: Text Content */}
           <div className="text-center lg:text-left flex flex-col items-center lg:items-start">
@@ -388,7 +388,7 @@ export default function HeroSection({ navigate }) {
       {/* BENTO GRID: THE FAMILIES - Restored Detail */}
       {/* ============================================================ */}
       <section className="relative py-32 border-b border-white/[0.06]">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-[1360px] mx-auto px-6">
           <SectionEyebrow label="Consensus Architectures" />
           
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">

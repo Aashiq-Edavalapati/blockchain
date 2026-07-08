@@ -111,7 +111,7 @@ export default function ProofOfWorkVisualizer() {
       `}</style>
 
       {/* 1. NAVIGATION HEADER */}
-      <div className="flex items-center justify-between px-10 py-6 border-b border-white/[0.06] bg-[#050505]/95 backdrop-blur-xl sticky top-0 z-50">
+      <div className="flex items-center justify-between px-10 py-6 border-b border-white/[0.06] bg-[#050505]/95 backdrop-blur-xl">
         <div className="flex items-center gap-10">
           <div className="flex flex-col">
             <span className="text-[10px] font-mono text-zinc-600 uppercase tracking-[0.4em] mb-1">Status</span>

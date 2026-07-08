@@ -302,7 +302,7 @@ export default function ConsensusExplorer() {
           <HeroSection navigate={navigate} />
         ) : (
           // EXPLORER PATH: '/explorer'
-          <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-8 flex-1 flex flex-col">
+          <div className="max-w-[1360px] mx-auto w-full px-4 sm:px-6 lg:px-8 pb-8 flex-1 flex flex-col">
             
             {/* Top Search & Filter Card (Sticky) */}
             <div className="sticky top-24 z-40 bg-[#000000] pt-4 pb-4 border-b border-white/[0.06] mb-6">
