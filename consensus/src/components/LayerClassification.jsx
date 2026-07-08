@@ -10,9 +10,9 @@ export default function LayerClassification({ chains, algorithm }) {
   return (
     <section className="space-y-4">
       <div className="flex items-center gap-3 pb-2 border-b border-white/[0.06]">
-        <h3 className="text-sm font-bold text-white tracking-tight">Layer Distribution</h3>
+        <h3 className="text-[15px] font-bold text-white tracking-tight">Layer Distribution</h3>
         <span
-          className="text-[10px] font-bold font-mono px-2 py-0.5 rounded border"
+          className="text-[11px] font-bold font-mono px-2 py-0.5 rounded border"
           style={{
             background: `${algorithm.color}10`,
             borderColor: `${algorithm.color}25`,
@@ -68,12 +68,12 @@ function LayerGroup({ label, icon, chains, color, algorithm, description, toolti
         </div>
         <div>
           <div className="flex items-center gap-1.5">
-            <p className="text-xs font-bold text-white">{label}</p>
-            <InfoTooltip text={tooltipText} size={11} />
+            <p className="text-sm font-bold text-white">{label}</p>
+            <InfoTooltip text={tooltipText} size={12} />
           </div>
-          <p className="text-[10px] text-white/40 mt-0.5">{description}</p>
+          <p className="text-[11px] text-white/40 mt-0.5">{description}</p>
         </div>
-        <span className="ml-auto font-mono text-xs font-bold" style={{ color }}>
+        <span className="ml-auto font-mono text-[13px] font-bold" style={{ color }}>
           {chains.length}
         </span>
       </div>
@@ -82,15 +82,20 @@ function LayerGroup({ label, icon, chains, color, algorithm, description, toolti
         {chains.map((c) => (
           <div
             key={c.id}
-            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs border border-white/[0.08] bg-white/[0.02]"
+            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[13px] border border-white/[0.08] bg-white/[0.02]"
           >
             <CryptoIcon symbol={c.symbol} size={18} />
-            <span className="truncate text-white font-medium">{c.name}</span>
-            <span className="font-mono text-[10px] ml-auto text-white/40">{c.symbol}</span>
+            <div className="relative group min-w-0 flex-1">
+              <span className="truncate text-white font-medium block">{c.name}</span>
+              <span className="absolute bottom-full left-0 mb-2 hidden group-hover:block z-50 bg-[#050505] border border-white/[0.08] text-white text-[11px] p-2.5 rounded-lg shadow-xl w-max max-w-[200px] whitespace-normal text-left pointer-events-none">
+                {c.name}
+              </span>
+            </div>
+            <span className="font-mono text-[11px] ml-auto text-white/40">{c.symbol}</span>
           </div>
         ))}
         {chains.length === 0 && (
-          <p className="text-xs py-5 text-center text-white/40 font-medium">
+          <p className="text-[13px] py-5 text-center text-white/40 font-medium">
             No {icon} chains mapped for {algorithm.shortName}
           </p>
         )}

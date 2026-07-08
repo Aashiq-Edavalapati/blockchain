@@ -125,22 +125,27 @@ export default function TrilemmaScorecard({ algorithm }) {
         {/* Block Time Card */}
         <div className="rounded-2xl border border-white/[0.08] bg-[#050505] p-5 flex flex-col justify-between min-h-[110px] hover:border-white/[0.15] transition-all duration-300">
           <div className="flex items-center justify-between">
-            <span className="text-[9px] font-bold uppercase tracking-wider text-white/40 flex items-center gap-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 flex items-center gap-1">
               Block Time
-              <InfoTooltip text="The average time interval required to produce, validate, and broadcast a new block to the network." size={10} />
+              <InfoTooltip text="The average time interval required to produce, validate, and broadcast a new block to the network." size={11} />
             </span>
             <span style={{ color: `${algorithm.color}aa` }}>
               <Clock size={12} />
             </span>
           </div>
           <div className="mt-2.5 text-left">
-            <p className="font-mono text-[16px] font-bold text-white tracking-tight leading-none">
+            <p className="font-mono text-[18px] font-bold text-white tracking-tight leading-none">
               {blockTime.value}
             </p>
             {blockTime.detail && (
-              <p className="text-[10px] text-white/40 font-medium mt-2 leading-tight truncate" title={blockTime.detail}>
-                {blockTime.detail}
-              </p>
+              <div className="relative group/time mt-2 min-w-0">
+                <p className="text-[11px] text-white/40 font-medium leading-tight truncate">
+                  {blockTime.detail}
+                </p>
+                <span className="absolute bottom-full left-0 mb-2 hidden group-hover/time:block z-50 bg-[#050505] border border-white/[0.08] text-white text-[11px] p-2.5 rounded-lg shadow-xl w-max max-w-[220px] whitespace-normal text-left pointer-events-none leading-normal">
+                  {blockTime.detail}
+                </span>
+              </div>
             )}
           </div>
         </div>
@@ -148,22 +153,27 @@ export default function TrilemmaScorecard({ algorithm }) {
         {/* Throughput Card */}
         <div className="rounded-2xl border border-white/[0.08] bg-[#050505] p-5 flex flex-col justify-between min-h-[110px] hover:border-white/[0.15] transition-all duration-300">
           <div className="flex items-center justify-between">
-            <span className="text-[9px] font-bold uppercase tracking-wider text-white/40 flex items-center gap-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 flex items-center gap-1">
               Throughput
-              <InfoTooltip text="Transactions Per Second (TPS) representing the rate of processed and finalized network operations." size={10} />
+              <InfoTooltip text="Transactions Per Second (TPS) representing the rate of processed and finalized network operations." size={11} />
             </span>
             <span style={{ color: `${algorithm.color}aa` }}>
               <Zap size={12} />
             </span>
           </div>
           <div className="mt-2.5 text-left">
-            <p className="font-mono text-[16px] font-bold text-white tracking-tight leading-none">
+            <p className="font-mono text-[18px] font-bold text-white tracking-tight leading-none">
               {tps.value}
             </p>
             {tps.detail && (
-              <p className="text-[10px] text-white/40 font-medium mt-2 leading-tight truncate" title={tps.detail}>
-                {tps.detail}
-              </p>
+              <div className="relative group/tps mt-2 min-w-0">
+                <p className="text-[11px] text-white/40 font-medium leading-tight truncate">
+                  {tps.detail}
+                </p>
+                <span className="absolute bottom-full left-0 mb-2 hidden group-hover/tps:block z-50 bg-[#050505] border border-white/[0.08] text-white text-[11px] p-2.5 rounded-lg shadow-xl w-max max-w-[220px] whitespace-normal text-left pointer-events-none leading-normal">
+                  {tps.detail}
+                </span>
+              </div>
             )}
           </div>
         </div>

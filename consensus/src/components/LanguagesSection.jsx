@@ -57,11 +57,14 @@ export default function LanguagesSection({ chains, algorithm }) {
                     <LanguageIcon name="" size={15} />
                   )}
                 </div>
-                <div className="min-w-0">
-                  <p className="text-xs font-bold text-white truncate" title={langName}>
+                <div className="min-w-0 flex-1 relative group">
+                  <p className="text-[13px] font-bold text-white truncate">
                     {shortLang}
                   </p>
-                  <p className="text-[10px] text-white/40 font-semibold mt-0.5">
+                  <span className="absolute bottom-full left-0 mb-2 hidden group-hover:block z-50 bg-[#050505] border border-white/[0.08] text-white text-[11px] p-2.5 rounded-lg shadow-xl w-max max-w-[200px] whitespace-normal text-left pointer-events-none">
+                    {langName}
+                  </span>
+                  <p className="text-[11px] text-white/40 font-semibold mt-0.5">
                     {data.chainList.length} client{data.chainList.length !== 1 ? "s" : ""}
                   </p>
                 </div>

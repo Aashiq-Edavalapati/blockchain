@@ -301,25 +301,27 @@ export default function ConsensusExplorer() {
           <HeroSection navigate={navigate} />
         ) : (
           // EXPLORER PATH: '/explorer'
-          <div className="max-w-[1360px] mx-auto w-full px-4 sm:px-6 lg:px-8 pt-24 pb-8 flex-1 flex flex-col">
+          <div className="w-full flex-1 flex flex-col pt-24">
             
-            {/* Top Search & Filter Card (Sticky) */}
-            <div className="sticky top-24 z-40 bg-[#000000] pt-4 pb-4 border-b border-white/[0.06] mb-6">
-              <SearchFilterCard
-                searchQuery={searchQuery}
-                onSearchChange={setSearchQuery}
-                activeFilter={activeFilter}
-                onFilterChange={setActiveFilter}
-                advancedFilters={advancedFilters}
-                onAdvancedFilterChange={handleAdvancedFilterChange}
-              />
+            {/* Top Search & Filter Card (Sticky - Full Viewport Width) */}
+            <div className="sticky top-20 z-40 bg-[#000000] pt-12 pb-4 -mt-8 border-b border-white/[0.06] w-full">
+              <div className="max-w-[1360px] mx-auto w-full px-4 sm:px-6 lg:px-8">
+                <SearchFilterCard
+                  searchQuery={searchQuery}
+                  onSearchChange={setSearchQuery}
+                  activeFilter={activeFilter}
+                  onFilterChange={setActiveFilter}
+                  advancedFilters={advancedFilters}
+                  onAdvancedFilterChange={handleAdvancedFilterChange}
+                />
+              </div>
             </div>
 
-            {/* Split Screen Layout */}
-            <div className="flex-1 grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8 items-start">
+            {/* Split Screen Layout (Centered Grid) */}
+            <div className="max-w-[1360px] mx-auto w-full px-4 sm:px-6 lg:px-8 pb-8 pt-6 flex-1 grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8 items-start relative z-10">
               
               {/* Desktop Left Column Sidebar */}
-              <aside className="hidden lg:flex flex-col bg-[#050505]/90 border border-white/[0.08] rounded-2xl p-4 sticky top-[180px] max-h-[calc(100vh-210px)] overflow-hidden backdrop-blur-md">
+              <aside className="hidden lg:flex flex-col bg-[#050505]/90 border border-white/[0.08] rounded-2xl p-4 sticky top-[240px] max-h-[calc(100vh-270px)] overflow-hidden backdrop-blur-md">
                 {/* Segmented Control Buttons */}
                 <div className="flex bg-[#020202] p-0.5 rounded-xl border border-white/[0.06] mb-4 shrink-0">
                   <button
@@ -361,7 +363,7 @@ export default function ConsensusExplorer() {
                             setActiveId(a.id);
                             setSelectedCryptoId(null);
                           }}
-                          className={`group flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold border transition-all duration-200 cursor-pointer ${
+                          className={`group flex items-center justify-between px-3 py-2 rounded-xl text-[13px] font-semibold border transition-all duration-200 cursor-pointer ${
                             isActive
                               ? "text-white"
                               : "text-white/60 border-transparent bg-transparent hover:text-white hover:bg-white/[0.04]"
@@ -382,7 +384,7 @@ export default function ConsensusExplorer() {
                             >
                               <IconByName name={a.id} size={10} />
                             </span>
-                            <span className="truncate">{a.shortName}</span>
+                            <span className="truncate" title={a.shortName}>{a.shortName}</span>
                           </div>
                         </div>
                       );
@@ -400,7 +402,7 @@ export default function ConsensusExplorer() {
                             setActiveId(c.algo);
                             setSelectedCryptoId(c.id);
                           }}
-                          className={`group flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold border transition-all duration-200 cursor-pointer ${
+                          className={`group flex items-center justify-between px-3 py-2 rounded-xl text-[13px] font-semibold border transition-all duration-200 cursor-pointer ${
                             isCryptoActive
                               ? "text-white"
                               : "text-white/60 border-transparent bg-transparent hover:text-white hover:bg-white/[0.04]"
@@ -412,7 +414,7 @@ export default function ConsensusExplorer() {
                         >
                           <div className="flex items-center gap-2.5 min-w-0">
                             <CryptoIcon symbol={c.symbol} size={16} />
-                            <span className="truncate">{c.name}</span>
+                            <span className="truncate" title={c.name}>{c.name}</span>
                           </div>
                           <span
                             className="font-mono text-[8px] font-bold px-1.5 py-0.5 rounded border uppercase shrink-0"
@@ -438,7 +440,7 @@ export default function ConsensusExplorer() {
               </aside>
 
               {/* Mobile Horizontal Selector (Sticky below search) */}
-              <div className="block lg:hidden w-full overflow-hidden sticky top-[180px] z-30 bg-[#000000] pt-2 pb-3 border-b border-white/[0.06] mb-4">
+              <div className="block lg:hidden w-full overflow-hidden sticky top-[240px] z-30 bg-[#000000] pt-5 pb-3 -mt-3 border-b border-white/[0.06] mb-4">
                 {/* Segmented Control Buttons */}
                 <div className="flex bg-[#020202] p-0.5 rounded-xl border border-white/[0.06] mb-3">
                   <button
@@ -561,7 +563,7 @@ export default function ConsensusExplorer() {
                   /* Workspace Details */
                   <div className="space-y-6">
                     {/* Sticky Tabs Navigation */}
-                    <div className="sticky top-[180px] z-30 bg-[#000000] py-2 border-b border-white/[0.06]">
+                    <div className="sticky top-[220px] z-30 bg-[#000000] pb-2 pt-5 -mt-3 border-b border-white/[0.06]">
                       <nav className="flex gap-2 overflow-x-auto scrollbar-none whitespace-nowrap">
                         {TABS.map((t) => {
                           const isTabActive = activeTab === t.id;

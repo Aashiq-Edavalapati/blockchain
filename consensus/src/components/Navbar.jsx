@@ -41,7 +41,7 @@ export default function Navbar({ currentPath, navigate }) {
   // Make navbar fixed across the entire app
   // In explorer it has solid black background. In landing page it transitions to blur glass when scrolled.
   const headerClass = isExplorer
-    ? "fixed top-0 left-0 right-0 z-50 bg-[#000000]/95 backdrop-blur-md transition-all duration-300"
+    ? "fixed top-0 left-0 right-0 z-50 bg-[#000000] backdrop-blur-md transition-all duration-300"
     : `fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled 
           ? "bg-[#000000]/80 backdrop-blur-lg py-1.5 shadow-[0_4px_30px_rgba(0,0,0,0.8)]" 
