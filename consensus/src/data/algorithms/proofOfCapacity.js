@@ -91,7 +91,7 @@ export default {
   ],
   realWorldExamples: [
     "Signum (formerly Burstcoin, first PoC cryptocurrency)",
-    "Chia (Proof of Space and Time, a related variant)",
+    "Chia Network (Proof of Space and Time)",
   ],
   compatibleConsensus: [
     "Proof of Space (closely related concept)",

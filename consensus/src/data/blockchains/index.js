@@ -36,9 +36,16 @@ import multiversx from "./multiversx.js";
 import celo from "./celo.js";
 import cronos from "./cronos.js";
 import klaytn from "./klaytn.js";
+import chia from "./chia.js";
+import nem from "./nem.js";
+import decred from "./decred.js";
+import slimcoin from "./slimcoin.js";
+import zilliqa from "./zilliqa.js";
+import osmosis from "./osmosis.js";
 
 const blockchains = [
   bitcoin,
+
   ethereum,
   litecoin,
   dogecoin,
@@ -76,6 +83,14 @@ const blockchains = [
   celo,
   cronos,
   klaytn,
+  chia,
+  nem,
+  decred,
+  slimcoin,
+  zilliqa,
+  osmosis,
 ];
 
+
 export default blockchains;
+

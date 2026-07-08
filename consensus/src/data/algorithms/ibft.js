@@ -97,6 +97,8 @@ export default {
     "Hyperledger Besu (IBFT 2.0)",
     "GoQuorum (consensus layer for enterprise Ethereum)",
     "Numerous enterprise and consortium Ethereum networks",
+    "Celo (CELO)",
+    "Klaytn (KLAY)",
   ],
   compatibleConsensus: [
     "PBFT (parent protocol)",

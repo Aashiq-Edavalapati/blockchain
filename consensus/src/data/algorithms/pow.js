@@ -95,7 +95,7 @@ export default {
     "Consumer CPU/GPU mining is only viable on ASIC-resistant algorithms (e.g., RandomX for Monero).",
     "Full node: ~500 GB+ storage, 8 GB RAM, stable internet connection.",
   ],
-  realWorldExamples: ["Bitcoin", "Litecoin", "Dogecoin", "Monero", "Bitcoin Cash"],
+  realWorldExamples: ["Bitcoin", "Litecoin", "Dogecoin", "Monero", "Bitcoin Cash", "Lightning Network (LN)"],
   compatibleConsensus: ["Proof of Work (same family)"],
   references: [
     "Nakamoto, S. 'Bitcoin: A Peer-to-Peer Electronic Cash System' (2008)",

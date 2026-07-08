@@ -96,6 +96,7 @@ export default {
   realWorldExamples: [
     "Stellar (SCP — Stellar Consensus Protocol)",
     "Interstellar network (enterprise Stellar)",
+    "XRP Ledger (XRP)",
   ],
   compatibleConsensus: [
     "PBFT (parent academic tradition)",

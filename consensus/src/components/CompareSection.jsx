@@ -1,10 +1,57 @@
 import { useState } from "react";
 import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, Legend } from "recharts";
-import { Sparkles, Info, ArrowLeftRight, Clock, Zap, Shield, HelpCircle } from "lucide-react";
+import { Sparkles, ArrowLeftRight, Clock, Zap, Shield, HelpCircle } from "lucide-react";
 import IconByName from "./IconByName";
 
+function generateDetailedComparison(a, b) {
+  const scoreDiff = {
+    security: a.score.security - b.score.security,
+    scalability: a.score.scalability - b.score.scalability,
+    decentralization: a.score.decentralization - b.score.decentralization,
+  };
+
+  const getTrilemmaAnalysis = () => {
+    let text = "";
+    if (Math.abs(scoreDiff.scalability) > 15) {
+      const faster = scoreDiff.scalability > 0 ? a : b;
+      const slower = scoreDiff.scalability > 0 ? b : a;
+      text += `**Scalability vs. Decentralization:** **${faster.shortName}** achieves high throughput (scoring ${faster.score.scalability} in scalability) by design, limiting message overhead. However, this restricts its validator set, leading to a lower decentralization score of ${faster.score.decentralization}. Conversely, **${slower.shortName}** prioritizes permissionless distribution (scoring ${slower.score.decentralization} in decentralization), accepting lower raw throughput in exchange for increased censorship resistance. `;
+    } else {
+      text += `**Scalability Profile:** Both protocols show similar throughput scalability (scores: ${a.shortName} = ${a.score.scalability}, ${b.shortName} = ${b.score.scalability}). They achieve their throughput with comparable network overhead and consensus loop latencies. `;
+    }
+
+    if (Math.abs(scoreDiff.security) > 10) {
+      const secure = scoreDiff.security > 0 ? a : b;
+      const lessSecure = scoreDiff.security > 0 ? b : a;
+      text += `**Security Thresholds:** **${secure.shortName}** offers stronger protocol-level security guarantees (scoring ${secure.score.security} vs ${lessSecure.score.security}). This is due to its rigid state consensus rules and extensive penalty mechanisms (such as economic slashing or computational cost) which make historical state revision economically ruinous.`;
+    } else {
+      text += `**Security Assurances:** Both systems provide high-grade security guarantees (scores: ${a.shortName} = ${a.score.security}, ${b.shortName} = ${b.score.security}), relying on robust mathematical models (like BFT voting bounds or massive hash-power work requirements) to protect state immutability.`;
+    }
+    return text;
+  };
+
+  const getCleanText = (str) => {
+    if (!str) return "";
+    return str.split(".")[0].trim() + ".";
+  };
+
+  const getCleanAttacks = (arr) => {
+    if (!arr || arr.length === 0) return "None documented";
+    return arr.map(atk => atk.split("—")[0].trim()).join(", ");
+  };
+
+  return {
+    consensusLoop: `Comparing their consensus mechanics, **${a.shortName}** operates via ${a.blockProductionMethod.toLowerCase()} and elects block proposers based on **${a.leaderElection.toLowerCase()}**. In contrast, **${b.shortName}** runs via ${b.blockProductionMethod.toLowerCase()} with proposer selection relying on **${b.leaderElection.toLowerCase()}**. For fork resolution, ${a.shortName} utilizes **${getCleanText(a.forkBehavior)}** whereas ${b.shortName} applies **${getCleanText(b.forkBehavior)}**, leading to **${a.finalityType.split("—")[0].trim().toLowerCase()}** compared to **${b.finalityType.split("—")[0].trim().toLowerCase()}** for ${b.shortName}.`,
+    
+    securityThreats: `From an adversarial standpoint, the main attack vectors for **${a.shortName}** are *${getCleanAttacks(a.commonAttacks)}*. Its attack resistance is built on **${getCleanText(a.attackResistance)}** and validated by its ${a.validatorType} set. In comparison, **${b.shortName}**'s primary vulnerabilities are *${getCleanAttacks(b.commonAttacks)}*, defending itself via **${getCleanText(b.attackResistance)}** under its ${b.validatorType} model.`,
+    
+    trilemma: getTrilemmaAnalysis(),
+    
+    applicationFit: `In production, **${a.shortName}** is highly suited for *${a.bestUseCases.join(", ")}*, but is limited by *${a.limitations.join(", ")}*. Meanwhile, **${b.shortName}** excels in *${b.bestUseCases.join(", ")}*, but struggles with bottlenecks like *${b.limitations.join(", ")}*. This positions ${a.shortName} as ${a.description.split(".")[0].toLowerCase()} and ${b.shortName} as ${b.description.split(".")[0].toLowerCase()}.`
+  };
+}
+
 export default function CompareSection({ activeAlgorithm, allAlgorithms }) {
-  // Select first algorithm in list that is not active as default compare selection
   const remainingAlgos = allAlgorithms.filter((a) => a.id !== activeAlgorithm.id);
   const [compareId, setCompareId] = useState(remainingAlgos[0]?.id || "");
 
@@ -36,6 +83,22 @@ export default function CompareSection({ activeAlgorithm, allAlgorithms }) {
       [compareAlgorithm.shortName]: compareAlgorithm.score.decentralization,
     },
   ];
+
+  const cleanVal = (val) => {
+    if (!val) return "N/A";
+    return val;
+  };
+
+  const getBriefSybil = (algo) => {
+    if (!algo.permissionType || !algo.validatorType) return "N/A";
+    const type = algo.validatorType.split(" ")[0].replace(/[^a-zA-Z]/g, "");
+    return `${algo.permissionType} (${type})`;
+  };
+
+  const getBriefFinality = (algo) => {
+    if (!algo.finalityType) return "N/A";
+    return algo.finalityType.split("—")[0].trim();
+  };
 
   return (
     <div className="space-y-6 w-full">
@@ -157,26 +220,26 @@ export default function CompareSection({ activeAlgorithm, allAlgorithms }) {
           <MetricRow 
             icon={<Clock size={12} className="text-white/40" />} 
             label="Typical Block Time" 
-            valA={activeAlgorithm.typicalBlockTime} 
-            valB={compareAlgorithm.typicalBlockTime} 
+            valA={cleanVal(activeAlgorithm.typicalBlockTime)} 
+            valB={cleanVal(compareAlgorithm.typicalBlockTime)} 
           />
           <MetricRow 
             icon={<Zap size={12} className="text-white/40" />} 
             label="Throughput (TPS)" 
-            valA={activeAlgorithm.typicalTPS} 
-            valB={compareAlgorithm.typicalTPS} 
+            valA={cleanVal(activeAlgorithm.typicalTPS)} 
+            valB={cleanVal(compareAlgorithm.typicalTPS)} 
           />
           <MetricRow 
             icon={<Shield size={12} className="text-white/40" />} 
             label="Sybil Resistance" 
-            valA={activeAlgorithm.sybilResistance} 
-            valB={compareAlgorithm.sybilResistance} 
+            valA={getBriefSybil(activeAlgorithm)} 
+            valB={getBriefSybil(compareAlgorithm)} 
           />
           <MetricRow 
             icon={<HelpCircle size={12} className="text-white/40" />} 
             label="Finality Type" 
-            valA={activeAlgorithm.finality} 
-            valB={compareAlgorithm.finality} 
+            valA={getBriefFinality(activeAlgorithm)} 
+            valB={getBriefFinality(compareAlgorithm)} 
           />
         </div>
       </div>
@@ -188,7 +251,7 @@ export default function CompareSection({ activeAlgorithm, allAlgorithms }) {
           <p className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-2.5">
             Core Mechanism comparison
           </p>
-          <div className="space-y-4 text-xs leading-relaxed">
+          <div className="space-y-4 text-xs leading-relaxed font-sans">
             <div>
               <p className="font-semibold" style={{ color: activeAlgorithm.color }}>{activeAlgorithm.shortName}</p>
               <p className="text-[#888] mt-1">{activeAlgorithm.coreMechanism}</p>
@@ -205,7 +268,7 @@ export default function CompareSection({ activeAlgorithm, allAlgorithms }) {
           <p className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-2.5">
             Strengths & Trade-offs
           </p>
-          <div className="space-y-4 text-xs leading-relaxed">
+          <div className="space-y-4 text-xs leading-relaxed font-sans">
             <div>
               <p className="font-semibold flex items-center gap-1.5" style={{ color: activeAlgorithm.color }}>
                 <Sparkles size={11} className="opacity-80" /> {activeAlgorithm.shortName}
@@ -223,6 +286,60 @@ export default function CompareSection({ activeAlgorithm, allAlgorithms }) {
           </div>
         </div>
       </div>
+
+      {/* Dynamic Deep-Dive Comparison Narrative */}
+      {(() => {
+        const narrative = generateDetailedComparison(activeAlgorithm, compareAlgorithm);
+        const formatMarkdown = (text) => {
+          // simple formatting for bold text (e.g. **text**)
+          return text.split("**").map((part, index) => {
+            return index % 2 === 1 ? <strong key={index} className="text-white font-bold">{part}</strong> : part;
+          });
+        };
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Consensus Loop & Election Narrative */}
+            <div className="rounded-2xl border border-white/[0.08] bg-[#050505] p-5">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-2.5">
+                Consensus Loop & Proposer Election
+              </p>
+              <p className="text-xs leading-relaxed text-[#888] font-sans">
+                {formatMarkdown(narrative.consensusLoop)}
+              </p>
+            </div>
+
+            {/* Security Assurances & Slashes */}
+            <div className="rounded-2xl border border-white/[0.08] bg-[#050505] p-5">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-2.5">
+                Security Assurances & Attack Surface
+              </p>
+              <p className="text-xs leading-relaxed text-[#888] font-sans">
+                {formatMarkdown(narrative.securityThreats)}
+              </p>
+            </div>
+
+            {/* Trilemma Trade-off Evaluation */}
+            <div className="rounded-2xl border border-white/[0.08] bg-[#050505] p-5">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-2.5">
+                Trilemma Trade-off Analysis
+              </p>
+              <p className="text-xs leading-relaxed text-[#888] font-sans">
+                {formatMarkdown(narrative.trilemma)}
+              </p>
+            </div>
+
+            {/* Application Environment Suitability */}
+            <div className="rounded-2xl border border-white/[0.08] bg-[#050505] p-5">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-2.5">
+                Application Fit & Bottlenecks
+              </p>
+              <p className="text-xs leading-relaxed text-[#888] font-sans">
+                {formatMarkdown(narrative.applicationFit)}
+              </p>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }

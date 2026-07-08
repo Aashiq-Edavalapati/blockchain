@@ -102,6 +102,13 @@ export default {
     "Polkadot (NPoS)",
     "Avalanche (PoS-based Snowman)",
     "Cosmos (Tendermint BFT with staking)",
+    "Arbitrum (ARB)",
+    "Optimism (OP)",
+    "Tezos (XTZ)",
+    "Algorand (ALGO)",
+    "NEAR Protocol (NEAR)",
+    "Internet Computer (ICP)",
+    "MultiversX (EGLD)",
   ],
   compatibleConsensus: ["Proof of Work", "Delegated Proof of Stake", "BFT variants"],
   references: [

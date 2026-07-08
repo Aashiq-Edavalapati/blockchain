@@ -24,6 +24,7 @@ import hotstuff from "./hotstuff.js";
 import ouroboros from "./ouroboros.js";
 import npos from "./npos.js";
 import bpos from "./bpos.js";
+import hashgraph from "./hashgraph.js";
 
 const algorithms = [
   pow,
@@ -52,6 +53,8 @@ const algorithms = [
   ouroboros,
   npos,
   bpos,
+  hashgraph,
 ];
 
 export default algorithms;
+

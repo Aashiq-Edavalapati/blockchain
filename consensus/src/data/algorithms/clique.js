@@ -95,7 +95,7 @@ export default {
     "No specialized hardware required.",
   ],
   realWorldExamples: [
-    "Goerli Testnet (Clique PoA, deprecated in 2023)",
+    "Goerli Testnet (Deprecated) (GETH)",
     "Rinkeby Testnet (Clique PoA, deprecated)",
     "Sepolia Testnet (transitioned from Clique to PoS)",
     "Countless local development chains and CI pipelines",
