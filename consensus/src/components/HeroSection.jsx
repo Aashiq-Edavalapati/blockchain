@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -13,6 +14,7 @@ import {
   Coins,
   GitBranch,
   Search,
+  ArrowUp
 } from "lucide-react";
 import TimelineSection from "./TimelineSection";
 
@@ -223,8 +225,29 @@ function SectionEyebrow({ label }) {
 }
 
 export default function HeroSection({ navigate }) {
-  const totalAlgos = 26; // Hardcoded for preview, replace with your data length
+  const totalAlgos = 26;
   const totalFamilies = 4;
+
+  // Scroll listener state for the back-to-top button
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Show button after scrolling down 500px
+      if (window.scrollY > 500) {
+        setShowBackToTop(true);
+      } else {
+        setShowBackToTop(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <div className="bg-[#000000] text-white min-h-screen overflow-x-hidden selection:bg-white/20 selection:text-white" style={{ fontFamily: FONT_SANS }}>
@@ -237,7 +260,6 @@ export default function HeroSection({ navigate }) {
         
         <div className="relative z-10 max-w-[1360px] mx-auto px-6 py-32 grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-12 lg:gap-8 items-center w-full">
           
-          {/* Left: Text Content */}
           <div className="text-center lg:text-left flex flex-col items-center lg:items-start">
             <button 
               onClick={() => navigate("/explorer")}
@@ -297,7 +319,6 @@ export default function HeroSection({ navigate }) {
             </div>
           </div>
 
-          {/* Right: Diagram (Moved back to the side) */}
           <div className="relative w-full">
             <ConsensusDiagram />
           </div>
@@ -306,7 +327,7 @@ export default function HeroSection({ navigate }) {
       </div>
 
       {/* ============================================================ */}
-      {/* FUNDAMENTALS - Restored Detailed Text */}
+      {/* FUNDAMENTALS  */}
       {/* ============================================================ */}
       <section id="fundamentals" className="relative py-32 border-b border-white/[0.06] bg-[#020202]">
         <div className="max-w-6xl mx-auto px-6">
@@ -388,7 +409,7 @@ export default function HeroSection({ navigate }) {
       {/* ============================================================ */}
       {/* BENTO GRID: THE FAMILIES - Restored Detail */}
       {/* ============================================================ */}
-      <section className="relative py-32 border-b border-white/[0.06]">
+      <section id="architectures" className="relative py-32 border-b border-white/[0.06]">
         <div className="max-w-[1360px] mx-auto px-6">
           <SectionEyebrow label="Consensus Architectures" />
           
@@ -488,7 +509,7 @@ export default function HeroSection({ navigate }) {
       {/* ============================================================ */}
       {/* INDEX CONTENTS - Restored Descriptions */}
       {/* ============================================================ */}
-      <section className="relative py-32 bg-[#020202]">
+      <section id="index" className="relative py-32 bg-[#020202]">
         <div className="max-w-4xl mx-auto px-6">
           <SectionEyebrow label="In this index" />
           
@@ -525,8 +546,22 @@ export default function HeroSection({ navigate }) {
       </section>
       
       {/* HISTORICAL TIMELINE */}
-      <TimelineSection />
+      <section id="timeline" className="relative">
+        <TimelineSection />
+      </section>
 
+      {/* ============================================================ */}
+      {/* BACK TO TOP BUTTON (Squircle) */}
+      {/* ============================================================ */}
+      <button
+        onClick={scrollToTop}
+        className={`fixed bottom-8 right-8 z-50 p-3.5 rounded-2xl bg-[#050505]/80 backdrop-blur-md border border-white/10 text-white/50 hover:text-white hover:border-white/30 hover:bg-[#0a0a0a] transition-all duration-500 shadow-[0_0_30px_rgba(0,0,0,0.8)] group cursor-pointer ${
+          showBackToTop ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0 pointer-events-none"
+        }`}
+        aria-label="Back to top"
+      >
+        <ArrowUp size={20} className="group-hover:-translate-y-1 transition-transform duration-300" />
+      </button>
     </div>
   );
 }

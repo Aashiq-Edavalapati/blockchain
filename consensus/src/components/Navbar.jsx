@@ -1,17 +1,56 @@
+import React, { useState, useEffect } from "react";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 
 export default function Navbar({ currentPath, navigate }) {
   const isExplorer = currentPath === "/explorer";
+  const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
 
-  // For the explorer, we use a stark black background with a subtle border.
-  // For the home page, it stays perfectly transparent to blend with the hero grid.
+  useEffect(() => {
+    if (isExplorer) return;
+    const handleScroll = () => {
+      // Background translucency toggle
+      if (window.scrollY > 20) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+
+      // Scroll Spy tracking
+      const sections = ["fundamentals", "architectures", "timeline"];
+      let currentSection = "";
+      for (const sectionId of sections) {
+        const el = document.getElementById(sectionId);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          // Detect if section occupies the active header scanline
+          if (rect.top <= 140 && rect.bottom >= 140) {
+            currentSection = sectionId;
+            break;
+          }
+        }
+      }
+      setActiveSection(currentSection);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll(); // Trigger once on load
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isExplorer]);
+
+  // Make navbar fixed across the entire app
+  // In explorer it has solid black background. In landing page it transitions to blur glass when scrolled.
   const headerClass = isExplorer
-    ? "sticky top-0 z-50 w-full bg-[#000000]/90 backdrop-blur-md"
-    : "absolute top-0 left-0 w-full z-50 bg-transparent";
+    ? "fixed top-0 left-0 right-0 z-50 bg-[#000000]/95 backdrop-blur-md transition-all duration-300"
+    : `fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled 
+          ? "bg-[#000000]/80 backdrop-blur-lg py-1.5 shadow-[0_4px_30px_rgba(0,0,0,0.8)]" 
+          : "bg-transparent py-4"
+      }`;
 
   return (
     <header className={headerClass}>
-      <div className="max-w-[1360px] mx-auto px-6 h-24 flex items-center justify-between">
+      <div className="max-w-[1360px] mx-auto px-6 h-20 flex items-center justify-between">
         
         {/* Left Side: Logo */}
         <div 
@@ -25,11 +64,56 @@ export default function Navbar({ currentPath, navigate }) {
             </svg>
           </div>
           <div className="flex items-baseline gap-3">
-            <span className="text-[16px] font-medium tracking-tight text-white/90 group-hover:text-white transition-colors">
-              Consensus Explorer
+            <span className="text-[15px] font-bold tracking-widest uppercase font-mono text-white/90 group-hover:text-white transition-colors">
+              Consensus
             </span>
           </div>
         </div>
+
+        {/* Center: Navigation Pills (Landing Page Only) */}
+        {!isExplorer && (
+          <div className="hidden md:flex items-center gap-1 rounded-full border border-white/[0.08] bg-black/60 p-1 backdrop-blur-xl shadow-lg shadow-black/50">
+            <button
+              onClick={() => {
+                const el = document.getElementById("fundamentals");
+                if (el) el.scrollIntoView({ behavior: "smooth" });
+              }}
+              className={`px-4.5 py-1.5 rounded-full text-[13px] font-medium transition-all duration-300 cursor-pointer ${
+                activeSection === "fundamentals"
+                  ? "bg-white text-black font-semibold shadow-sm"
+                  : "text-white/60 hover:text-white hover:bg-white/[0.04]"
+              }`}
+            >
+              Fundamentals
+            </button>
+            <button
+              onClick={() => {
+                const el = document.getElementById("architectures");
+                if (el) el.scrollIntoView({ behavior: "smooth" });
+              }}
+              className={`px-4.5 py-1.5 rounded-full text-[13px] font-medium transition-all duration-300 cursor-pointer ${
+                activeSection === "architectures"
+                  ? "bg-white text-black font-semibold shadow-sm"
+                  : "text-white/60 hover:text-white hover:bg-white/[0.04]"
+              }`}
+            >
+              Families
+            </button>
+            <button
+              onClick={() => {
+                const el = document.getElementById("timeline");
+                if (el) el.scrollIntoView({ behavior: "smooth" });
+              }}
+              className={`px-4.5 py-1.5 rounded-full text-[13px] font-medium transition-all duration-300 cursor-pointer ${
+                activeSection === "timeline"
+                  ? "bg-white text-black font-semibold shadow-sm"
+                  : "text-white/60 hover:text-white hover:bg-white/[0.04]"
+              }`}
+            >
+              Timeline
+            </button>
+          </div>
+        )}
 
         {/* Right Side: Action Button */}
         <div>
