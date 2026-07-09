@@ -135,14 +135,14 @@ export default function CompatibilityMatrix({ allChains, activeAlgorithm }) {
 
   const renderInfoPanel = () => (
     <div className="relative min-h-[140px] w-full">
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="popLayout">
         {activePair ? (
           <motion.div
             key={activePair}
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 6 }}
-            transition={{ duration: 0.15 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.12 }}
             className="rounded-2xl border border-white/[0.08] bg-[#050505] p-6 h-full flex flex-col justify-between"
           >
             {/* Header Title with Logos */}

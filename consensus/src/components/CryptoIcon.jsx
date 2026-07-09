@@ -9,13 +9,14 @@ const SYMBOL_MAP = {
   KLAY: "klay", EOS: "eos", ARB: "arb",
   SUI: "sui", APT: "apt", BASE: "base", OP: "op", ZK: "zk", STRK: "strk",
   CELO: "celo", OSMO: "osmo", ICP: "icp", XCH: "xch", XEM: "xem",
-  DCR: "dcr", SLM: "slm", LN: "ln"
+  DCR: "dcr", SLM: "slm", LN: "ln", ZIL: "zilliqa",
+  "AVAX-C": "avax", "AVAX-X": "avax", GETH: "eth", AURA: "dot"
 };
 
 const FALLBACK_COLORS = {
   SUI: "#4DA2FF", APT: "#00BFA5", BASE: "#0052FF", OP: "#FF0420",
   ZK: "#4C4CFF", STRK: "#F05A2C", ICP: "#3B00B9", CELO: "#35D07F",
-  POL: "#8247E5",
+  POL: "#8247E5", ZIL: "#496CE9",
 };
 
 const NAME_MAP = {
@@ -29,6 +30,7 @@ const NAME_MAP = {
   DOT: "Polkadot",
   AVAX: "Avalanche",
   MATIC: "Polygon",
+  POL: "Polygon",
   ARB: "Arbitrum",
   EOS: "EOS",
   TRX: "TRON",
@@ -60,6 +62,11 @@ const NAME_MAP = {
   XEM: "NEM",
   DCR: "Decred",
   SLM: "Slimcoin",
+  ZIL: "Zilliqa",
+  "AVAX-C": "Avalanche C-Chain",
+  "AVAX-X": "Avalanche X-Chain",
+  GETH: "Goerli Testnet",
+  AURA: "Substrate Solo Chain",
 };
 
 export default function CryptoIcon({ symbol, size = 20 }) {
@@ -79,7 +86,8 @@ export default function CryptoIcon({ symbol, size = 20 }) {
       );
     }
 
-    const color = FALLBACK_COLORS[symbol] || "var(--text-3)";
+    const displaySymbol = symbol === "None (no native cryptocurrency)" ? "N/A" : symbol;
+    const color = FALLBACK_COLORS[displaySymbol] || "var(--text-3)";
     return (
       <span
         className="inline-flex items-center justify-center rounded-full font-mono font-semibold"
@@ -88,7 +96,7 @@ export default function CryptoIcon({ symbol, size = 20 }) {
           background: `${color}15`, color,
         }}
       >
-        {symbol.slice(0, 2)}
+        {displaySymbol.slice(0, 2)}
       </span>
     );
   };
