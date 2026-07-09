@@ -5,6 +5,10 @@ import PoWVisualizer from "./how_it_works/PoW";
 import PoSVisualizer from "./how_it_works/PoS";
 import BFTVisualizer from "./how_it_works/BFT";
 import DAGVisualizer from "./how_it_works/DAG";
+import PoCVisualizer from "./how_it_works/PoC";
+import PoBVisualizer from "./how_it_works/PoB";
+import PoAVisualizer from "./how_it_works/PoA";
+import PoETVisualizer from "./how_it_works/PoET";
 
 export default function HowItWorks({ algorithm }) {
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -26,13 +30,22 @@ export default function HowItWorks({ algorithm }) {
     const fam = algorithm.family.toLowerCase();
     const id = algorithm.id.toLowerCase();
 
+    if (id === "proofofcapacity") {
+      return <PoCVisualizer algorithm={algorithm} />;
+    }
+    if (id === "proofofburn") {
+      return <PoBVisualizer algorithm={algorithm} />;
+    }
+    if (id === "proofofactivity") {
+      return <PoAVisualizer algorithm={algorithm} />;
+    }
+    if (id === "proofofelapsedtime") {
+      return <PoETVisualizer algorithm={algorithm} />;
+    }
+
     if (
       fam.includes("pow") || 
-      id === "pow" || 
-      id === "proofofcapacity" || 
-      id === "proofofburn" || 
-      id === "proofofactivity" || 
-      id === "proofofelapsedtime"
+      id === "pow"
     ) {
       return <PoWVisualizer algorithm={algorithm} />;
     }
