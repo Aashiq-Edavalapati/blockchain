@@ -84,7 +84,7 @@ function LayerGroup({ label, icon, chains, color, algorithm, description, toolti
             key={c.id}
             className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[14px] border border-white/[0.08] bg-white/[0.02]"
           >
-            <CryptoIcon symbol={c.symbol} size={18} />
+            <CryptoIcon symbol={c.symbol} id={c.id} size={18} />
             <div className="relative group min-w-0 flex-1">
               <span className="truncate text-white font-medium block">{c.name}</span>
               <span className="absolute bottom-full left-0 mb-2 hidden group-hover:block z-50 bg-[#050505] border border-white/[0.08] text-white text-xs p-2.5 rounded-lg shadow-xl w-max max-w-[200px] whitespace-normal text-left pointer-events-none">

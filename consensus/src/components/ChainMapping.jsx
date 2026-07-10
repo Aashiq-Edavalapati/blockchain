@@ -40,7 +40,7 @@ export default function ChainMapping({ chains, algorithm }) {
               {/* Card Header (with rounded-t-2xl to prevent clipping without overflow-hidden) */}
               <div className="flex items-center gap-3.5 p-4 border-b border-white/[0.06] bg-white/[0.01] rounded-t-2xl">
                 <div className="shrink-0 bg-white/[0.02] p-1 rounded-xl border border-white/[0.08]">
-                  <CryptoIcon symbol={c.symbol} size={26} />
+                  <CryptoIcon symbol={c.symbol} id={c.id} size={26} />
                 </div>
                 <div className="min-w-0 flex-1 relative group">
                   <p className="text-[16px] font-bold text-white truncate">{c.name}</p>

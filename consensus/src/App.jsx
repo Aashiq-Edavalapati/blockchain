@@ -413,7 +413,7 @@ export default function ConsensusExplorer() {
                           }}
                         >
                           <div className="flex items-center gap-2.5 min-w-0">
-                            <CryptoIcon symbol={c.symbol} size={16} />
+                            <CryptoIcon symbol={c.symbol} id={c.id} size={16} />
                             <span className="truncate" title={c.name}>{c.name}</span>
                           </div>
                           <span
@@ -519,7 +519,7 @@ export default function ConsensusExplorer() {
                             borderColor: isCryptoActive ? `${activeAlgoColor}40` : "",
                           }}
                         >
-                          <CryptoIcon symbol={c.symbol} size={13} />
+                          <CryptoIcon symbol={c.symbol} id={c.id} size={13} />
                           <span>{c.name}</span>
                         </button>
                       );

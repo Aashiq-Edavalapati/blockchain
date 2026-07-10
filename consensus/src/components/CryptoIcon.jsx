@@ -13,6 +13,17 @@ const SYMBOL_MAP = {
   "AVAX-C": "avax", "AVAX-X": "avax", GETH: "eth", AURA: "dot"
 };
 
+const ID_MAP = {
+  base: "base",
+  zksync: "zk",
+  stark: "strk",
+  op: "op",
+  fabric: "hyperledger",
+  sawtooth: "hyperledger",
+  "aura-chain": "substrate",
+  goerli: "eth"
+};
+
 const FALLBACK_COLORS = {
   SUI: "#4DA2FF", APT: "#00BFA5", BASE: "#0052FF", OP: "#FF0420",
   ZK: "#4C4CFF", STRK: "#F05A2C", ICP: "#3B00B9", CELO: "#35D07F",
@@ -67,12 +78,26 @@ const NAME_MAP = {
   "AVAX-X": "Avalanche X-Chain",
   GETH: "Goerli Testnet",
   AURA: "Substrate Solo Chain",
+  
+  // Lowercase ID Specific Names
+  base: "Base",
+  zksync: "zkSync Era",
+  stark: "Starknet",
+  op: "Optimism",
+  fabric: "Hyperledger Fabric",
+  sawtooth: "Hyperledger Sawtooth",
+  "aura-chain": "Substrate Solo Chain",
+  goerli: "Goerli Testnet (Deprecated)"
 };
 
-export default function CryptoIcon({ symbol, size = 20 }) {
+export default function CryptoIcon({ symbol, id, size = 20 }) {
   const [hovered, setHovered] = useState(false);
-  const iconFile = SYMBOL_MAP[symbol];
-  const fullName = NAME_MAP[symbol] || symbol;
+  const lookupKey = (id && ID_MAP[id.toLowerCase()]) || SYMBOL_MAP[symbol];
+  const iconFile = lookupKey;
+  const fullName = (id && NAME_MAP[id.toLowerCase()]) || NAME_MAP[symbol] || symbol;
+
+  const INVERT_KEYS = ["xrp", "xlm", "algo", "near", "hbar", "apt", "egld", "zk"];
+  const shouldInvert = iconFile && INVERT_KEYS.includes(iconFile.toLowerCase());
 
   const renderIcon = () => {
     if (iconFile) {
@@ -80,7 +105,12 @@ export default function CryptoIcon({ symbol, size = 20 }) {
         <img
           src={`/icons/crypto/${iconFile}.svg`}
           alt={symbol}
-          style={{ width: size, height: size, objectFit: "contain" }}
+          style={{ 
+            width: size, 
+            height: size, 
+            objectFit: "contain",
+            filter: shouldInvert ? "brightness(0) invert(1)" : "none"
+          }}
           loading="lazy"
         />
       );

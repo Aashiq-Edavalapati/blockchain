@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { Maximize2, Minimize2 } from "lucide-react";
+import { Maximize2, Minimize2, Cpu } from "lucide-react";
+
+// Assuming these are your local imports
 import PoWVisualizer from "./how_it_works/PoW";
 import PoSVisualizer from "./how_it_works/PoS";
 import BFTVisualizer from "./how_it_works/BFT";
@@ -30,26 +32,12 @@ export default function HowItWorks({ algorithm }) {
     const fam = algorithm.family.toLowerCase();
     const id = algorithm.id.toLowerCase();
 
-    if (id === "proofofcapacity") {
-      return <PoCVisualizer algorithm={algorithm} />;
-    }
-    if (id === "proofofburn") {
-      return <PoBVisualizer algorithm={algorithm} />;
-    }
-    if (id === "proofofactivity") {
-      return <PoAVisualizer algorithm={algorithm} />;
-    }
-    if (id === "proofofelapsedtime") {
-      return <PoETVisualizer algorithm={algorithm} />;
-    }
+    if (id === "proofofcapacity") return <PoCVisualizer algorithm={algorithm} />;
+    if (id === "proofofburn") return <PoBVisualizer algorithm={algorithm} />;
+    if (id === "proofofactivity") return <PoAVisualizer algorithm={algorithm} />;
+    if (id === "proofofelapsedtime") return <PoETVisualizer algorithm={algorithm} />;
 
-    if (
-      fam.includes("pow") || 
-      id === "pow"
-    ) {
-      return <PoWVisualizer algorithm={algorithm} />;
-    }
-    
+    if (fam.includes("pow") || id === "pow") return <PoWVisualizer algorithm={algorithm} />;
     if (
       fam.includes("bft") || 
       fam.includes("cft") || 
@@ -63,41 +51,44 @@ export default function HowItWorks({ algorithm }) {
       return <BFTVisualizer algorithm={algorithm} />;
     }
     
-    if (
-      fam.includes("dag") || 
-      id === "avalanche" || 
-      id === "snowman" || 
-      id === "snowball"
-    ) {
+    if (fam.includes("dag") || id === "avalanche" || id === "snowman" || id === "snowball") {
       return <DAGVisualizer algorithm={algorithm} />;
     }
     
-    // Default fallback is PoS visualizer
     return <PoSVisualizer algorithm={algorithm} />;
   };
 
   return (
-    <div className="space-y-8 w-full">
-      {/* Dynamic Interactive Simulation Panel */}
+    <div className="w-full flex flex-col gap-12 pb-8">
+      
+      {/* 1. Dynamic Interactive Simulation Panel */}
       {isFullscreen ? (
         createPortal(
-          <div className="fixed inset-0 z-[9999] bg-[#000000] p-6 lg:p-12 overflow-y-auto flex flex-col items-center">
-            {/* Fullscreen header */}
-            <div className="w-full max-w-5xl flex items-center justify-between border-b border-white/[0.06] pb-4 mb-6">
-              <div>
-                <h2 className="text-lg font-bold text-white tracking-tight">{algorithm.name} Simulation</h2>
-                <p className="text-xs text-white/40 mt-1">Fullscreen Interactive Playground</p>
+          <div className="fixed inset-0 z-[9999] bg-[#000000] p-6 lg:p-12 overflow-y-auto flex flex-col items-center selection:bg-white/20 selection:text-white">
+            <div className="w-full max-w-6xl flex items-center justify-between border-b border-white/[0.06] pb-5 mb-8">
+              <div className="flex items-center gap-4">
+                <div 
+                  className="w-10 h-10 rounded-xl flex items-center justify-center border border-white/10 bg-white/[0.02]"
+                  style={{ color: algorithm.color }}
+                >
+                  <Cpu size={20} />
+                </div>
+                <div>
+                  <h2 className="text-xl font-medium text-white tracking-tight">{algorithm.name} Simulation</h2>
+                  <p className="text-[13px] text-white/40 mt-0.5 font-mono tracking-widest uppercase">
+                    Interactive Playground
+                  </p>
+                </div>
               </div>
               <button
                 onClick={() => setIsFullscreen(false)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider text-white/60 hover:text-white border border-white/[0.08] bg-[#050505] hover:bg-white/[0.02] transition-all cursor-pointer shadow-sm"
+                className="group flex items-center gap-2 px-4 py-2 rounded-full text-[12px] font-medium text-white/60 hover:text-white border border-white/[0.12] bg-[#050505] hover:bg-white/[0.05] transition-all cursor-pointer shadow-sm"
               >
-                <Minimize2 size={13} />
+                <Minimize2 size={14} className="group-hover:scale-90 transition-transform" />
                 <span>Exit Fullscreen</span>
               </button>
             </div>
-            {/* Visualizer centered container */}
-            <div className="w-full max-w-5xl flex-1 flex flex-col items-center">
+            <div className="w-full max-w-6xl flex-1 flex flex-col items-center">
               {renderVisualizer()}
             </div>
           </div>,
@@ -105,72 +96,70 @@ export default function HowItWorks({ algorithm }) {
         )
       ) : (
         /* Normal view */
-        <div className="flex flex-col items-center w-full relative">
-          <div className="w-full max-w-4xl flex justify-end mb-2 shrink-0 z-10">
+        <div className="flex flex-col items-center w-full relative group">
+          <div className="w-full flex justify-end mb-4 shrink-0 z-10 absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <button
               onClick={() => setIsFullscreen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider text-white/60 hover:text-white border border-white/[0.08] bg-[#050505] hover:bg-white/[0.02] transition-all cursor-pointer shadow-sm"
+              className="flex items-center gap-2 px-4 py-2 rounded-full text-[12px] font-medium text-white/60 hover:text-white border border-white/[0.12] bg-[#050505]/80 backdrop-blur-md hover:bg-white/[0.08] transition-all cursor-pointer shadow-xl"
             >
-              <Maximize2 size={13} />
-              <span>Fullscreen View</span>
+              <Maximize2 size={14} />
+              <span>Expand</span>
             </button>
           </div>
-          {renderVisualizer()}
+          <div className="w-full rounded-2xl overflow-hidden border border-white/[0.06] bg-[#020202]">
+            {renderVisualizer()}
+          </div>
         </div>
       )}
 
-      {/* Overview Intro Card */}
-      <div className="rounded-2xl border border-white/[0.08] bg-[#050505] p-6">
-        <h3 className="text-sm font-bold text-white tracking-tight mb-2">
-          How <span style={{ color: algorithm.color }}>{algorithm.shortName}</span> Works
-        </h3>
-        <p className="text-xs leading-relaxed text-[#888]">
-          {algorithm.coreMechanism}
-        </p>
-      </div>
+      {/* 2. Mechanics Breakdown Section */}
+      <div className="w-full max-w-3xl mx-auto">
+        
+        {/* Restored Header with Premium Box Layout */}
+        <div className="mb-12 p-8 rounded-3xl border border-white/[0.08] bg-gradient-to-b from-[#050505] to-[#000000] shadow-2xl">
+          <h3 className="text-xl font-semibold text-white tracking-tight mb-4 flex items-center gap-2">
+            How <span style={{ color: algorithm.color }}>{algorithm.shortName}</span> Works
+          </h3>
+          <p className="text-[15px] leading-relaxed text-[#888] font-light">
+            {algorithm.coreMechanism}
+          </p>
+        </div>
 
-      {/* Blockchain-style step blocks */}
-      <div className="space-y-0 w-full">
-        {algorithm.stepByStepExplanation.map((step, i) => (
-          <div key={i} className="flex flex-col items-center w-full">
-            {/* Step block */}
-            <div
-              className="rounded-2xl p-5 w-full border border-white/[0.08] bg-white/[0.02]"
-              style={{
-                borderLeft: `3px solid ${algorithm.color}`,
-              }}
-            >
-              <div className="flex items-start gap-3">
-                <div
-                  className="w-8.5 h-8.5 rounded-xl flex items-center justify-center font-mono text-[11px] font-bold shrink-0 border border-white/[0.08]"
-                  style={{
-                    background: `${algorithm.color}10`,
-                    color: algorithm.color,
-                  }}
+        {/* Modular Stepper Matrix */}
+        <div className="flex flex-col gap-6 w-full">
+          {algorithm.stepByStepExplanation.map((step, i) => (
+            <div key={i} className="relative flex items-stretch gap-6 group">
+              
+              {/* Subtle Connector Line (Hidden on the last step) */}
+              {i !== algorithm.stepByStepExplanation.length - 1 && (
+                <div className="absolute left-[24px] top-[48px] bottom-[-24px] w-px bg-gradient-to-b from-white/[0.1] to-transparent z-0" />
+              )}
+
+              {/* Heavy Duty Number Badge */}
+              <div className="relative z-10 shrink-0">
+                <div 
+                  className="w-12 h-12 flex items-center justify-center rounded-2xl border border-white/[0.08] bg-[#050505] font-mono text-[13px] font-bold shadow-xl transition-colors duration-300 group-hover:border-white/[0.2] group-hover:bg-[#0a0a0a]"
+                  style={{ color: algorithm.color }}
                 >
-                  {String(i + 1).padStart(2, "0")}
-                </div>
-                <div className="min-w-0 pt-1">
-                  <p className="text-[10px] font-mono font-bold mb-1" style={{ color: algorithm.color }}>
-                    STEP_{String(i + 1).padStart(2, "0")}
-                  </p>
-                  <p className="text-xs leading-relaxed text-[#888]">
-                    {step}
-                  </p>
+                  {String(i + 1).padStart(2, '0')}
                 </div>
               </div>
-            </div>
 
-            {/* Connector arrow to next step */}
-            {i < algorithm.stepByStepExplanation.length - 1 && (
-              <div className="flex flex-col items-center py-2.5 text-white/20">
-                <svg width="12" height="16" viewBox="0 0 16 20" fill="none">
-                  <path d="M8 0v16M2 10l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+              {/* Step Content Block */}
+              <div className="flex-1">
+                <div className="p-6 md:p-8 rounded-3xl border border-white/[0.06] bg-[#030303] group-hover:bg-[#080808] group-hover:border-white/[0.15] transition-all duration-300">
+                  <div className="flex flex-col gap-2">
+                    <p className="text-[15px] leading-relaxed text-[#888] font-light">
+                      {step}
+                    </p>
+                  </div>
+                </div>
               </div>
-            )}
-          </div>
-        ))}
+
+            </div>
+          ))}
+        </div>
+
       </div>
     </div>
   );

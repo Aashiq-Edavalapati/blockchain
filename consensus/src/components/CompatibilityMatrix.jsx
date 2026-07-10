@@ -60,7 +60,7 @@ export default function CompatibilityMatrix({ allChains, activeAlgorithm }) {
             {matrixChains.map((c) => (
               <th key={c.id} className="sticky top-0 z-20 bg-[#000000]/95 backdrop-blur-sm border-b border-white/[0.06] py-2.5 text-center">
                 <div className="flex flex-col items-center justify-center gap-0.5">
-                  <CryptoIcon symbol={c.symbol} size={15} />
+                  <CryptoIcon symbol={c.symbol} id={c.id} size={15} />
                 </div>
               </th>
             ))}
@@ -72,7 +72,7 @@ export default function CompatibilityMatrix({ allChains, activeAlgorithm }) {
               {/* Sticky Left Chain Label */}
               <th className="sticky left-0 z-20 bg-[#000000]/95 backdrop-blur-sm border-r border-white/[0.06] px-3 py-1.5 text-left">
                 <div className="flex items-center gap-2">
-                  <CryptoIcon symbol={rowChain.symbol} size={14} />
+                  <CryptoIcon symbol={rowChain.symbol} id={rowChain.id} size={14} />
                   <span 
                     className="font-mono text-[10px] font-bold" 
                     style={{ color: rowChain.algo === activeAlgorithm.id ? activeAlgorithm.color : "rgba(255, 255, 255, 0.4)" }}
@@ -164,12 +164,12 @@ export default function CompatibilityMatrix({ allChains, activeAlgorithm }) {
                     {/* Connection Header */}
                     <div className="flex items-center gap-3">
                       <div className="flex items-center gap-1.5 bg-white/[0.02] px-3 py-1.5 rounded-xl border border-white/[0.08]">
-                         <CryptoIcon symbol={cA.symbol} size={18} />
+                         <CryptoIcon symbol={cA.symbol} id={cA.id} size={18} />
                         <span className="text-xs font-bold text-white">{cA.name}</span>
                       </div>
                       <ArrowRightLeft size={13} className="text-white/40 shrink-0" />
                       <div className="flex items-center gap-1.5 bg-white/[0.02] px-3 py-1.5 rounded-xl border border-white/[0.08]">
-                         <CryptoIcon symbol={cB.symbol} size={18} />
+                         <CryptoIcon symbol={cB.symbol} id={cB.id} size={18} />
                         <span className="text-xs font-bold text-white">{cB.name}</span>
                       </div>
                     </div>

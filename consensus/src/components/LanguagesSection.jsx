@@ -71,7 +71,7 @@ export default function LanguagesSection({ chains, algorithm }) {
               </div>
               <div className="flex flex-wrap gap-2 mt-4">
                 {data.chainList.map((c) => (
-                  <CryptoIcon key={c.id} symbol={c.symbol} size={20} />
+                  <CryptoIcon key={c.id} symbol={c.symbol} id={c.id} size={20} />
                 ))}
               </div>
             </div>

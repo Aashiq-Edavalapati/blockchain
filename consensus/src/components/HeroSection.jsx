@@ -107,7 +107,7 @@ export function ConsensusDiagram() {
             <g 
               key={`validator-${i}`} 
               className="transition-transform duration-500 ease-out group-hover:scale-125"
-              style={{ transformOrigin: `${n.x}px ${n.y}px` }} // PERFECT ALIGNMENT FIX
+              style={{ transformOrigin: `${n.x}px ${n.y}px` }}
             >
               {/* Outer Sync Ring */}
               <circle
@@ -228,12 +228,10 @@ export default function HeroSection({ navigate }) {
   const totalAlgos = 26;
   const totalFamilies = 4;
 
-  // Scroll listener state for the back-to-top button
   const [showBackToTop, setShowBackToTop] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      // Show button after scrolling down 500px
       if (window.scrollY > 500) {
         setShowBackToTop(true);
       } else {
@@ -272,21 +270,45 @@ export default function HeroSection({ navigate }) {
               <ArrowRight size={12} className="text-white/40 group-hover:text-white group-hover:translate-x-0.5 transition-all" />
             </button>
 
-            <h1 className="text-5xl sm:text-6xl md:text-[4.5rem] font-bold tracking-tighter leading-[1.05] mb-6 text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40 drop-shadow-sm">
+            <h1 className="text-5xl sm:text-6xl md:text-[4.5rem] font-bold tracking-tighter leading-[1.05] mb-6 text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40 drop-shadow-sm z-50">
               The architecture of <br />
-              <span className="inline-flex items-center gap-4 text-white/90 mt-2">
-                <span className="bg-white/10 px-4 py-1.5 rounded-2xl border border-white/10 italic text-[0.85em] font-light shadow-2xl">
-                  trustless
+              
+              <span className="inline-flex items-center gap-4 text-white/90 mt-2 relative">
+                
+                {/* CLEAN, TECHNICAL ANNOTATION NODE */}
+                <span className="group relative cursor-help z-50">
+                  {/* Restored Original Look */}
+                  <span className="inline-block bg-white/10 px-4 py-1.5 rounded-2xl border border-white/10 italic text-[0.85em] font-light shadow-2xl transition-all duration-300 group-hover:bg-white/[0.15] group-hover:border-white/[0.25]">
+                    trustless
+                  </span>
+                  
+                  {/* Ultra-clean Definition Popover */}
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-[300px] sm:w-[340px] rounded-2xl bg-[#000000] border border-white/[0.12] shadow-[0_0_80px_60px_rgba(0,0,0,0.95)] opacity-0 scale-95 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto transition-all duration-300 ease-out z-[999] p-5 text-left flex flex-col gap-3">
+                    
+                    {/* CSS connection triangle for sharp aesthetic */}
+                    <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-[#000000] border-t border-l border-white/[0.12] rotate-45" />
+                    
+                    <div className="flex items-center justify-between border-b border-white/[0.06] pb-2 mb-1">
+                      <span className="text-[10px] font-mono tracking-widest uppercase text-white/40">
+                        Definition
+                      </span>
+                    </div>
+                    
+                    <p className="text-[14px] leading-relaxed text-[#888] font-sans normal-case tracking-normal m-0">
+                      <strong className="text-white font-medium">Not a lack of trust.</strong> Instead of relying on fallible central authorities, trust is shifted entirely to <span className="text-white border-b border-white/20 pb-0.5">cryptographic math</span> and open-source verification.
+                    </p>
+                  </div>
                 </span>
+                
                 systems.
               </span>
             </h1>
 
-            <p className="text-[17px] text-[#888] max-w-xl leading-relaxed mb-10 font-light">
+            <p className="text-[17px] text-[#888] max-w-xl leading-relaxed mb-10 font-light relative z-0">
               Compare and take apart the consensus mechanisms behind modern block and graph-based networks — trade-offs, failure modes, and the chains that run each one.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto mb-12">
+            <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto mb-12 relative z-0">
               <button
                 onClick={() => navigate("/explorer")}
                 className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 text-[14px] font-medium text-black bg-white rounded-full hover:scale-[0.98] hover:bg-[#ebebeb] active:scale-95 transition-all duration-200 cursor-pointer shadow-[0_0_40px_rgba(255,255,255,0.15)] group"
@@ -308,7 +330,7 @@ export default function HeroSection({ navigate }) {
             </div>
 
             <div
-              className="flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-3 text-[12px] text-[#666]"
+              className="flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-3 text-[12px] text-[#666] relative z-0"
               style={{ fontFamily: FONT_MONO }}
             >
               <span className="flex items-center gap-2"><Cpu size={14} className="text-white/40"/> {totalAlgos} algorithms</span>
@@ -319,7 +341,7 @@ export default function HeroSection({ navigate }) {
             </div>
           </div>
 
-          <div className="relative w-full">
+          <div className="relative w-full z-0">
             <ConsensusDiagram />
           </div>
 
