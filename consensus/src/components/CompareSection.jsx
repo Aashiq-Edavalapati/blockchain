@@ -105,20 +105,20 @@ export default function CompareSection({ activeAlgorithm, allAlgorithms }) {
       {/* Selector Header Bar */}
       <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-white/[0.06]">
         <div>
-          <h3 className="text-sm font-bold text-white tracking-tight flex items-center gap-2">
+          <h3 className="text-[15px] font-bold text-white tracking-tight flex items-center gap-2">
             <ArrowLeftRight size={14} style={{ color: activeAlgorithm.color }} />
             Protocol Comparison Sandbox
           </h3>
-          <p className="text-[11px] text-white/40 mt-0.5">Compare architectural properties and trilemma scores side-by-side</p>
+          <p className="text-xs text-white/40 mt-0.5">Compare architectural properties and trilemma scores side-by-side</p>
         </div>
 
         {/* Dropdown Selector */}
         <div className="flex items-center gap-2.5 rounded-xl border px-3 py-1.5 bg-[#020202] border-white/[0.08]">
-          <span className="font-mono text-[9px] text-white/40 uppercase font-bold">Compare with:</span>
+          <span className="font-mono text-[10px] text-white/40 uppercase font-bold">Compare with:</span>
           <select
             value={compareId}
             onChange={(e) => setCompareId(e.target.value)}
-            className="bg-transparent text-xs font-bold text-white focus:outline-none border-none p-1 cursor-pointer"
+            className="bg-transparent text-[13px] font-bold text-white focus:outline-none border-none p-1 cursor-pointer"
           >
             {remainingAlgos.map((a) => (
               <option key={a.id} value={a.id} className="bg-[#050505] text-white/60 font-semibold">
@@ -144,10 +144,10 @@ export default function CompareSection({ activeAlgorithm, allAlgorithms }) {
               <IconByName name={activeAlgorithm.id} size={20} />
             </div>
             <div>
-              <span className="font-mono text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-white/10" style={{ color: activeAlgorithm.color }}>
+              <span className="font-mono text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-white/10" style={{ color: activeAlgorithm.color }}>
                 Active Protocol
               </span>
-              <h4 className="text-sm font-bold text-white mt-1">{activeAlgorithm.name}</h4>
+              <h4 className="text-[15px] font-bold text-white mt-1">{activeAlgorithm.name}</h4>
             </div>
           </div>
         </div>
@@ -165,10 +165,10 @@ export default function CompareSection({ activeAlgorithm, allAlgorithms }) {
               <IconByName name={compareAlgorithm.id} size={20} />
             </div>
             <div>
-              <span className="font-mono text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-white/10" style={{ color: compareAlgorithm.color }}>
+              <span className="font-mono text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-white/10" style={{ color: compareAlgorithm.color }}>
                 Compared Protocol
               </span>
-              <h4 className="text-sm font-bold text-white mt-1">{compareAlgorithm.name}</h4>
+              <h4 className="text-[15px] font-bold text-white mt-1">{compareAlgorithm.name}</h4>
             </div>
           </div>
         </div>
@@ -176,15 +176,15 @@ export default function CompareSection({ activeAlgorithm, allAlgorithms }) {
 
       {/* Unified Scorecard Overlay */}
       <div className="rounded-2xl border border-white/[0.08] bg-[#050505] p-6 flex flex-col items-center">
-        <h4 className="text-xs font-bold text-white uppercase tracking-wider self-start mb-4 border-b border-white/[0.06] pb-2 w-full">
+        <h4 className="text-[13px] font-bold text-white uppercase tracking-wider self-start mb-4 border-b border-white/[0.06] pb-2 w-full">
           Overlay Trilemma Scorecard
         </h4>
         <div style={{ width: "100%", height: 260 }} className="flex items-center justify-center">
           <ResponsiveContainer>
             <RadarChart data={radarData} outerRadius="58%">
               <PolarGrid stroke="rgba(255, 255, 255, 0.08)" />
-              <PolarAngleAxis dataKey="subject" tick={{ fill: "rgba(255, 255, 255, 0.5)", fontSize: 9, fontWeight: 500 }} />
-              <Legend verticalAlign="bottom" height={36} wrapperStyle={{ fontSize: '10px', fontWeight: 600, color: 'rgba(255, 255, 255, 0.6)' }} />
+              <PolarAngleAxis dataKey="subject" tick={{ fill: "rgba(255, 255, 255, 0.5)", fontSize: 10, fontWeight: 500 }} />
+              <Legend verticalAlign="bottom" height={36} wrapperStyle={{ fontSize: '11px', fontWeight: 600, color: 'rgba(255, 255, 255, 0.6)' }} />
               <Radar
                 name={activeAlgorithm.shortName}
                 dataKey={activeAlgorithm.shortName}
@@ -210,13 +210,13 @@ export default function CompareSection({ activeAlgorithm, allAlgorithms }) {
 
       {/* Technical Parameters Matrix */}
       <div className="rounded-2xl border border-white/[0.08] bg-[#050505] overflow-hidden">
-        <div className="grid grid-cols-3 bg-[#020202]/40 border-b border-white/[0.06] p-3 text-[10px] uppercase font-bold text-white/40">
+        <div className="grid grid-cols-3 bg-[#020202]/40 border-b border-white/[0.06] p-3 text-[11px] uppercase font-bold text-white/40">
           <span>Technical metric</span>
           <span style={{ color: activeAlgorithm.color }}>{activeAlgorithm.shortName}</span>
           <span style={{ color: compareAlgorithm.color }}>{compareAlgorithm.shortName}</span>
         </div>
 
-        <div className="divide-y divide-white/[0.06] font-mono text-xs">
+        <div className="divide-y divide-white/[0.06] font-mono text-[13px]">
           <MetricRow 
             icon={<Clock size={12} className="text-white/40" />} 
             label="Typical Block Time" 
@@ -248,10 +248,10 @@ export default function CompareSection({ activeAlgorithm, allAlgorithms }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Core Mechanism Comparison */}
         <div className="rounded-2xl border border-white/[0.08] bg-[#050505] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-2.5">
+          <p className="text-[11px] font-bold uppercase tracking-wider text-white/40 mb-2.5">
             Core Mechanism comparison
           </p>
-          <div className="space-y-4 text-xs leading-relaxed font-sans">
+          <div className="space-y-4 text-[13px] leading-relaxed font-sans">
             <div>
               <p className="font-semibold" style={{ color: activeAlgorithm.color }}>{activeAlgorithm.shortName}</p>
               <p className="text-[#888] mt-1">{activeAlgorithm.coreMechanism}</p>
@@ -265,10 +265,10 @@ export default function CompareSection({ activeAlgorithm, allAlgorithms }) {
 
         {/* Strengths & Trade-offs Comparison */}
         <div className="rounded-2xl border border-white/[0.08] bg-[#050505] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-2.5">
+          <p className="text-[11px] font-bold uppercase tracking-wider text-white/40 mb-2.5">
             Strengths & Trade-offs
           </p>
-          <div className="space-y-4 text-xs leading-relaxed font-sans">
+          <div className="space-y-4 text-[13px] leading-relaxed font-sans">
             <div>
               <p className="font-semibold flex items-center gap-1.5" style={{ color: activeAlgorithm.color }}>
                 <Sparkles size={11} className="opacity-80" /> {activeAlgorithm.shortName}
@@ -300,40 +300,40 @@ export default function CompareSection({ activeAlgorithm, allAlgorithms }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Consensus Loop & Election Narrative */}
             <div className="rounded-2xl border border-white/[0.08] bg-[#050505] p-5">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-2.5">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-white/40 mb-2.5">
                 Consensus Loop & Proposer Election
               </p>
-              <p className="text-xs leading-relaxed text-[#888] font-sans">
+              <p className="text-[13px] leading-relaxed text-[#888] font-sans">
                 {formatMarkdown(narrative.consensusLoop)}
               </p>
             </div>
 
             {/* Security Assurances & Slashes */}
             <div className="rounded-2xl border border-white/[0.08] bg-[#050505] p-5">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-2.5">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-white/40 mb-2.5">
                 Security Assurances & Attack Surface
               </p>
-              <p className="text-xs leading-relaxed text-[#888] font-sans">
+              <p className="text-[13px] leading-relaxed text-[#888] font-sans">
                 {formatMarkdown(narrative.securityThreats)}
               </p>
             </div>
 
             {/* Trilemma Trade-off Evaluation */}
             <div className="rounded-2xl border border-white/[0.08] bg-[#050505] p-5">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-2.5">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-white/40 mb-2.5">
                 Trilemma Trade-off Analysis
               </p>
-              <p className="text-xs leading-relaxed text-[#888] font-sans">
+              <p className="text-[13px] leading-relaxed text-[#888] font-sans">
                 {formatMarkdown(narrative.trilemma)}
               </p>
             </div>
 
             {/* Application Environment Suitability */}
             <div className="rounded-2xl border border-white/[0.08] bg-[#050505] p-5">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-2.5">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-white/40 mb-2.5">
                 Application Fit & Bottlenecks
               </p>
-              <p className="text-xs leading-relaxed text-[#888] font-sans">
+              <p className="text-[13px] leading-relaxed text-[#888] font-sans">
                 {formatMarkdown(narrative.applicationFit)}
               </p>
             </div>

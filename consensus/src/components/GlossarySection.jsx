@@ -26,15 +26,15 @@ export default function GlossarySection({ algorithm }) {
   return (
     <div>
       <div className="flex items-center gap-3 mb-3">
-        <h3 className="text-base font-semibold tracking-tight">Glossary</h3>
+        <h3 className="text-lg font-semibold tracking-tight">Glossary</h3>
         <span
-          className="text-[10px] px-2 py-0.5 rounded font-mono"
+          className="text-[11px] px-2 py-0.5 rounded font-mono"
           style={{ background: `${accentColor}12`, color: accentColor }}
         >
           {glossary.length} terms
         </span>
       </div>
-      <p className="text-sm mb-5" style={{ color: "var(--text-2)" }}>
+      <p className="text-[15px] mb-5" style={{ color: "var(--text-2)" }}>
         Key blockchain consensus terminology explained simply.
       </p>
 
@@ -82,7 +82,7 @@ export default function GlossarySection({ algorithm }) {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-sm font-semibold">{entry.term}</span>
+                    <span className="text-[15px] font-semibold">{entry.term}</span>
                     <motion.div
                       animate={{ rotate: expanded === entry.term ? 0 : -90 }}
                       transition={{ duration: 0.15 }}
@@ -91,7 +91,7 @@ export default function GlossarySection({ algorithm }) {
                       <ChevronDown size={13} />
                     </motion.div>
                   </div>
-                  <p className="text-sm mt-1 leading-relaxed" style={{ color: "var(--text-2)" }}>
+                  <p className="text-[14px] mt-1 leading-relaxed" style={{ color: "var(--text-2)" }}>
                     {entry.definition}
                   </p>
 
@@ -108,7 +108,7 @@ export default function GlossarySection({ algorithm }) {
                           {entry.simpleExplanation && (
                             <div className="flex gap-2 mb-3">
                               <Lightbulb size={12} className="shrink-0 mt-0.5" style={{ color: "#F59E0B" }} />
-                              <p className="text-xs leading-relaxed" style={{ color: "var(--text-2)" }}>
+                              <p className="text-[13px] leading-relaxed" style={{ color: "var(--text-2)" }}>
                                 {entry.simpleExplanation}
                               </p>
                             </div>
@@ -117,7 +117,7 @@ export default function GlossarySection({ algorithm }) {
                           {entry.realWorldAnalogy && (
                             <div className="flex gap-2 mb-3">
                               <Lightbulb size={12} className="shrink-0 mt-0.5" style={{ color: "#5FD98A" }} />
-                              <p className="text-xs leading-relaxed" style={{ color: "var(--text-2)" }}>
+                              <p className="text-[13px] leading-relaxed" style={{ color: "var(--text-2)" }}>
                                 <span style={{ color: "#5FD98A" }}>Analogy: </span>
                                 {entry.realWorldAnalogy}
                               </p>
@@ -130,7 +130,7 @@ export default function GlossarySection({ algorithm }) {
                               {entry.relatedTerms.map((rt) => (
                                 <span
                                   key={rt}
-                                  className="text-[9px] font-mono px-1.5 py-0.5 rounded"
+                                  className="text-[10px] font-mono px-1.5 py-0.5 rounded"
                                   style={{ background: `${accentColor}10`, color: accentColor, border: `1px solid ${accentColor}18` }}
                                 >
                                   {rt}
