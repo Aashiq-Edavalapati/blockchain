@@ -25,9 +25,9 @@ export default function LanguagesSection({ chains, algorithm }) {
   return (
     <section className="space-y-4">
       <div className="flex items-center gap-3 pb-2 border-b border-white/[0.06]">
-        <h3 className="text-sm font-bold text-white tracking-tight">Smart Contract client Languages</h3>
+        <h3 className="text-[17px] font-bold text-white tracking-tight">Smart Contract client Languages</h3>
         <span
-          className="text-[10px] font-bold font-mono px-2 py-0.5 rounded border"
+          className="text-xs font-bold font-mono px-2 py-0.5 rounded border"
           style={{
             background: `${algorithm.color}10`,
             borderColor: `${algorithm.color}25`,
@@ -58,13 +58,13 @@ export default function LanguagesSection({ chains, algorithm }) {
                   )}
                 </div>
                 <div className="min-w-0 flex-1 relative group">
-                  <p className="text-[13px] font-bold text-white truncate">
+                  <p className="text-[15px] font-bold text-white truncate">
                     {shortLang}
                   </p>
-                  <span className="absolute bottom-full left-0 mb-2 hidden group-hover:block z-50 bg-[#050505] border border-white/[0.08] text-white text-[11px] p-2.5 rounded-lg shadow-xl w-max max-w-[200px] whitespace-normal text-left pointer-events-none">
+                  <span className="absolute bottom-full left-0 mb-2 hidden group-hover:block z-50 bg-[#050505] border border-white/[0.08] text-white text-xs p-2.5 rounded-lg shadow-xl w-max max-w-[200px] whitespace-normal text-left pointer-events-none">
                     {langName}
                   </span>
-                  <p className="text-[11px] text-white/40 font-semibold mt-0.5">
+                  <p className="text-xs text-white/40 font-semibold mt-0.5">
                     {data.chainList.length} client{data.chainList.length !== 1 ? "s" : ""}
                   </p>
                 </div>
