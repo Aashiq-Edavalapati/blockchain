@@ -21,7 +21,8 @@ const ID_MAP = {
   fabric: "hyperledger",
   sawtooth: "hyperledger",
   "aura-chain": "substrate",
-  goerli: "eth"
+  goerli: "eth",
+  polyzkevm: "matic"
 };
 
 const FALLBACK_COLORS = {
@@ -87,7 +88,8 @@ const NAME_MAP = {
   fabric: "Hyperledger Fabric",
   sawtooth: "Hyperledger Sawtooth",
   "aura-chain": "Substrate Solo Chain",
-  goerli: "Goerli Testnet (Deprecated)"
+  goerli: "Goerli Testnet (Deprecated)",
+  polyzkevm: "Polygon zkEVM"
 };
 
 export default function CryptoIcon({ symbol, id, size = 20 }) {
